@@ -1,0 +1,152 @@
+/* ============================================================
+   mathicx-file · tokens.css
+   Design tokens (cores, espaço, raio, sombra, timing) + 3 temas
+   Temas: dark (padrão), light, auto (via prefers-color-scheme)
+   ============================================================ */
+
+:root {
+  /* --- Marca (constantes em todos os temas) --- */
+  --brand-1: #6366f1;       /* índigo */
+  --brand-2: #8b5cf6;       /* violeta */
+  --brand-3: #22d3ee;       /* ciano de acento secundário */
+  --brand-grad: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+  --brand-grad-soft: linear-gradient(135deg, rgba(99,102,241,.16), rgba(139,92,246,.16));
+
+  /* Cores semânticas */
+  --danger: #ef4444;
+  --danger-soft: rgba(239,68,68,.14);
+  --success: #22c55e;
+  --warning: #f59e0b;
+
+  /* Categorias de apps (mantidas consistentes entre temas) */
+  --cat-pessoal: #818cf8;
+  --cat-trabalho: #34d399;
+  --cat-ferramenta: #fb923c;
+  --cat-sistema: #f472b6;
+  --cat-midia: #38bdf8;
+
+  /* Espaçamento (escala 4px) */
+  --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 20px; --sp-6: 24px; --sp-8: 32px; --sp-10: 40px;
+
+  /* Raios */
+  --r-sm: 6px;  --r-md: 10px; --r-lg: 14px; --r-xl: 18px; --r-full: 999px;
+
+  /* Timing */
+  --t-fast: .12s;  --t-base: .18s;  --t-slow: .28s;
+  --ease: cubic-bezier(.4, 0, .2, 1);
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+
+  /* Tipografia */
+  --font-ui: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  /* Dimensões de UI */
+  --taskbar-h: 56px;
+  --window-min-w: 320px;
+  --window-min-h: 240px;
+}
+
+/* ===================== TEMA DARK (padrão) ===================== */
+:root,
+[data-theme="dark"] {
+  --bg: #0a0c14;
+  --bg-2: #0d1019;
+  --surface: #141826;
+  --surface-2: #1b2030;
+  --surface-3: #232a3d;
+  --surface-hover: rgba(255, 255, 255, .05);
+  --border: #2a3144;
+  --border-soft: rgba(255, 255, 255, .07);
+  --text: #e8ecf4;
+  --text-strong: #ffffff;
+  --muted: #8b94a8;
+  --accent: var(--brand-1);
+  --accent-2: var(--brand-2);
+  --accent-contrast: #ffffff;
+  --accent-soft: rgba(99, 102, 241, .16);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, .35);
+  --shadow-md: 0 12px 32px -10px rgba(0, 0, 0, .55);
+  --shadow-lg: 0 30px 70px -20px rgba(0, 0, 0, .7);
+  --shadow-window: 0 36px 80px -24px rgba(0, 0, 0, .75), 0 0 0 1px var(--border-soft);
+  --glass-bg: rgba(20, 24, 38, .72);
+  --glass-blur: 18px;
+  --aurora-op: .42;
+  --grid-op: .04;
+  color-scheme: dark;
+}
+
+/* ===================== TEMA LIGHT ===================== */
+[data-theme="light"] {
+  --bg: #eef1f7;
+  --bg-2: #e6eaf2;
+  --surface: #ffffff;
+  --surface-2: #f5f7fb;
+  --surface-3: #eef1f7;
+  --surface-hover: rgba(15, 23, 42, .04);
+  --border: #dde3ee;
+  --border-soft: rgba(15, 23, 42, .06);
+  --text: #1a2236;
+  --text-strong: #0b1020;
+  --muted: #6a7488;
+  --accent: var(--brand-1);
+  --accent-2: var(--brand-2);
+  --accent-contrast: #ffffff;
+  --accent-soft: rgba(99, 102, 241, .1);
+  --shadow-sm: 0 2px 8px rgba(30, 50, 80, .08);
+  --shadow-md: 0 12px 32px -10px rgba(30, 50, 80, .18);
+  --shadow-lg: 0 30px 70px -20px rgba(30, 50, 80, .26);
+  --shadow-window: 0 36px 80px -24px rgba(30, 50, 80, .3), 0 0 0 1px var(--border-soft);
+  --glass-bg: rgba(255, 255, 255, .72);
+  --glass-blur: 18px;
+  --aurora-op: .16;
+  --grid-op: .025;
+  color-scheme: light;
+}
+
+/* ===================== TEMA AUTO =====================
+   Resolvido em runtime pelo theme-manager para um tema concreto,
+   mas mantemos um fallback via prefers-color-scheme caso o JS falhe. */
+@media (prefers-color-scheme: light) {
+  [data-theme="auto"] {
+    --bg: #eef1f7;
+    --bg-2: #e6eaf2;
+    --surface: #ffffff;
+    --surface-2: #f5f7fb;
+    --surface-3: #eef1f7;
+    --surface-hover: rgba(15, 23, 42, .04);
+    --border: #dde3ee;
+    --border-soft: rgba(15, 23, 42, .06);
+    --text: #1a2236;
+    --text-strong: #0b1020;
+    --muted: #6a7488;
+    --accent-soft: rgba(99, 102, 241, .1);
+    --shadow-window: 0 36px 80px -24px rgba(30, 50, 80, .3), 0 0 0 1px var(--border-soft);
+    --glass-bg: rgba(255, 255, 255, .72);
+    --aurora-op: .16;
+    --grid-op: .025;
+    color-scheme: light;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-theme="auto"] {
+    --bg: #0a0c14;
+    --bg-2: #0d1019;
+    --surface: #141826;
+    --surface-2: #1b2030;
+    --surface-3: #232a3d;
+    --surface-hover: rgba(255, 255, 255, .05);
+    --border: #2a3144;
+    --border-soft: rgba(255, 255, 255, .07);
+    --text: #e8ecf4;
+    --text-strong: #ffffff;
+    --muted: #8b94a8;
+    --accent-soft: rgba(99, 102, 241, .16);
+    --shadow-window: 0 36px 80px -24px rgba(0, 0, 0, .75), 0 0 0 1px var(--border-soft);
+    --glass-bg: rgba(20, 24, 38, .72);
+    --aurora-op: .42;
+    --grid-op: .04;
+    color-scheme: dark;
+  }
+}

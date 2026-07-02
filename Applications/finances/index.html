@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Organize suas finanças pessoais: receitas, despesas, parcelamentos, metas e muito mais." />
+  <title>Finanças Pessoais</title>
+
+  <!-- Fontes e ícones -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <!-- ============================ LAYOUT ============================ -->
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__brand">
+        <div class="brand__logo" aria-hidden="true">
+          <span>₿</span>
+        </div>
+        <div class="brand__text">
+          <strong>Finanças</strong>
+          <small>Controle pessoal</small>
+        </div>
+      </div>
+
+      <nav class="nav" id="mainNav"><!-- Gerado via JS --></nav>
+
+      <div class="sidebar__footer">
+        <button class="btn btn--ghost btn--block" id="btnThemeQuick" title="Alternar tema">
+          <span class="icon">🎨</span><span>Tema</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Sidebar backdrop (mobile) -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <!-- Main -->
+    <div class="main">
+      <!-- Topbar -->
+      <header class="topbar">
+        <button class="icon-btn only-mobile" id="btnToggleSidebar" aria-label="Abrir menu">
+          <span>☰</span>
+        </button>
+
+        <div class="topbar__search">
+          <span class="icon">🔎</span>
+          <input type="search" id="globalSearch" placeholder="Buscar em tudo..." autocomplete="off" />
+        </div>
+
+        <div class="topbar__actions">
+          <select id="profileSelector" class="profile-selector" title="Selecionar perfil"></select>
+          <div class="period-selector">
+            <button class="icon-btn" id="btnPrevMonth" title="Mês anterior">‹</button>
+            <span id="periodLabel" class="period-label">—</span>
+            <button class="icon-btn" id="btnNextMonth" title="Próximo mês">›</button>
+          </div>
+          <button class="btn btn--primary" id="btnQuickAdd">
+            <span>＋</span><span class="hide-sm">Novo</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Indicador de saúde / alertas -->
+      <div class="alerts-strip" id="alertsStrip"></div>
+
+      <!-- Conteúdo -->
+      <main class="content" id="viewRoot"><!-- Views renderizadas aqui --></main>
+
+      <footer class="footer">
+        <span>Finanças Pessoais · Feito com 💙 · Dados salvos localmente no seu navegador</span>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ============================ MODAIS ============================ -->
+  <div class="modal-root" id="modalRoot" aria-hidden="true"></div>
+
+  <!-- Toasts -->
+  <div class="toast-root" id="toastRoot" aria-live="polite"></div>
+
+  <!-- Fab (mobile) -->
+  <button class="fab only-mobile" id="btnFabAdd" title="Adicionar">＋</button>
+
+  <!-- ============================ TEMPLATES ============================ -->
+  <template id="tmpl-modal">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal__backdrop" data-close></div>
+      <div class="modal__panel">
+        <header class="modal__header">
+          <h3 class="modal__title" data-title></h3>
+          <button class="icon-btn" data-close aria-label="Fechar">✕</button>
+        </header>
+        <div class="modal__body" data-body></div>
+        <footer class="modal__footer" data-footer></footer>
+      </div>
+    </div>
+  </template>
+
+  <!-- ============================ SCRIPTS ============================ -->
+  <!-- Libs via CDN (offline-friendly: usamos fallback inline mínimo) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <!-- App -->
+  <script src="./js/storage.js"></script>
+  <script src="./js/utils.js"></script>
+  <script src="./js/ui.js"></script>
+  <script src="./js/views/dashboard.js"></script>
+  <script src="./js/views/transactions.js"></script>
+  <script src="./js/views/installments.js"></script>
+  <script src="./js/views/recurring.js"></script>
+  <script src="./js/views/categories.js"></script>
+  <script src="./js/views/cards.js"></script>
+  <script src="./js/views/simulator.js"></script>
+  <script src="./js/views/goals.js"></script>
+  <script src="./js/views/reports.js"></script>
+  <script src="./js/views/calendar.js"></script>
+  <script src="./js/views/settings.js"></script>
+  <script src="./js/views/profiles.js"></script>
+  <script src="./js/views/transfers.js"></script>
+  <script src="./js/views/comparison.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>

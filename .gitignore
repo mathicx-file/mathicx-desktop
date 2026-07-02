@@ -1,0 +1,22 @@
+# OS
+Thumbs.db
+.DS_Store
+Desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Server artifacts
+*.log
+node_modules/
+
+# Local/generated artifacts
+_nul
+
+# Firebase local configuration
+src/firebase/firebase-config.local.js
+src/firebase/*.local.js

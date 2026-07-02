@@ -1,0 +1,111 @@
+/* ============================================================
+   mathicx-file · taskbar.css
+   Barra de tarefas: start, apps abertos/fixados, tray, relógio
+   ============================================================ */
+
+.taskbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+  height: var(--taskbar-h);
+  display: flex; align-items: center; gap: var(--sp-2);
+  padding: 0 var(--sp-3);
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border-top: 1px solid var(--border-soft);
+}
+
+.start-btn {
+  display: flex; align-items: center; gap: var(--sp-2);
+  height: 42px; padding: 0 var(--sp-4);
+  border-radius: var(--r-md);
+  background: var(--brand-grad); color: #fff;
+  font-weight: 800; font-size: 13px;
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+  transition: filter var(--t-fast), transform var(--t-fast);
+}
+.start-btn:hover { filter: brightness(1.1); }
+.start-btn:active { transform: scale(.96); }
+.start-btn svg { width: 16px; height: 16px; }
+.start-btn.is-open { box-shadow: var(--shadow-sm), 0 0 0 2px var(--accent-2); }
+
+.taskbar-apps {
+  flex: 1; display: flex; gap: 6px; overflow-x: auto;
+  height: 100%; align-items: center;
+  scrollbar-width: none; min-width: 0;
+}
+.taskbar-apps::-webkit-scrollbar { display: none; }
+
+.taskbar-app {
+  flex-shrink: 0;
+  display: flex; align-items: center; gap: 6px;
+  height: 42px; padding: 0 var(--sp-3);
+  border-radius: var(--r-md);
+  border: 1px solid transparent; background: var(--surface-hover);
+  color: var(--text); font-size: 12px; font-weight: 700;
+  max-width: 200px; position: relative;
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+.taskbar-app:hover { background: var(--surface-2); }
+.taskbar-app .ta-ico { font-size: 15px; line-height: 1; }
+.taskbar-app .ta-label {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.taskbar-app.is-pinned { background: transparent; opacity: .7; }
+.taskbar-app.is-pinned:hover { opacity: 1; }
+.taskbar-app.is-running { border-color: var(--border-soft); }
+.taskbar-app.is-running::after {
+  content: ''; position: absolute; bottom: 3px; left: 50%;
+  transform: translateX(-50%);
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--muted);
+}
+.taskbar-app.is-active { background: var(--accent-soft); border-color: var(--accent); }
+.taskbar-app.is-active::after { background: var(--accent); width: 12px; }
+.taskbar-app.is-minimized { opacity: .55; }
+
+.taskbar-right {
+  display: flex; align-items: center; gap: var(--sp-2); flex-shrink: 0;
+}
+.tray-btn {
+  width: 38px; height: 38px; border-radius: var(--r-md);
+  border: 1px solid var(--border); background: var(--surface-hover);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; color: var(--text);
+  position: relative;
+  transition: background var(--t-fast);
+}
+.tray-btn:hover { background: var(--surface-2); }
+.tray-btn.tray-admin { color: var(--accent); }
+.tray-btn.tray-admin:hover { background: var(--accent-soft); }
+.tray-btn .badge {
+  position: absolute; top: -2px; right: -2px;
+  min-width: 16px; height: 16px; padding: 0 4px;
+  border-radius: var(--r-full);
+  background: var(--danger); color: #fff;
+  font-size: 9px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid var(--surface);
+}
+.tray-btn .badge.is-pending {
+  background: #f59e0b;
+}
+.taskbar-clock-wrap {
+  display: flex; flex-direction: column; align-items: flex-end;
+  padding: 0 var(--sp-2); line-height: 1.2;
+}
+.taskbar-clock {
+  font-family: var(--font-mono); font-size: 13.5px; font-weight: 700;
+  color: var(--text-strong);
+}
+.taskbar-date {
+  font-size: 10px; font-weight: 600; color: var(--muted);
+  text-transform: capitalize;
+}
+
+@media (max-width: 640px) {
+  .taskbar-app .ta-label { display: none; }
+  .taskbar-app { padding: 0 10px; }
+  .start-btn span { display: none; }
+  .start-btn { padding: 0 12px; }
+  .taskbar-date { display: none; }
+}

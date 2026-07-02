@@ -1,0 +1,127 @@
+/* ============================================================
+   mathicx-file · explorer.css
+   Estilos do app mathicx-file Explorer
+   ============================================================ */
+
+.explorer {
+  display: grid; grid-template-columns: 220px 1fr;
+  height: 100%; background: var(--bg-2);
+}
+.explorer-sidebar {
+  border-right: 1px solid var(--border);
+  background: var(--surface); overflow-y: auto;
+  padding: var(--sp-3);
+}
+.explorer-side-title {
+  font-size: 10px; font-weight: 800; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--muted);
+  padding: var(--sp-2) var(--sp-2) var(--sp-1);
+}
+.explorer-side-item {
+  display: flex; align-items: center; gap: var(--sp-2);
+  padding: 8px 10px; border-radius: var(--r-sm);
+  font-size: 12.5px; font-weight: 600; color: var(--text);
+  width: 100%; text-align: left;
+  transition: background var(--t-fast);
+}
+.explorer-side-item:hover { background: var(--surface-hover); }
+.explorer-side-item.is-active { background: var(--accent-soft); color: var(--accent); }
+.explorer-side-item .esi-ico { font-size: 14px; width: 18px; text-align: center; }
+.explorer-side-tree { padding-left: var(--sp-3); }
+
+.explorer-main { display: flex; flex-direction: column; min-width: 0; }
+.explorer-toolbar {
+  display: flex; align-items: center; gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  border-bottom: 1px solid var(--border); background: var(--surface);
+  flex-shrink: 0;
+}
+.explorer-breadcrumb {
+  display: flex; align-items: center; gap: 4px; flex: 1; min-width: 0;
+  font-size: 12.5px; font-weight: 600;
+}
+.explorer-breadcrumb .crumb {
+  padding: 4px 8px; border-radius: var(--r-sm); color: var(--text);
+  transition: background var(--t-fast);
+}
+.explorer-breadcrumb .crumb:hover { background: var(--surface-hover); }
+.explorer-breadcrumb .crumb.is-current { color: var(--accent); }
+.explorer-breadcrumb .sep { color: var(--muted); font-size: 11px; }
+
+.explorer-search {
+  width: 200px; padding: 6px 10px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: var(--r-sm); font-size: 12px; color: var(--text);
+}
+.explorer-search:focus { border-color: var(--accent); }
+.explorer-tool-btn {
+  width: 30px; height: 30px; border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted); font-size: 15px;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.explorer-tool-btn:hover { background: var(--surface-hover); color: var(--text); }
+.explorer-tool-btn.is-active { background: var(--accent-soft); color: var(--accent); }
+
+.explorer-content { flex: 1; overflow-y: auto; padding: var(--sp-4); position: relative; }
+
+.explorer-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: var(--sp-3);
+}
+.explorer-item {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: var(--sp-3) var(--sp-2); border-radius: var(--r-md);
+  border: 1px solid transparent; cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+.explorer-item:hover { background: var(--surface-hover); }
+.explorer-item.selected { background: var(--accent-soft); border-color: var(--accent); }
+.explorer-item .ei-ico { font-size: 38px; line-height: 1; }
+.explorer-item.is-folder .ei-ico { filter: drop-shadow(0 2px 4px var(--shadow-sm)); }
+.explorer-item .ei-name {
+  font-size: 11.5px; font-weight: 600; color: var(--text);
+  text-align: center; line-height: 1.3;
+  word-break: break-word;
+}
+.explorer-item .ei-name-edit {
+  font-size: 11.5px; padding: 2px 4px; width: 100%;
+  background: var(--surface-2); border: 1px solid var(--accent);
+  border-radius: var(--r-sm); color: var(--text); text-align: center;
+}
+
+.explorer-list {
+  display: flex; flex-direction: column;
+}
+.explorer-list-head, .explorer-list-row {
+  display: grid; grid-template-columns: 1fr 90px 80px 110px 90px;
+  gap: var(--sp-2); align-items: center;
+  padding: 8px var(--sp-3);
+}
+.explorer-list-head {
+  font-size: 10px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: .06em; color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+.explorer-list-row {
+  font-size: 12.5px; cursor: pointer; border-radius: var(--r-sm);
+  transition: background var(--t-fast);
+}
+.explorer-list-row:hover { background: var(--surface-hover); }
+.explorer-list-row.selected { background: var(--accent-soft); }
+.explorer-list-row .el-name { display: flex; align-items: center; gap: var(--sp-2); font-weight: 600; }
+.explorer-list-row .el-name .el-ico { font-size: 16px; }
+.explorer-list-row .el-meta { color: var(--muted); font-size: 11.5px; }
+
+.explorer-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: var(--sp-10) var(--sp-4); color: var(--muted); text-align: center;
+}
+.explorer-empty .ee-ico { font-size: 48px; opacity: .3; margin-bottom: var(--sp-3); }
+
+/* Menu de contexto do explorer reaproveita .context-menu */
+
+@media (max-width: 640px) {
+  .explorer { grid-template-columns: 1fr; }
+  .explorer-sidebar { display: none; }
+}

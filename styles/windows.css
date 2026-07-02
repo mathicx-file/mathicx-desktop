@@ -1,0 +1,131 @@
+/* ============================================================
+   mathicx-file · windows.css
+   Sistema de janelas, titlebar, controles, resize handles,
+   snap layouts flyout, overlay de snap
+   ============================================================ */
+
+#windowsLayer {
+  position: absolute; inset: 0; z-index: 5;
+  pointer-events: none;
+  contain: strict;
+}
+
+.os-window {
+  position: absolute; pointer-events: auto;
+  display: flex; flex-direction: column;
+  min-width: var(--window-min-w); min-height: var(--window-min-h);
+  background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--r-lg);
+  box-shadow: var(--shadow-window); overflow: hidden;
+  will-change: transform;
+}
+.os-window.opening { animation: win-open .18s var(--ease-out); }
+.os-window.closing { animation: win-close .14s var(--ease) forwards; }
+@keyframes win-open  { from{opacity:0; transform:scale(.96) translateY(8px)} to{opacity:1; transform:scale(1) translateY(0)} }
+@keyframes win-close { from{opacity:1; transform:scale(1)} to{opacity:0; transform:scale(.95)} }
+
+.os-window.minimized {
+  opacity: 0 !important; pointer-events: none;
+  transform: scale(.05) translateY(70vh);
+  transition: transform var(--t-slow) var(--ease), opacity var(--t-base);
+}
+.os-window.maximized {
+  top: 0 !important; left: 0 !important;
+  width: 100% !important; height: 100% !important;
+  border-radius: 0; border-color: transparent;
+}
+.os-window.snapped { transition: top var(--t-base), left var(--t-base), width var(--t-base), height var(--t-base); }
+.os-window.focused { box-shadow: 0 40px 90px -22px rgba(0,0,0,.65), 0 0 0 1px var(--accent); }
+
+/* ===== Titlebar ===== */
+.os-titlebar {
+  display: flex; align-items: center; gap: var(--sp-2);
+  padding: 0 6px 0 var(--sp-4); height: 40px; flex-shrink: 0;
+  background: var(--surface-2); border-bottom: 1px solid var(--border);
+  user-select: none; touch-action: none;
+}
+.os-title-icon { font-size: 15px; line-height: 1; }
+.os-title-text {
+  font-size: 12.5px; font-weight: 700; color: var(--text); flex: 1;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.os-controls { display: flex; align-items: center; gap: 2px; }
+
+.os-btn {
+  position: relative;
+  width: 38px; height: 30px; border-radius: var(--r-sm);
+  color: var(--muted);
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.os-btn svg { width: 11px; height: 11px; }
+.os-btn:hover { background: var(--surface-hover); color: var(--text); }
+.os-close:hover { background: var(--danger); color: #fff; }
+
+/* ===== Snap layout flyout (hover no maximizar) ===== */
+.snap-flyout {
+  position: absolute; z-index: 20; top: 40px; right: 4px;
+  width: 280px; padding: var(--sp-3);
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-md); box-shadow: var(--shadow-lg);
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-2);
+  animation: pop-in .12s var(--ease-out);
+}
+.snap-flyout .snap-title {
+  grid-column: 1 / -1; font-size: 10.5px; font-weight: 800;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 4px;
+}
+.snap-layout {
+  height: 56px; border-radius: var(--r-sm);
+  border: 1px solid var(--border); background: var(--surface-2);
+  display: grid; gap: 2px; padding: 4px;
+  transition: border-color var(--t-fast), background var(--t-fast);
+}
+.snap-layout:hover { border-color: var(--accent); background: var(--accent-soft); }
+.snap-layout .sz { background: var(--border); border-radius: 2px; transition: background var(--t-fast); }
+.snap-layout:hover .sz { background: var(--accent); }
+
+/* ===== Corpo da janela ===== */
+.os-body {
+  flex: 1; position: relative; background: var(--bg-2);
+  min-height: 0; overflow: hidden;
+}
+.os-content { width: 100%; height: 100%; overflow: auto; }
+
+/* ===== Resize handles (8 alças) ===== */
+.os-resize {
+  position: absolute; z-index: 2;
+  background: transparent;
+}
+.os-resize.n  { top: -3px; left: 8px; right: 8px; height: 6px; cursor: ns-resize; }
+.os-resize.s  { bottom: -3px; left: 8px; right: 8px; height: 6px; cursor: ns-resize; }
+.os-resize.e  { right: -3px; top: 8px; bottom: 8px; width: 6px; cursor: ew-resize; }
+.os-resize.w  { left: -3px; top: 8px; bottom: 8px; width: 6px; cursor: ew-resize; }
+.os-resize.ne { top: -3px; right: -3px; width: 12px; height: 12px; cursor: nesw-resize; }
+.os-resize.nw { top: -3px; left: -3px; width: 12px; height: 12px; cursor: nwse-resize; }
+.os-resize.se { bottom: -3px; right: -3px; width: 12px; height: 12px; cursor: nwse-resize; }
+.os-resize.sw { bottom: -3px; left: -3px; width: 12px; height: 12px; cursor: nesw-resize; }
+.os-window.maximized .os-resize { display: none; }
+
+/* ===== Overlay de preview de snap (durante drag) ===== */
+.snap-preview {
+  position: fixed; z-index: 30; pointer-events: none;
+  background: var(--accent-soft); border: 2px solid var(--accent);
+  border-radius: var(--r-md);
+  transition: all var(--t-fast) var(--ease-out);
+  box-shadow: var(--shadow-md);
+}
+
+/* Loader de conteúdo (enquanto app carrega via import dinâmico) */
+.os-loader {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted); font-size: 12px; font-weight: 600;
+}
+.os-loader .spinner {
+  width: 18px; height: 18px; margin-right: 8px;
+  border: 2px solid var(--border); border-top-color: var(--accent);
+  border-radius: 50%; animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
