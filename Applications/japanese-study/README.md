@@ -403,6 +403,7 @@ Quando executado dentro do Mathicx-File:
 - dicionario, kana, kanji, exercicios e assets continuam locais/estaticos;
 - o tema recebido do host e aplicado como `dark` ou `light`;
 - a aba Dados mostra o status da sincronizacao Firebase.
+- o painel de sync permite `Sincronizar agora` e mostra detalhes do ultimo envio.
 
 Paths pessoais atualmente planejados/usados:
 
@@ -454,15 +455,14 @@ Estado atual:
 - Sincronizacao Firebase por usuario aprovado: concluida como camada local-first inicial.
 - Status visual da sincronizacao Firebase: concluido.
 - Marcador de migracao `japanese-study-local-first-sync-v1`: concluido.
+- Botao `Sincronizar agora` e detalhes do ultimo sync: concluido.
 
 Proximos passos recomendados:
 
-1. Mostrar detalhes expandiveis do ultimo sync, como contagem de eventos/SRS/conquistas enviados.
-2. Melhorar reconciliacao de conflitos entre dispositivos.
-3. Adicionar botao "Sincronizar agora" para envio manual.
-4. Aprofundar a integracao Mathicx-File com widget, launcher, deep links, notificacoes e status de estudo.
-5. Expandir a digitacao guiada com katakana, traducao guiada, dicas e textos medios.
-6. Expandir Kanji N5 em blocos pequenos, mantendo validacao de dados e compatibilidade com backup/sync.
+1. Melhorar reconciliacao de conflitos entre dispositivos.
+2. Aprofundar a integracao Mathicx-File com widget, launcher, deep links, notificacoes e status de estudo.
+3. Expandir a digitacao guiada com katakana, traducao guiada, dicas e textos medios.
+4. Expandir Kanji N5 em blocos pequenos, mantendo validacao de dados e compatibilidade com backup/sync.
 
 ## Futuro banco de dados
 

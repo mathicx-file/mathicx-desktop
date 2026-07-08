@@ -1302,6 +1302,39 @@ body {
   background: var(--text-secondary);
 }
 
+.sync-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.sync-details {
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.sync-details-list {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.sync-details-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.sync-details-list strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
 .danger-confirm {
   display: flex;
   align-items: flex-start;

@@ -120,6 +120,32 @@ class JapaneseFirebaseSync {
     return counts;
   }
 
+  async syncNow() {
+    if (!this.ready || !this.flags?.firestoreJapaneseWriteEnabled) {
+      this.emitStatus({
+        state: this.ready ? 'disabled' : 'checking',
+        message: this.ready
+          ? 'Escrita remota desativada para este ambiente.'
+          : 'A sincronizacao ainda esta inicializando.',
+      });
+      return { ok: false, reason: this.ready ? 'write-disabled' : 'not-ready' };
+    }
+
+    clearTimeout(this.writeTimer);
+    try {
+      const counts = await this.uploadNow('manual');
+      return { ok: true, counts };
+    } catch (error) {
+      console.warn('[japanese-firebase-sync] manual sync failed', error);
+      this.emitStatus({
+        state: 'error',
+        message: 'Nao foi possivel sincronizar manualmente.',
+        error: error?.message || String(error),
+      });
+      return { ok: false, reason: 'upload-failed', error };
+    }
+  }
+
   emitStatus(detail) {
     window.dispatchEvent(new CustomEvent('japanese:firebase-sync-status', {
       detail: {

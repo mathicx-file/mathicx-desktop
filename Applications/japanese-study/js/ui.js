@@ -16,6 +16,7 @@ export const JapaneseUI = (() => {
   let currentIndex = 0;
   let modalOpen = false;
   let currentStrokeModel = null;
+  let lastFirebaseSyncDetail = null;
 
   const elements = {};
 
@@ -80,6 +81,8 @@ export const JapaneseUI = (() => {
     elements.backupReplaceBtn = document.getElementById('backup-replace-btn');
     elements.backupPreview = document.getElementById('backup-preview');
     elements.firebaseSyncStatus = document.getElementById('firebase-sync-status');
+    elements.firebaseSyncNowBtn = document.getElementById('firebase-sync-now-btn');
+    elements.firebaseSyncDetails = document.getElementById('firebase-sync-details');
     elements.clearDataConfirm = document.getElementById('clear-data-confirm');
     elements.clearDataBtn = document.getElementById('clear-data-btn');
     elements.clearDataStatus = document.getElementById('clear-data-status');
@@ -139,6 +142,9 @@ export const JapaneseUI = (() => {
     });
     elements.backupReplaceBtn.addEventListener('click', () => {
       if (typeof onBackupImport === 'function') onBackupImport('replace');
+    });
+    elements.firebaseSyncNowBtn.addEventListener('click', () => {
+      if (typeof onFirebaseSyncNow === 'function') onFirebaseSyncNow();
     });
     elements.clearDataConfirm.addEventListener('change', () => {
       elements.clearDataBtn.disabled = !elements.clearDataConfirm.checked;
@@ -1391,6 +1397,7 @@ export const JapaneseUI = (() => {
   let onBackupExport = null;
   let onBackupFileSelected = null;
   let onBackupImport = null;
+  let onFirebaseSyncNow = null;
   let onClearData = null;
   let onKanaExport = null;
   let onStudyNow = null;
@@ -1466,6 +1473,10 @@ export const JapaneseUI = (() => {
 
   function onBackupImportCallback(cb) {
     onBackupImport = cb;
+  }
+
+  function onFirebaseSyncNowCallback(cb) {
+    onFirebaseSyncNow = cb;
   }
 
   function onClearDataCallback(cb) {
@@ -1581,6 +1592,12 @@ export const JapaneseUI = (() => {
     const state = normalizeSyncState(detail.state);
     const label = getSyncStatusLabel(state);
     const message = detail.message || getSyncStatusMessage(state, detail);
+    if (detail.counts || detail.lastSyncedAt || detail.reason) {
+      lastFirebaseSyncDetail = {
+        ...(lastFirebaseSyncDetail || {}),
+        ...detail,
+      };
+    }
 
     elements.firebaseSyncStatus.dataset.state = state;
     elements.firebaseSyncStatus.innerHTML =
@@ -1589,6 +1606,39 @@ export const JapaneseUI = (() => {
         '<strong>' + escapeHtml(label) + '</strong>' +
         '<span>' + escapeHtml(message) + '</span>' +
       '</div>';
+
+    updateFirebaseSyncControls(state);
+    updateFirebaseSyncDetails(lastFirebaseSyncDetail);
+  }
+
+  function updateFirebaseSyncControls(state) {
+    if (!elements.firebaseSyncNowBtn) return;
+    elements.firebaseSyncNowBtn.disabled = !['synced', 'error'].includes(state);
+    elements.firebaseSyncNowBtn.textContent = state === 'syncing' || state === 'hydrating'
+      ? 'Sincronizando...'
+      : 'Sincronizar agora';
+  }
+
+  function updateFirebaseSyncDetails(detail) {
+    if (!elements.firebaseSyncDetails) return;
+    if (!detail) {
+      elements.firebaseSyncDetails.textContent = 'Os detalhes aparecerao depois da primeira sincronizacao.';
+      return;
+    }
+
+    const counts = detail.counts || {};
+    const rows = [
+      ['Ultima sync', detail.lastSyncedAt ? new Date(detail.lastSyncedAt).toLocaleString('pt-BR') : 'Ainda nao registrada'],
+      ['Origem', getSyncReasonLabel(detail.reason)],
+      ['Settings', String(counts.settings ?? 0)],
+      ['SRS', String(counts.srs ?? 0)],
+      ['Eventos', String(counts.events ?? 0)],
+      ['Conquistas', String(counts.achievements ?? 0)]
+    ];
+
+    elements.firebaseSyncDetails.innerHTML = '<div class="sync-details-list">' + rows.map(([label, value]) =>
+      '<div><span>' + escapeHtml(label) + '</span><strong>' + escapeHtml(value) + '</strong></div>'
+    ).join('') + '</div>';
   }
 
   function updateFilterButtons() {
@@ -2276,6 +2326,14 @@ export const JapaneseUI = (() => {
     }[state] || 'Preparando sincronizacao...';
   }
 
+  function getSyncReasonLabel(reason) {
+    return {
+      initial: 'Inicial',
+      manual: 'Manual',
+      'local-change': 'Alteracao local'
+    }[reason] || 'Automatica';
+  }
+
   function escapeHtml(value) {
     return String(value || '')
       .replace(/&/g, '&amp;')
@@ -2319,6 +2377,7 @@ export const JapaneseUI = (() => {
     onBackupExportCallback,
     onBackupFileSelectedCallback,
     onBackupImportCallback,
+    onFirebaseSyncNowCallback,
     onClearDataCallback,
     onKanaExportCallback,
     onStudyNowCallback,

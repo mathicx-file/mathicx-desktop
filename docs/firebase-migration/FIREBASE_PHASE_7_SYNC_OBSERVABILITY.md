@@ -52,12 +52,27 @@ Formato do marcador:
 }
 ```
 
+## Complemento 7.5
+
+Antes de iniciar a Fase 8 de experiencia integrada, foi adicionado um complemento pequeno ao painel de sync:
+
+- botao `Sincronizar agora`;
+- API `japaneseFirebaseSync.syncNow()` para forcar upload manual do snapshot local;
+- cancelamento de upload pendente com debounce antes do sync manual;
+- detalhes do ultimo sync exibidos na UI:
+  - data/hora da ultima sincronizacao;
+  - origem do sync (`Inicial`, `Manual`, `Alteracao local`);
+  - quantidade de settings, SRS, eventos e conquistas enviados.
+
+O botao fica habilitado quando o sync esta `synced` ou em `error`, e permanece desabilitado durante inicializacao, hydrate ou envio.
+
 ## Decisoes
 
 - O marcador de migracao e resiliente: se ele falhar, o upload principal de dados nao e desfeito.
 - A UI de status vive dentro da aba Dados para ficar perto de backup/importacao.
 - O app standalone continua funcionando sem Firebase; nesse caso o status mostra sincronizacao remota indisponivel/desativada.
 - O sync continua local-first: Firestore e destino/remoto de sincronizacao, nao fonte obrigatoria para abrir o app.
+- A sincronizacao manual reutiliza o mesmo `uploadNow`, evitando um segundo caminho de persistencia.
 
 ## Testes
 
@@ -73,8 +88,7 @@ Formato do marcador:
 
 ## Pendencias Recomendadas
 
-1. Mostrar detalhes expandiveis do ultimo sync, como contagem de eventos/SRS/conquistas enviados.
-2. Criar reconciliacao mais forte entre dispositivos para settings e SRS.
-3. Criar testes de unidade especificos para a maquina de estados do sync.
-4. Avaliar botao "Sincronizar agora" para disparar upload manual.
-5. Adicionar indicadores no launcher/widget fora da aba Dados.
+1. Criar reconciliacao mais forte entre dispositivos para settings e SRS.
+2. Criar testes de unidade especificos para a maquina de estados do sync.
+3. Adicionar indicadores no launcher/widget fora da aba Dados.
+4. Iniciar a Fase 8 com deep links, widget e busca global.

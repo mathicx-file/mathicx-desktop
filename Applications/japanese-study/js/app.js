@@ -28,6 +28,7 @@ const JapaneseApp = (() => {
   let activeTypingSession = null;
   let currentTypingValue = '';
   let currentTypingResult = null;
+  let firebaseSyncModule = null;
 
   async function init() {
     if (initialized) return;
@@ -154,6 +155,10 @@ const JapaneseApp = (() => {
 
       JapaneseUI.onBackupImportCallback((mode) => {
         importSelectedBackup(mode);
+      });
+
+      JapaneseUI.onFirebaseSyncNowCallback(() => {
+        syncFirebaseNow();
       });
 
       JapaneseUI.onClearDataCallback(() => {
@@ -343,6 +348,7 @@ const JapaneseApp = (() => {
   async function setupFirebaseSync() {
     try {
       const module = await import('./firebase/japanese-firebase-sync.js');
+      firebaseSyncModule = module;
       const result = await module.japaneseFirebaseSync.init({ storage: JapaneseStorage });
       if (result?.enabled) {
         console.info('[japanese-firebase-sync] enabled for current user');
@@ -373,6 +379,18 @@ const JapaneseApp = (() => {
       'user-not-approved': 'A conta precisa estar aprovada para sincronizar.',
       'already-ready-or-missing-storage': 'Sincronizacao ja inicializada ou armazenamento indisponivel.'
     }[reason] || 'Este ambiente esta usando apenas dados locais.';
+  }
+
+  async function syncFirebaseNow() {
+    if (!firebaseSyncModule?.japaneseFirebaseSync) {
+      JapaneseUI.updateFirebaseSyncStatus({
+        state: 'error',
+        message: 'Sincronizacao Firebase ainda nao inicializada.'
+      });
+      return;
+    }
+
+    await firebaseSyncModule.japaneseFirebaseSync.syncNow();
   }
 
   async function exportBackup() {
