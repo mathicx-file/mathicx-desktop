@@ -20,6 +20,7 @@ import {
 } from './sync-utils.js';
 
 const BATCH_LIMIT = 450;
+const JAPANESE_STUDY_MIGRATION_ID = 'japanese-study-local-first-sync-v1';
 
 export class JapaneseFirestoreRepository {
   constructor() {
@@ -86,6 +87,24 @@ export class JapaneseFirestoreRepository {
       events: buildGamificationEventEntries(backup?.data?.progress).length,
       achievements: buildAchievementEntries(backup?.data?.settings).length,
     };
+  }
+
+  async markMigration(uid, details = {}) {
+    const { firestore } = await this._init();
+    await commitOperations(firestore, [
+      {
+        path: firestorePaths.userMigration(uid, JAPANESE_STUDY_MIGRATION_ID),
+        data: withTimestamp({
+          appId: 'japanese-study',
+          migrationId: JAPANESE_STUDY_MIGRATION_ID,
+          schemaVersion: 1,
+          status: details.status || 'completed',
+          reason: details.reason || 'initial-sync',
+          counts: details.counts || {},
+          completedAt: serverTimestamp(),
+        }),
+      },
+    ]);
   }
 
   async _init() {

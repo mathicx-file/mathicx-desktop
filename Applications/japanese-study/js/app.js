@@ -33,8 +33,9 @@ const JapaneseApp = (() => {
     if (initialized) return;
     initialized = true;
 
-    const firebaseSyncReady = setupFirebaseSync();
     JapaneseUI.init();
+    setupFirebaseSyncStatusListener();
+    const firebaseSyncReady = setupFirebaseSync();
 
     const loadingEl = document.getElementById('loading-state');
     const gridEl = document.getElementById('character-grid');
@@ -345,10 +346,33 @@ const JapaneseApp = (() => {
       const result = await module.japaneseFirebaseSync.init({ storage: JapaneseStorage });
       if (result?.enabled) {
         console.info('[japanese-firebase-sync] enabled for current user');
+      } else if (result?.reason) {
+        JapaneseUI.updateFirebaseSyncStatus({
+          state: result.reason === 'user-not-approved' ? 'pending' : 'disabled',
+          message: getFirebaseSyncDisabledMessage(result.reason)
+        });
       }
     } catch (error) {
       console.info('[japanese-firebase-sync] unavailable in this runtime', error?.message || error);
+      JapaneseUI.updateFirebaseSyncStatus({
+        state: 'error',
+        message: 'Nao foi possivel iniciar a sincronizacao Firebase.'
+      });
     }
+  }
+
+  function setupFirebaseSyncStatusListener() {
+    window.addEventListener('japanese:firebase-sync-status', (event) => {
+      JapaneseUI.updateFirebaseSyncStatus(event.detail || {});
+    });
+  }
+
+  function getFirebaseSyncDisabledMessage(reason) {
+    return {
+      'feature-disabled': 'Sincronizacao remota desativada por feature flag.',
+      'user-not-approved': 'A conta precisa estar aprovada para sincronizar.',
+      'already-ready-or-missing-storage': 'Sincronizacao ja inicializada ou armazenamento indisponivel.'
+    }[reason] || 'Este ambiente esta usando apenas dados locais.';
   }
 
   async function exportBackup() {

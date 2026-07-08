@@ -204,7 +204,8 @@ Status em 2026-07-08:
 3. Conquistas desbloqueadas persistidas em `settings.gamificationAchievements`, com estado de desbloqueio preservado em backup/importacao.
 4. Repositorio/sync Firebase inicial implementado no contexto do Mathicx-File.
 5. Isolamento local por usuario Firebase implementado em LocalStorage e IndexedDB.
-6. Pendencias restantes: UI de status de sync, marcador de migracao e reconciliacao mais forte entre dispositivos.
+6. UI de status de sync e marcador de migracao `japanese-study-local-first-sync-v1` implementados.
+7. Pendencias restantes: detalhes expandiveis do ultimo sync, sincronizacao manual e reconciliacao mais forte entre dispositivos.
 
 ## Novos Contratos Locais
 

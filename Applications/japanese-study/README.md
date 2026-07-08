@@ -401,7 +401,8 @@ Quando executado dentro do Mathicx-File:
 - dados pessoais usam o namespace `users/{uid}/apps/japanese-study/...`;
 - LocalStorage e IndexedDB usam o UID como escopo local;
 - dicionario, kana, kanji, exercicios e assets continuam locais/estaticos;
-- o tema recebido do host e aplicado como `dark` ou `light`.
+- o tema recebido do host e aplicado como `dark` ou `light`;
+- a aba Dados mostra o status da sincronizacao Firebase.
 
 Paths pessoais atualmente planejados/usados:
 
@@ -414,6 +415,12 @@ users/{uid}/apps/japanese-study/achievements/{achievementId}
 users/{uid}/apps/japanese-study/srs/{itemId}
 users/{uid}/apps/japanese-study/favorites/{entryId}
 users/{uid}/apps/japanese-study/dictionaryFavorites/{entryId}
+```
+
+O app tambem registra o marcador de migracao/sync inicial:
+
+```text
+users/{uid}/migrations/japanese-study-local-first-sync-v1
 ```
 
 Mensagens enviadas ao host:
@@ -445,12 +452,14 @@ Estado atual:
 - Assistente de Estudo Diario v2: iniciado com recomendacoes explicaveis e resumo pos-quiz.
 - Integracao Mathicx-File por iframe: concluida.
 - Sincronizacao Firebase por usuario aprovado: concluida como camada local-first inicial.
+- Status visual da sincronizacao Firebase: concluido.
+- Marcador de migracao `japanese-study-local-first-sync-v1`: concluido.
 
 Proximos passos recomendados:
 
-1. Adicionar UI de status da sincronizacao Firebase.
-2. Registrar marcador de migracao em `users/{uid}/migrations`.
-3. Melhorar reconciliacao de conflitos entre dispositivos.
+1. Mostrar detalhes expandiveis do ultimo sync, como contagem de eventos/SRS/conquistas enviados.
+2. Melhorar reconciliacao de conflitos entre dispositivos.
+3. Adicionar botao "Sincronizar agora" para envio manual.
 4. Aprofundar a integracao Mathicx-File com widget, launcher, deep links, notificacoes e status de estudo.
 5. Expandir a digitacao guiada com katakana, traducao guiada, dicas e textos medios.
 6. Expandir Kanji N5 em blocos pequenos, mantendo validacao de dados e compatibilidade com backup/sync.

@@ -388,7 +388,7 @@ Recomendacoes:
 
 ## Roadmap Sugerido
 
-- Evoluir a Fase 7 da integracao Firebase, com UI de status de sincronizacao e marcadores de migracao.
+- Evoluir a observabilidade do Firebase com detalhes do ultimo sync, reconciliacao entre dispositivos e sincronizacao manual.
 - Aprofundar a integracao do `japanese-study` com widgets, deep links e busca global.
 - Criar uma suite de testes automatizados para o host alem dos testes de rules e do app Japanese Study.
 - Adicionar export/import global dos dados do desktop.

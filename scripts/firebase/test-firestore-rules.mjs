@@ -118,7 +118,37 @@ test('approved owner can access own desktop/app/migration subcollections', async
   const alice = userDb(env, 'alice');
   await assertSucceeds(setDoc(doc(alice, 'users/alice/desktop/settings'), desktopSettings));
   await assertSucceeds(setDoc(doc(alice, 'users/alice/apps/japanese-study/settings/main'), desktopSettings));
+  await assertSucceeds(setDoc(doc(alice, 'users/alice/apps/japanese-study/profile/progression'), {
+    schemaVersion: 1,
+    level: 2,
+    xp: 120,
+    updatedAt: now,
+  }));
+  await assertSucceeds(setDoc(doc(alice, 'users/alice/apps/japanese-study/events/event-1'), {
+    schemaVersion: 1,
+    eventType: 'quiz.correct',
+    xp: 9,
+    timestamp: now,
+    updatedAt: now,
+  }));
+  await assertSucceeds(setDoc(doc(alice, 'users/alice/apps/japanese-study/srs/kana-a'), {
+    schemaVersion: 1,
+    charId: 'kana-a',
+    state: 'review',
+    updatedAt: now,
+  }));
+  await assertSucceeds(setDoc(doc(alice, 'users/alice/apps/japanese-study/achievements/first-steps'), {
+    schemaVersion: 1,
+    unlocked: true,
+    updatedAt: now,
+  }));
   await assertSucceeds(setDoc(doc(alice, 'users/alice/migrations/local-v1'), { done: true }));
+  await assertSucceeds(setDoc(doc(alice, 'users/alice/migrations/japanese-study-local-first-sync-v1'), {
+    appId: 'japanese-study',
+    status: 'completed',
+    schemaVersion: 1,
+    updatedAt: now,
+  }));
 });
 
 test('approved user cannot access another user subcollections', async (env) => {

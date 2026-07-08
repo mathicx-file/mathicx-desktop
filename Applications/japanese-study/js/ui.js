@@ -79,6 +79,7 @@ export const JapaneseUI = (() => {
     elements.backupMergeBtn = document.getElementById('backup-merge-btn');
     elements.backupReplaceBtn = document.getElementById('backup-replace-btn');
     elements.backupPreview = document.getElementById('backup-preview');
+    elements.firebaseSyncStatus = document.getElementById('firebase-sync-status');
     elements.clearDataConfirm = document.getElementById('clear-data-confirm');
     elements.clearDataBtn = document.getElementById('clear-data-btn');
     elements.clearDataStatus = document.getElementById('clear-data-status');
@@ -1574,6 +1575,22 @@ export const JapaneseUI = (() => {
     elements.clearDataStatus.appendChild(status);
   }
 
+  function updateFirebaseSyncStatus(detail = {}) {
+    if (!elements.firebaseSyncStatus) return;
+
+    const state = normalizeSyncState(detail.state);
+    const label = getSyncStatusLabel(state);
+    const message = detail.message || getSyncStatusMessage(state, detail);
+
+    elements.firebaseSyncStatus.dataset.state = state;
+    elements.firebaseSyncStatus.innerHTML =
+      '<span class="sync-dot" aria-hidden="true"></span>' +
+      '<div>' +
+        '<strong>' + escapeHtml(label) + '</strong>' +
+        '<span>' + escapeHtml(message) + '</span>' +
+      '</div>';
+  }
+
   function updateFilterButtons() {
     const bar = elements.filtersBar;
     bar.querySelectorAll('.filter-btn').forEach(btn => {
@@ -2226,6 +2243,39 @@ export const JapaneseUI = (() => {
     return String(date.getDate()).padStart(2, '0') + '/' + String(date.getMonth() + 1).padStart(2, '0');
   }
 
+  function normalizeSyncState(state) {
+    return ['checking', 'disabled', 'pending', 'hydrating', 'syncing', 'synced', 'error'].includes(state)
+      ? state
+      : 'checking';
+  }
+
+  function getSyncStatusLabel(state) {
+    return {
+      checking: 'Verificando conexao',
+      disabled: 'Sincronizacao desativada',
+      pending: 'Aguardando aprovacao',
+      hydrating: 'Baixando dados',
+      syncing: 'Sincronizando',
+      synced: 'Sincronizado',
+      error: 'Falha na sincronizacao'
+    }[state] || 'Verificando conexao';
+  }
+
+  function getSyncStatusMessage(state, detail = {}) {
+    if (state === 'synced' && detail.lastSyncedAt) {
+      return 'Ultima sincronizacao: ' + new Date(detail.lastSyncedAt).toLocaleString('pt-BR');
+    }
+    return {
+      checking: 'Preparando sincronizacao...',
+      disabled: 'Este ambiente esta usando apenas dados locais.',
+      pending: 'A conta precisa estar aprovada para sincronizar.',
+      hydrating: 'Mesclando dados remotos com o cache local.',
+      syncing: 'Enviando alteracoes para sua conta.',
+      synced: 'Dados locais e remotos estao atualizados.',
+      error: 'Nao foi possivel concluir a ultima operacao.'
+    }[state] || 'Preparando sincronizacao...';
+  }
+
   function escapeHtml(value) {
     return String(value || '')
       .replace(/&/g, '&amp;')
@@ -2281,6 +2331,7 @@ export const JapaneseUI = (() => {
     showBackupStatus,
     resetClearDataConfirmation,
     showClearDataStatus,
+    updateFirebaseSyncStatus,
     updateCardFavoriteState,
     updateStats,
     updateDashboard,

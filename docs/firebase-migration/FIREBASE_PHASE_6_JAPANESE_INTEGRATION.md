@@ -70,13 +70,12 @@ Durante os testes no GitHub Pages foram corrigidos pontos de experiencia do host
 
 ## Proxima fase recomendada
 
-Evoluir a camada de sync local-first do Japanese Study:
+Evoluir a camada de sync local-first do Japanese Study depois da Fase 7:
 
-1. adicionar uma UI de status da sincronizacao;
-2. registrar marcador de migracao em `users/{uid}/migrations`;
-3. melhorar reconciliacao de conflitos entre dispositivos;
-4. adicionar testes de contrato com emulador para os paths especificos do Japanese Study;
-5. avaliar widgets, deep links e busca global.
+1. melhorar reconciliacao de conflitos entre dispositivos;
+2. mostrar detalhes expandiveis do ultimo sync;
+3. adicionar botao "Sincronizar agora";
+4. avaliar widgets, deep links e busca global.
 
 ## Validacao
 

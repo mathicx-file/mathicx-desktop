@@ -18,23 +18,40 @@ class JapaneseFirebaseSync {
     if (this.ready || !storage) return { enabled: false, reason: 'already-ready-or-missing-storage' };
 
     this.storage = storage;
+    this.emitStatus({ state: 'checking', message: 'Verificando Firebase e usuario aprovado.' });
     this.flags = await loadFeatureFlags();
 
     if (!this.flags.firebaseEnabled || !this.flags.firestoreJapaneseReadEnabled) {
+      this.emitStatus({ state: 'disabled', message: 'Sincronizacao remota desativada por feature flag.' });
       return { enabled: false, reason: 'feature-disabled' };
     }
 
     this.repo = new JapaneseFirestoreRepository();
     const user = await this.repo.getApprovedUser();
-    if (!user?.uid) return { enabled: false, reason: 'user-not-approved' };
+    if (!user?.uid) {
+      this.emitStatus({ state: 'pending', message: 'A conta precisa estar aprovada para sincronizar.' });
+      return { enabled: false, reason: 'user-not-approved' };
+    }
     this.uid = user.uid;
     this.storage.setUserScope?.(user.uid);
 
     await this.hydrateLocalFromRemote();
 
     if (this.flags.firestoreJapaneseWriteEnabled) {
-      await this.uploadNow('initial');
+      const counts = await this.uploadNow('initial');
+      await this.repo.markMigration(this.uid, {
+        status: 'completed',
+        reason: 'initial-sync',
+        counts,
+      }).catch((error) => {
+        console.warn('[japanese-firebase-sync] failed to mark migration', error);
+      });
       this.watchLocalChanges();
+    } else {
+      this.emitStatus({
+        state: 'synced',
+        message: 'Dados remotos carregados. Escrita remota esta desativada.'
+      });
     }
 
     this.ready = true;
@@ -43,6 +60,7 @@ class JapaneseFirebaseSync {
 
   async hydrateLocalFromRemote() {
     this.hydrating = true;
+    this.emitStatus({ state: 'hydrating', message: 'Baixando dados remotos do Japanese Study.' });
     try {
       const remoteBackup = await this.repo.loadSnapshot(this.uid);
       const summary = remoteBackup?.data || {};
@@ -71,20 +89,44 @@ class JapaneseFirebaseSync {
 
   scheduleUpload() {
     if (this.hydrating || !this.flags?.firestoreJapaneseWriteEnabled) return;
+    this.emitStatus({ state: 'syncing', message: 'Alteracoes locais aguardando envio.' });
     clearTimeout(this.writeTimer);
     this.writeTimer = setTimeout(() => {
       this.uploadNow('local-change').catch((error) => {
         console.warn('[japanese-firebase-sync] failed to upload local data', error);
+        this.emitStatus({
+          state: 'error',
+          message: 'Nao foi possivel enviar as alteracoes para o Firebase.',
+          error: error?.message || String(error),
+        });
       });
     }, WRITE_DEBOUNCE_MS);
   }
 
   async uploadNow(reason = 'manual') {
     if (!this.repo || !this.uid) return null;
+    this.emitStatus({ state: 'syncing', message: 'Enviando dados para o Firebase.' });
     const backup = await this.storage.exportBackup();
     const counts = await this.repo.saveSnapshot(this.uid, backup);
-    this.storage.emitChange('firebase-sync-updated', { reason, counts });
+    const lastSyncedAt = new Date().toISOString();
+    this.storage.emitChange('firebase-sync-updated', { reason, counts, lastSyncedAt });
+    this.emitStatus({
+      state: 'synced',
+      message: 'Dados sincronizados com sua conta.',
+      reason,
+      counts,
+      lastSyncedAt,
+    });
     return counts;
+  }
+
+  emitStatus(detail) {
+    window.dispatchEvent(new CustomEvent('japanese:firebase-sync-status', {
+      detail: {
+        uid: this.uid,
+        ...detail,
+      },
+    }));
   }
 
   dispose() {
