@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "exercises": [
+    {
+      "id": "typing-hira-001",
+      "level": "beginner",
+      "size": "small",
+      "category": "greetings",
+      "script": "hiragana",
+      "mode": "copy",
+      "promptPt": "Bom dia.",
+      "referenceJapanese": "おはよう",
+      "answer": "おはよう",
+      "acceptedAnswers": ["おはよう。"],
+      "romaji": "ohayou",
+      "notes": "Cumprimento simples usado pela manha.",
+      "tokens": [
+        { "surface": "おはよう", "meaning": "bom dia" }
+      ]
+    },
+    {
+      "id": "typing-hira-002",
+      "level": "beginner",
+      "size": "small",
+      "category": "greetings",
+      "script": "hiragana",
+      "mode": "copy",
+      "promptPt": "Obrigado.",
+      "referenceJapanese": "ありがとう",
+      "answer": "ありがとう",
+      "acceptedAnswers": ["ありがとう。"],
+      "romaji": "arigatou",
+      "notes": "Forma comum e simples de agradecer.",
+      "tokens": [
+        { "surface": "ありがとう", "meaning": "obrigado" }
+      ]
+    },
+    {
+      "id": "typing-hira-003",
+      "level": "beginner",
+      "size": "small",
+      "category": "classroom",
+      "script": "hiragana",
+      "mode": "copy",
+      "promptPt": "Professor.",
+      "referenceJapanese": "せんせい",
+      "answer": "せんせい",
+      "acceptedAnswers": ["せんせい。"],
+      "romaji": "sensei",
+      "notes": "Vocabulario frequente em sala de aula.",
+      "tokens": [
+        { "surface": "せんせい", "meaning": "professor" }
+      ]
+    },
+    {
+      "id": "typing-hira-004",
+      "level": "beginner",
+      "size": "small",
+      "category": "people",
+      "script": "hiragana",
+      "mode": "copy",
+      "promptPt": "Amigo.",
+      "referenceJapanese": "ともだち",
+      "answer": "ともだち",
+      "acceptedAnswers": ["ともだち。"],
+      "romaji": "tomodachi",
+      "notes": "Palavra util para apresentacoes simples.",
+      "tokens": [
+        { "surface": "ともだち", "meaning": "amigo" }
+      ]
+    },
+    {
+      "id": "typing-hira-005",
+      "level": "beginner",
+      "size": "small",
+      "category": "places",
+      "script": "hiragana",
+      "mode": "copy",
+      "promptPt": "Escola.",
+      "referenceJapanese": "がっこう",
+      "answer": "がっこう",
+      "acceptedAnswers": ["がっこう。"],
+      "romaji": "gakkou",
+      "notes": "Inclui consoante dupla, formando pequeno っ.",
+      "tokens": [
+        { "surface": "がっこう", "meaning": "escola" }
+      ]
+    },
+    {
+      "id": "typing-hira-006",
+      "level": "beginner",
+      "size": "small",
+      "category": "places",
+      "script": "hiragana",
+      "mode": "copy",
+      "promptPt": "Viagem.",
+      "referenceJapanese": "りょこう",
+      "answer": "りょこう",
+      "acceptedAnswers": ["りょこう。"],
+      "romaji": "ryokou",
+      "notes": "Inclui combinacao com pequeno ょ.",
+      "tokens": [
+        { "surface": "りょこう", "meaning": "viagem" }
+      ]
+    },
+    {
+      "id": "typing-hira-007",
+      "level": "beginner",
+      "size": "small",
+      "category": "objects",
+      "script": "hiragana",
+      "mode": "copy",
+      "promptPt": "Livro.",
+      "referenceJapanese": "ほん",
+      "answer": "ほん",
+      "acceptedAnswers": ["ほん。"],
+      "romaji": "hon",
+      "notes": "Exercicio curto para finalizar ん no envio.",
+      "tokens": [
+        { "surface": "ほん", "meaning": "livro" }
+      ]
+    },
+    {
+      "id": "typing-hira-008",
+      "level": "beginner",
+      "size": "small",
+      "category": "phrases",
+      "script": "hiragana",
+      "mode": "copy",
+      "promptPt": "Eu sou estudante.",
+      "referenceJapanese": "わたしはがくせいです",
+      "answer": "わたしはがくせいです",
+      "acceptedAnswers": ["わたしはがくせいです。"],
+      "romaji": "watashihagakuseidesu",
+      "notes": "Frase curta sem espacos para manter o MVP simples.",
+      "tokens": [
+        { "surface": "わたし", "meaning": "eu" },
+        { "surface": "は", "meaning": "particula de topico" },
+        { "surface": "がくせい", "meaning": "estudante" },
+        { "surface": "です", "meaning": "ser/estar educado" }
+      ]
+    }
+  ]
+}

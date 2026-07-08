@@ -19,6 +19,7 @@ import formularios from './formularios/manifest.js';
 import configuracoes from './configuracoes/manifest.js';
 import finanças from './finanças/manifest.js';
 import admin from './admin/manifest.js';
+import japaneseStudy from './japanese-study/manifest.js';
 
 /** Catálogo de categorias disponíveis (para filtros do launcher). */
 export const CATEGORIES = [
@@ -45,7 +46,8 @@ class AppRegistry {
 
   /** Registra todos os apps built-in. */
   registerAll() {
-    [calculadora, notas, arquivos, formularios, configuracoes, finanças, admin].forEach((m) => this.register(m));
+    [calculadora, notas, arquivos, formularios, configuracoes, finanças, admin, japaneseStudy]
+      .forEach((m) => this.register(m));
   }
 
   get(id) { return this._apps.get(id); }

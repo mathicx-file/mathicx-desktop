@@ -1,0 +1,12 @@
+{
+  "name": "japanese-study",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "check:mojibake": "node scripts/mojibake-check.mjs",
+    "fix:mojibake": "node scripts/mojibake-check.mjs --fix",
+    "download:kana-strokes": "node scripts/download-kana-strokes.mjs"
+  }
+}

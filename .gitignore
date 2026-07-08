@@ -13,9 +13,24 @@ Desktop.ini
 # Server artifacts
 *.log
 node_modules/
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
 
 # Local/generated artifacts
 _nul
+tmp/
+tmp-*/
+*.tmp
+*.bak
+*.local
+
+# Nested project metadata copied into Applications/
+Applications/**/.git/
+Applications/**/.agents/
+Applications/**/tmp/
+Applications/**/node_modules/
 
 # Firebase local configuration
 src/firebase/firebase-config.local.js

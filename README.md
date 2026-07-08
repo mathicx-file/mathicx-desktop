@@ -134,7 +134,7 @@ mathicx-file/
 |   |-- README.md              # Indice da documentacao
 |   |-- architecture.md        # Arquitetura do host
 |   |-- app-integration.md     # Guia para integrar apps via iframe
-|   |-- firebase-migration.md  # Proposta atual de migracao Firebase
+|   |-- firebase-migration/     # Documentos de planejamento da migracao Firebase
 |   |-- archive/               # Documentos historicos/legado
 |   |-- templates/             # Templates para novos apps externos
 |   `-- scripts/
@@ -372,7 +372,7 @@ Recomendacoes:
 
 - [docs/README.md](docs/README.md): indice geral da documentacao.
 - [docs/architecture.md](docs/architecture.md): arquitetura do desktop virtual.
-- [docs/firebase-migration.md](docs/firebase-migration.md): proposta atual para migrar identidade e dados para Firebase.
+- [docs/firebase-migration/firebase-migration.md](docs/firebase-migration/firebase-migration.md): proposta atual para migrar identidade e dados para Firebase.
 - [docs/app-integration.md](docs/app-integration.md): guia detalhado para integrar apps via iframe.
 - [docs/archive/local-auth-legacy.md](docs/archive/local-auth-legacy.md): resumo da autenticacao local legada.
 - [Applications/finances/README.md](Applications/finances/README.md): documentacao do app de financas.

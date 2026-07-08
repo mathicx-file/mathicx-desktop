@@ -501,7 +501,7 @@ Isso deixa a migracao reversivel sem desfazer codigo.
 Entregavel:
 
 ```text
-docs/FIREBASE_AUDITORIA_LOCAL.md
+docs/firebase-migration/FIREBASE_AUDIT.md
 ```
 
 Mapear:

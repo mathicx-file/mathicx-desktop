@@ -149,7 +149,7 @@ Funcionalidades:
 - Criar `Applications/japanese-study`, se for app externo.
 - Criar `JapaneseStudyRepository` com contrato minimo.
 - Separar dados de usuario de dados publicos do dicionario.
-- Salvar progresso, favoritos e configuracoes em `users/{uid}/apps/japanese`.
+- Salvar progresso, favoritos e configuracoes em `users/{uid}/apps/japanese-study`.
 - Manter dicionario, KanjiVG e assets como arquivos estaticos versionados/cacheados.
 
 Resultado esperado:

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#e63946">
+  <link rel="icon" href="data:,">
+  <title>Japanese Study - Aprenda Kana e Kanji N5</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-header-inner">
+      <h1>Japanese Study</h1>
+      <nav class="view-tabs" aria-label="Secoes do app">
+        <button class="view-tab active" data-view="home">In&iacute;cio</button>
+        <button class="view-tab" data-view="characters">Caracteres</button>
+        <button class="view-tab" data-view="dictionary">Dicion&aacute;rio</button>
+        <button class="view-tab" data-view="quiz">Quiz</button>
+        <button class="view-tab" data-view="typing">Digita&ccedil;&atilde;o guiada</button>
+        <button class="view-tab" data-view="data">Configura&ccedil;&otilde;es</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <section id="learning-dashboard" class="learning-dashboard" aria-label="Dashboard de aprendizado">
+      <div class="dashboard-header">
+        <div>
+          <h2>In&iacute;cio</h2>
+          <p>Acompanhe seu progresso em hiragana, katakana e kanji N5.</p>
+        </div>
+        <div class="dashboard-actions">
+          <button id="study-now-btn" class="dashboard-primary-btn" type="button">Estudar agora</button>
+          <button id="diagnostic-btn" class="dashboard-secondary-btn" type="button">Fazer diagnóstico</button>
+        </div>
+      </div>
+      <div id="stats-bar" class="stats-bar">
+        <div class="stat-item">Carregando...</div>
+      </div>
+      <div id="dashboard-metrics" class="dashboard-metrics"></div>
+      <div id="adaptive-dashboard" class="adaptive-dashboard"></div>
+      <div class="dashboard-panels">
+        <section class="dashboard-panel progress-panel">
+          <h3>Progresso</h3>
+          <div id="dashboard-progress" class="dashboard-progress"></div>
+        </section>
+        <section class="dashboard-panel activity-panel">
+          <h3>Atividade recente</h3>
+          <div id="activity-calendar" class="activity-calendar"></div>
+        </section>
+        <section class="dashboard-panel recent-panel">
+          <h3>Últimos estudados</h3>
+          <div id="recent-characters" class="recent-characters"></div>
+        </section>
+      </div>
+    </section>
+
+    <section id="characters-section" class="characters-section" style="display:none" aria-label="Caracteres japoneses">
+      <div class="section-header">
+        <div>
+          <h2>Caracteres</h2>
+          <p>Busque e estude hiragana, katakana e kanji N5.</p>
+        </div>
+        <button id="kana-export-toggle" class="section-action-btn" type="button" aria-expanded="false" aria-controls="kana-export-panel">Exportar</button>
+      </div>
+      <div id="kana-export-panel" class="kana-export-panel" hidden>
+        <div class="kana-export-tabs" role="tablist" aria-label="Tipo de exportacao">
+          <button class="kana-export-tab active" type="button" data-kana-export-mode="reference">Tabela</button>
+          <button class="kana-export-tab" type="button" data-kana-export-mode="practice">Pratica de escrita</button>
+        </div>
+
+        <div class="kana-export-controls">
+          <label>
+            Escrita
+            <select id="kana-export-script">
+              <option value="hiragana">Hiragana</option>
+              <option value="katakana">Katakana</option>
+            </select>
+          </label>
+          <fieldset class="kana-export-categories">
+            <legend>Niveis</legend>
+            <label><input type="checkbox" value="gojuuon" checked> Gojuuon</label>
+            <label><input type="checkbox" value="dakuon" checked> Dakuon</label>
+            <label><input type="checkbox" value="handakuon" checked> Handakuon</label>
+            <label><input type="checkbox" value="youon" checked> Youon</label>
+          </fieldset>
+          <label class="kana-export-practice-option" hidden>
+            Orientacao
+            <select id="kana-export-orientation">
+              <option value="landscape">Paisagem</option>
+              <option value="portrait">Retrato</option>
+            </select>
+          </label>
+          <label class="kana-export-practice-option" hidden>
+            Linhas extras
+            <input id="kana-export-extra-rows" type="number" min="0" max="6" step="1" value="0">
+          </label>
+        </div>
+
+        <div id="kana-export-practice" class="kana-export-practice" hidden>
+          <div class="kana-export-practice-header">
+            <span>Caracteres para praticar</span>
+            <div>
+              <button id="kana-export-select-all" type="button">Todos</button>
+              <button id="kana-export-select-none" type="button">Limpar</button>
+            </div>
+          </div>
+          <div id="kana-export-character-list" class="kana-export-character-list"></div>
+        </div>
+
+        <div class="kana-export-actions">
+          <span id="kana-export-summary">Hiragana - todos os niveis</span>
+          <div class="kana-export-action-buttons">
+            <button id="kana-export-blank-generate" class="section-action-btn" type="button" hidden>Folha em branco</button>
+            <button id="kana-export-generate" class="section-action-btn primary" type="button">Gerar PDF</button>
+          </div>
+        </div>
+      </div>
+      <div class="section-tools">
+        <div class="search-container">
+          <span class="search-icon">Buscar</span>
+          <input type="text" id="search-input" placeholder="Buscar por romaji, kana, kanji, leitura ou significado..." autocomplete="off">
+        </div>
+        <nav id="filters-bar" class="filters-bar" aria-label="Filtros de caracteres"></nav>
+      </div>
+
+      <div id="loading-state" class="loading-state">
+        <div class="spinner"></div>
+        <p>Carregando caracteres...</p>
+      </div>
+      <div id="character-grid" class="character-grid" style="display:none"></div>
+    </section>
+
+    <section id="dictionary-section" class="dictionary-section" style="display:none" aria-label="Dicionário japonês">
+      <div class="dictionary-header">
+        <div>
+          <h2>Dicionário japonês</h2>
+          <p>Palavras em kana e kanji com leitura, romaji e definição.</p>
+        </div>
+        <div id="dictionary-count" class="dictionary-count">0 palavras</div>
+      </div>
+
+      <div class="section-tools">
+        <div class="search-container">
+          <span class="search-icon">Buscar</span>
+          <input type="text" id="dictionary-search-input" placeholder="Buscar palavra, leitura, romaji ou definicao..." autocomplete="off">
+        </div>
+      </div>
+
+      <div class="dictionary-toolbar">
+        <div class="dictionary-tabs" aria-label="Visões do dicionário">
+          <button class="dictionary-tab active" data-dictionary-tab="all">Todas</button>
+          <button class="dictionary-tab" data-dictionary-tab="history">Histórico</button>
+          <button class="dictionary-tab" data-dictionary-tab="favorites">Favoritas</button>
+        </div>
+        <div class="dictionary-script-tabs" aria-label="Filtro por escrita">
+          <button class="dictionary-script active" data-dictionary-script="all">Todas</button>
+          <button class="dictionary-script" data-dictionary-script="hiragana">Hiragana</button>
+          <button class="dictionary-script" data-dictionary-script="katakana">Katakana</button>
+          <button class="dictionary-script" data-dictionary-script="kanji">Kanji</button>
+        </div>
+      </div>
+
+      <div id="dictionary-grid" class="dictionary-table"></div>
+    </section>
+
+    <section id="quiz-section" class="quiz-section" style="display:none" aria-label="Quiz de japonês">
+      <div class="quiz-header">
+        <div>
+          <h2>Quiz</h2>
+          <p>Pratique reconhecimento, romaji, digitação e flashcards.</p>
+        </div>
+        <div id="quiz-score" class="quiz-score">0/0 · 0%</div>
+      </div>
+
+      <div class="quiz-toolbar">
+        <label>
+          Modo
+          <select id="quiz-mode">
+            <option value="recognition">Reconhecimento</option>
+            <option value="romaji">Romaji → Japonês</option>
+            <option value="kana-typing">Produção ativa</option>
+            <option value="multiple-choice">Múltipla escolha</option>
+            <option value="typing">Digitação</option>
+            <option value="flashcards">Flashcards</option>
+            <option value="kanji-meaning">Kanji → significado</option>
+            <option value="meaning-kanji">Significado → Kanji</option>
+            <option value="kanji-reading">Kanji → leitura</option>
+            <option value="kanji-vocabulary-reading">Vocabulário → leitura</option>
+          </select>
+        </label>
+        <label>
+          Escrita
+          <select id="quiz-script">
+            <option value="all">Hiragana + Katakana</option>
+            <option value="hiragana">Hiragana</option>
+            <option value="katakana">Katakana</option>
+            <option value="kanji">Kanji N5</option>
+          </select>
+        </label>
+        <fieldset id="quiz-category-filter" class="quiz-category-filter">
+          <legend>N&iacute;veis</legend>
+          <div class="quiz-category-options">
+            <label>
+              <input type="checkbox" value="gojuuon" checked>
+              Gojuuon
+            </label>
+            <label>
+              <input type="checkbox" value="dakuon" checked>
+              Dakuon
+            </label>
+            <label>
+              <input type="checkbox" value="handakuon" checked>
+              Handakuon
+            </label>
+            <label>
+              <input type="checkbox" value="youon" checked>
+              Youon
+            </label>
+            <label>
+              <input type="checkbox" value="N5" checked>
+              Kanji N5
+            </label>
+          </div>
+        </fieldset>
+        <label>
+          Questões
+          <select id="quiz-limit">
+            <option value="10">10 perguntas</option>
+            <option value="15">15 perguntas</option>
+            <option value="20">20 perguntas</option>
+          </select>
+        </label>
+        <label class="quiz-toggle">
+          <input id="quiz-include-reviews" type="checkbox" checked>
+          Incluir revisões de erros
+        </label>
+      </div>
+
+      <div id="quiz-card" class="quiz-card"></div>
+    </section>
+
+    <section id="typing-section" class="typing-section" style="display:none" aria-label="Digitação guiada em japonês">
+      <div class="typing-header">
+        <div>
+          <h2>Digitação guiada</h2>
+          <p>Digite em romaji, veja hiragana se formar e compare com frases curtas revisadas.</p>
+        </div>
+        <div id="typing-score" class="typing-score">Pronto</div>
+      </div>
+
+      <div class="typing-toolbar">
+        <label>
+          Escrita
+          <select id="typing-script">
+            <option value="hiragana">Hiragana</option>
+          </select>
+        </label>
+        <label>
+          Tamanho
+          <select id="typing-size">
+            <option value="small">Pequeno</option>
+          </select>
+        </label>
+        <label>
+          Modo
+          <select id="typing-mode">
+            <option value="copy">Cópia guiada</option>
+          </select>
+        </label>
+        <label>
+          Exercícios
+          <select id="typing-limit">
+            <option value="3">3 frases</option>
+            <option value="5" selected>5 frases</option>
+            <option value="8">8 frases</option>
+          </select>
+        </label>
+        <div class="typing-toolbar-actions">
+          <button id="typing-start-btn" class="typing-primary-btn" type="button">Iniciar</button>
+          <button id="typing-reset-btn" class="typing-secondary-btn" type="button">Reiniciar</button>
+        </div>
+      </div>
+
+      <div id="typing-card" class="typing-card"></div>
+    </section>
+
+    <section id="data-section" class="data-section" style="display:none" aria-label="Configuracoes e backup">
+      <div class="data-header">
+        <div>
+          <h2>Configuracoes e backup</h2>
+          <p>Proteja favoritos, histórico, SRS, dicionário e preferências em um arquivo local.</p>
+        </div>
+      </div>
+
+      <div class="data-panels">
+        <section class="data-panel">
+          <h3>Exportar backup</h3>
+          <p>Gera um arquivo JSON com versão de esquema e todos os dados importantes do estudo.</p>
+          <button id="backup-export-btn" class="data-action primary" type="button">Exportar JSON</button>
+        </section>
+
+        <section class="data-panel">
+          <h3>Importar backup</h3>
+          <p>Escolha um backup exportado pelo Japanese Study. Você pode mesclar ou substituir os dados atuais.</p>
+          <input id="backup-file-input" class="backup-file-input" type="file" accept="application/json,.json">
+          <div class="data-actions">
+            <button id="backup-merge-btn" class="data-action primary" type="button" disabled>Mesclar</button>
+            <button id="backup-replace-btn" class="data-action danger" type="button" disabled>Substituir</button>
+          </div>
+          <div id="backup-preview" class="backup-preview">Nenhum arquivo selecionado.</div>
+        </section>
+
+        <section class="data-panel danger-zone">
+          <h3>Excluir dados locais</h3>
+          <p>Remove histórico, progresso, SRS, favoritos e preferências salvos neste navegador. Exporte um backup antes se quiser preservar os dados.</p>
+          <label class="danger-confirm">
+            <input id="clear-data-confirm" type="checkbox">
+            Tenho certeza de que quero excluir meus dados locais de estudo.
+          </label>
+          <button id="clear-data-btn" class="data-action danger" type="button" disabled>Excluir dados</button>
+          <div id="clear-data-status" class="backup-preview">A exclusão só será liberada após marcar a confirmação.</div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <div id="study-modal" class="modal-overlay">
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close-btn" aria-label="Fechar">&times;</button>
+      <div id="stroke-player-area" class="stroke-player-area"></div>
+      <div id="practice-area" class="practice-area" style="display:none">
+        <div class="practice-canvas-wrapper">
+          <canvas id="practice-canvas"></canvas>
+        </div>
+        <div id="practice-result" class="practice-result" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

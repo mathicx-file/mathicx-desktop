@@ -1,0 +1,348 @@
+[
+  {
+    "id": "hira_asa",
+    "word": "あさ",
+    "romaji": "asa",
+    "definition": "manha",
+    "script": "hiragana",
+    "category": "tempo"
+  },
+  {
+    "id": "hira_yoru",
+    "word": "よる",
+    "romaji": "yoru",
+    "definition": "noite",
+    "script": "hiragana",
+    "category": "tempo"
+  },
+  {
+    "id": "hira_mizu",
+    "word": "みず",
+    "romaji": "mizu",
+    "definition": "agua",
+    "script": "hiragana",
+    "category": "substantivo"
+  },
+  {
+    "id": "hira_hana",
+    "word": "はな",
+    "romaji": "hana",
+    "definition": "flor; nariz",
+    "script": "hiragana",
+    "category": "substantivo"
+  },
+  {
+    "id": "hira_sora",
+    "word": "そら",
+    "romaji": "sora",
+    "definition": "ceu",
+    "script": "hiragana",
+    "category": "natureza"
+  },
+  {
+    "id": "hira_yama",
+    "word": "やま",
+    "romaji": "yama",
+    "definition": "montanha",
+    "script": "hiragana",
+    "category": "natureza"
+  },
+  {
+    "id": "hira_kawa",
+    "word": "かわ",
+    "romaji": "kawa",
+    "definition": "rio; pele",
+    "script": "hiragana",
+    "category": "natureza"
+  },
+  {
+    "id": "hira_ie",
+    "word": "いえ",
+    "romaji": "ie",
+    "definition": "casa",
+    "script": "hiragana",
+    "category": "lugar"
+  },
+  {
+    "id": "hira_neko",
+    "word": "ねこ",
+    "romaji": "neko",
+    "definition": "gato",
+    "script": "hiragana",
+    "category": "animal"
+  },
+  {
+    "id": "hira_inu",
+    "word": "いぬ",
+    "romaji": "inu",
+    "definition": "cachorro",
+    "script": "hiragana",
+    "category": "animal"
+  },
+  {
+    "id": "hira_kasa",
+    "word": "かさ",
+    "romaji": "kasa",
+    "definition": "guarda-chuva",
+    "script": "hiragana",
+    "category": "objeto"
+  },
+  {
+    "id": "hira_kuruma",
+    "word": "くるま",
+    "romaji": "kuruma",
+    "definition": "carro",
+    "script": "hiragana",
+    "category": "transporte"
+  },
+  {
+    "id": "hira_tabemono",
+    "word": "たべもの",
+    "romaji": "tabemono",
+    "definition": "comida",
+    "script": "hiragana",
+    "category": "comida"
+  },
+  {
+    "id": "hira_nomimono",
+    "word": "のみもの",
+    "romaji": "nomimono",
+    "definition": "bebida",
+    "script": "hiragana",
+    "category": "comida"
+  },
+  {
+    "id": "hira_tomodachi",
+    "word": "ともだち",
+    "romaji": "tomodachi",
+    "definition": "amigo",
+    "script": "hiragana",
+    "category": "pessoa"
+  },
+  {
+    "id": "hira_sensei",
+    "word": "せんせい",
+    "romaji": "sensei",
+    "definition": "professor",
+    "script": "hiragana",
+    "category": "pessoa"
+  },
+  {
+    "id": "kata_amerika",
+    "word": "アメリカ",
+    "romaji": "amerika",
+    "definition": "America; Estados Unidos",
+    "script": "katakana",
+    "category": "pais"
+  },
+  {
+    "id": "kata_kamera",
+    "word": "カメラ",
+    "romaji": "kamera",
+    "definition": "camera",
+    "script": "katakana",
+    "category": "objeto"
+  },
+  {
+    "id": "kata_koohii",
+    "word": "コーヒー",
+    "romaji": "koohii",
+    "definition": "cafe",
+    "script": "katakana",
+    "category": "bebida"
+  },
+  {
+    "id": "kata_pasu",
+    "word": "バス",
+    "romaji": "basu",
+    "definition": "onibus",
+    "script": "katakana",
+    "category": "transporte"
+  },
+  {
+    "id": "kata_takushii",
+    "word": "タクシー",
+    "romaji": "takushii",
+    "definition": "taxi",
+    "script": "katakana",
+    "category": "transporte"
+  },
+  {
+    "id": "kata_terebi",
+    "word": "テレビ",
+    "romaji": "terebi",
+    "definition": "televisao",
+    "script": "katakana",
+    "category": "objeto"
+  },
+  {
+    "id": "kata_piza",
+    "word": "ピザ",
+    "romaji": "piza",
+    "definition": "pizza",
+    "script": "katakana",
+    "category": "comida"
+  },
+  {
+    "id": "kata_pan",
+    "word": "パン",
+    "romaji": "pan",
+    "definition": "pao",
+    "script": "katakana",
+    "category": "comida"
+  },
+  {
+    "id": "kata_resutoran",
+    "word": "レストラン",
+    "romaji": "resutoran",
+    "definition": "restaurante",
+    "script": "katakana",
+    "category": "lugar"
+  },
+  {
+    "id": "kata_hoteru",
+    "word": "ホテル",
+    "romaji": "hoteru",
+    "definition": "hotel",
+    "script": "katakana",
+    "category": "lugar"
+  },
+  {
+    "id": "kata_supoostu",
+    "word": "スポーツ",
+    "romaji": "supootsu",
+    "definition": "esportes",
+    "script": "katakana",
+    "category": "atividade"
+  },
+  {
+    "id": "kata_pasupooto",
+    "word": "パスポート",
+    "romaji": "pasupooto",
+    "definition": "passaporte",
+    "script": "katakana",
+    "category": "documento"
+  },
+  {
+    "id": "kata_konpyuuta",
+    "word": "コンピュータ",
+    "romaji": "konpyuuta",
+    "definition": "computador",
+    "script": "katakana",
+    "category": "tecnologia"
+  },
+  {
+    "id": "kata_intaanetto",
+    "word": "インターネット",
+    "romaji": "intaanetto",
+    "definition": "internet",
+    "script": "katakana",
+    "category": "tecnologia"
+  },
+  {
+    "id": "kata_menyu",
+    "word": "メニュー",
+    "romaji": "menyuu",
+    "definition": "menu",
+    "script": "katakana",
+    "category": "comida"
+  },
+  {
+    "id": "kata_chiketto",
+    "word": "チケット",
+    "romaji": "chiketto",
+    "definition": "ingresso; passagem",
+    "script": "katakana",
+    "category": "documento"
+  },
+  {
+    "id": "kanji_nihon",
+    "word": "日本",
+    "reading": "にほん",
+    "romaji": "nihon",
+    "definition": "Japão",
+    "script": "kanji",
+    "category": "pais"
+  },
+  {
+    "id": "kanji_getsuyoubi",
+    "word": "月曜日",
+    "reading": "げつようび",
+    "romaji": "getsuyoubi",
+    "definition": "segunda-feira",
+    "script": "kanji",
+    "category": "tempo"
+  },
+  {
+    "id": "kanji_kayoubi",
+    "word": "火曜日",
+    "reading": "かようび",
+    "romaji": "kayoubi",
+    "definition": "terça-feira",
+    "script": "kanji",
+    "category": "tempo"
+  },
+  {
+    "id": "kanji_suiyoubi",
+    "word": "水曜日",
+    "reading": "すいようび",
+    "romaji": "suiyoubi",
+    "definition": "quarta-feira",
+    "script": "kanji",
+    "category": "tempo"
+  },
+  {
+    "id": "kanji_mokuyoubi",
+    "word": "木曜日",
+    "reading": "もくようび",
+    "romaji": "mokuyoubi",
+    "definition": "quinta-feira",
+    "script": "kanji",
+    "category": "tempo"
+  },
+  {
+    "id": "kanji_kinyoubi",
+    "word": "金曜日",
+    "reading": "きんようび",
+    "romaji": "kinyoubi",
+    "definition": "sexta-feira",
+    "script": "kanji",
+    "category": "tempo"
+  },
+  {
+    "id": "kanji_doyoubi",
+    "word": "土曜日",
+    "reading": "どようび",
+    "romaji": "doyoubi",
+    "definition": "sábado",
+    "script": "kanji",
+    "category": "tempo"
+  },
+  {
+    "id": "kanji_hito",
+    "word": "人",
+    "reading": "ひと",
+    "romaji": "hito",
+    "definition": "pessoa",
+    "script": "kanji",
+    "category": "pessoa"
+  },
+  {
+    "id": "kanji_daigaku",
+    "word": "大学",
+    "reading": "だいがく",
+    "romaji": "daigaku",
+    "definition": "universidade",
+    "script": "kanji",
+    "category": "educacao"
+  },
+  {
+    "id": "kanji_chiisai",
+    "word": "小さい",
+    "reading": "ちいさい",
+    "romaji": "chiisai",
+    "definition": "pequeno",
+    "script": "kanji",
+    "category": "adjetivo"
+  }
+]

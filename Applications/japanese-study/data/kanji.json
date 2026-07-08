@@ -1,0 +1,184 @@
+{
+  "kanji": [
+    {
+      "id": "day-sun",
+      "char": "日",
+      "unicode": "65E5",
+      "script": "kanji",
+      "level": "N5",
+      "strokes": 4,
+      "meanings": ["dia", "sol"],
+      "onyomi": ["ニチ", "ジツ"],
+      "kunyomi": ["ひ", "か"],
+      "radical": "日",
+      "components": ["日"],
+      "examples": [
+        { "word": "日本", "reading": "にほん", "romaji": "nihon", "meaning": "Japão" },
+        { "word": "日曜日", "reading": "にちようび", "romaji": "nichiyoubi", "meaning": "domingo" }
+      ],
+      "tags": ["tempo", "natureza"]
+    },
+    {
+      "id": "moon-month",
+      "char": "月",
+      "unicode": "6708",
+      "script": "kanji",
+      "level": "N5",
+      "strokes": 4,
+      "meanings": ["lua", "mês"],
+      "onyomi": ["ゲツ", "ガツ"],
+      "kunyomi": ["つき"],
+      "radical": "月",
+      "components": ["月"],
+      "examples": [
+        { "word": "月曜日", "reading": "げつようび", "romaji": "getsuyoubi", "meaning": "segunda-feira" },
+        { "word": "一月", "reading": "いちがつ", "romaji": "ichigatsu", "meaning": "janeiro" }
+      ],
+      "tags": ["tempo", "natureza"]
+    },
+    {
+      "id": "fire",
+      "char": "火",
+      "unicode": "706B",
+      "script": "kanji",
+      "level": "N5",
+      "strokes": 4,
+      "meanings": ["fogo"],
+      "onyomi": ["カ"],
+      "kunyomi": ["ひ"],
+      "radical": "火",
+      "components": ["火"],
+      "examples": [
+        { "word": "火曜日", "reading": "かようび", "romaji": "kayoubi", "meaning": "terça-feira" },
+        { "word": "火山", "reading": "かざん", "romaji": "kazan", "meaning": "vulcão" }
+      ],
+      "tags": ["natureza", "elemento"]
+    },
+    {
+      "id": "water",
+      "char": "水",
+      "unicode": "6C34",
+      "script": "kanji",
+      "level": "N5",
+      "strokes": 4,
+      "meanings": ["água"],
+      "onyomi": ["スイ"],
+      "kunyomi": ["みず"],
+      "radical": "水",
+      "components": ["水"],
+      "examples": [
+        { "word": "水曜日", "reading": "すいようび", "romaji": "suiyoubi", "meaning": "quarta-feira" },
+        { "word": "水", "reading": "みず", "romaji": "mizu", "meaning": "água" }
+      ],
+      "tags": ["natureza", "elemento"]
+    },
+    {
+      "id": "tree-wood",
+      "char": "木",
+      "unicode": "6728",
+      "script": "kanji",
+      "level": "N5",
+      "strokes": 4,
+      "meanings": ["árvore", "madeira"],
+      "onyomi": ["モク", "ボク"],
+      "kunyomi": ["き"],
+      "radical": "木",
+      "components": ["木"],
+      "examples": [
+        { "word": "木曜日", "reading": "もくようび", "romaji": "mokuyoubi", "meaning": "quinta-feira" },
+        { "word": "木", "reading": "き", "romaji": "ki", "meaning": "árvore" }
+      ],
+      "tags": ["natureza", "elemento"]
+    },
+    {
+      "id": "gold-money",
+      "char": "金",
+      "unicode": "91D1",
+      "script": "kanji",
+      "level": "N5",
+      "strokes": 8,
+      "meanings": ["ouro", "dinheiro"],
+      "onyomi": ["キン", "コン"],
+      "kunyomi": ["かね", "かな"],
+      "radical": "金",
+      "components": ["金"],
+      "examples": [
+        { "word": "金曜日", "reading": "きんようび", "romaji": "kinyoubi", "meaning": "sexta-feira" },
+        { "word": "お金", "reading": "おかね", "romaji": "okane", "meaning": "dinheiro" }
+      ],
+      "tags": ["tempo", "objeto"]
+    },
+    {
+      "id": "earth-soil",
+      "char": "土",
+      "unicode": "571F",
+      "script": "kanji",
+      "level": "N5",
+      "strokes": 3,
+      "meanings": ["terra", "solo"],
+      "onyomi": ["ド", "ト"],
+      "kunyomi": ["つち"],
+      "radical": "土",
+      "components": ["土"],
+      "examples": [
+        { "word": "土曜日", "reading": "どようび", "romaji": "doyoubi", "meaning": "sábado" },
+        { "word": "土", "reading": "つち", "romaji": "tsuchi", "meaning": "terra; solo" }
+      ],
+      "tags": ["natureza", "elemento"]
+    },
+    {
+      "id": "person",
+      "char": "人",
+      "unicode": "4EBA",
+      "script": "kanji",
+      "level": "N5",
+      "strokes": 2,
+      "meanings": ["pessoa"],
+      "onyomi": ["ジン", "ニン"],
+      "kunyomi": ["ひと"],
+      "radical": "人",
+      "components": ["人"],
+      "examples": [
+        { "word": "日本人", "reading": "にほんじん", "romaji": "nihonjin", "meaning": "pessoa japonesa" },
+        { "word": "人", "reading": "ひと", "romaji": "hito", "meaning": "pessoa" }
+      ],
+      "tags": ["pessoa"]
+    },
+    {
+      "id": "big",
+      "char": "大",
+      "unicode": "5927",
+      "script": "kanji",
+      "level": "N5",
+      "strokes": 3,
+      "meanings": ["grande"],
+      "onyomi": ["ダイ", "タイ"],
+      "kunyomi": ["おお"],
+      "radical": "大",
+      "components": ["大"],
+      "examples": [
+        { "word": "大学", "reading": "だいがく", "romaji": "daigaku", "meaning": "universidade" },
+        { "word": "大きい", "reading": "おおきい", "romaji": "ookii", "meaning": "grande" }
+      ],
+      "tags": ["tamanho"]
+    },
+    {
+      "id": "small",
+      "char": "小",
+      "unicode": "5C0F",
+      "script": "kanji",
+      "level": "N5",
+      "strokes": 3,
+      "meanings": ["pequeno"],
+      "onyomi": ["ショウ"],
+      "kunyomi": ["ちい", "こ", "お"],
+      "radical": "小",
+      "components": ["小"],
+      "examples": [
+        { "word": "小さい", "reading": "ちいさい", "romaji": "chiisai", "meaning": "pequeno" },
+        { "word": "小学校", "reading": "しょうがっこう", "romaji": "shougakkou", "meaning": "escola primária" }
+      ],
+      "tags": ["tamanho"]
+    }
+  ]
+}

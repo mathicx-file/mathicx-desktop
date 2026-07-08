@@ -13,6 +13,7 @@ import { store } from '../core/state.js';
 import { bus, EVT } from '../core/event-bus.js';
 import { uid, norm } from '../core/utils.js';
 import { hashPassword, verifyPassword } from './crypto.js';
+import { featureFlags } from '../firebase/feature-flags.js';
 
 const SESSION_TTL = 7 * 24 * 60 * 60 * 1000;   // 7 dias
 
@@ -252,4 +253,189 @@ function _validateRegister({ nome, username, email, senha }) {
   return errs;
 }
 
-export const authProvider = new AuthProvider();
+export const localAuthProvider = new AuthProvider();
+
+class AuthProviderFacade {
+  constructor() {
+    this._firebaseProviderPromise = null;
+    this._firebaseProviderInstance = null;
+  }
+
+  get mode() {
+    return featureFlags.authMode === 'firebase' ? 'firebase' : 'local';
+  }
+
+  get isFirebaseMode() {
+    return this.mode === 'firebase';
+  }
+
+  async _firebaseProvider() {
+    if (!this._firebaseProviderPromise) {
+      this._firebaseProviderPromise = import('./firebase-auth-provider.js')
+        .then((mod) => {
+          this._firebaseProviderInstance = mod.firebaseAuthProvider;
+          return mod.firebaseAuthProvider;
+        });
+    }
+    return this._firebaseProviderPromise;
+  }
+
+  _local() {
+    return localAuthProvider;
+  }
+
+  async _activeAsync() {
+    return this.isFirebaseMode ? this._firebaseProvider() : this._local();
+  }
+
+  _activeSync() {
+    return this.isFirebaseMode ? this._firebaseProviderInstance : this._local();
+  }
+
+  async ready() {
+    const provider = await this._activeAsync();
+    return provider.ready?.() ?? true;
+  }
+
+  async hasUsers() {
+    if (this.isFirebaseMode) return true;
+    return this._local().hasUsers();
+  }
+
+  async restoreSession() {
+    const provider = await this._activeAsync();
+    const restored = await provider.restoreSession();
+    if (!this.isFirebaseMode) return restored;
+    const canEnter = restored && provider.isApproved?.() === true;
+    if (canEnter) {
+      bus.emit(EVT.AUTH_CHANGE, { user: provider.getCurrentUser(), session: { provider: 'firebase' } });
+    }
+    return canEnter;
+  }
+
+  async register(payload) {
+    const provider = await this._activeAsync();
+    const result = await provider.register(payload);
+    if (this.isFirebaseMode && result.ok) {
+      bus.emit(EVT.USER_REGISTER, result.user);
+      bus.emit(EVT.AUTH_CHANGE, { user: result.user, session: { provider: 'firebase' } });
+    }
+    return result;
+  }
+
+  async login(login, senha) {
+    const provider = await this._activeAsync();
+    const result = await provider.login(login, senha);
+    if (this.isFirebaseMode && result.ok) {
+      bus.emit(EVT.USER_LOGIN, { user: result.user, session: { provider: 'firebase' } });
+      bus.emit(EVT.AUTH_CHANGE, { user: result.user, session: { provider: 'firebase' } });
+    }
+    return result;
+  }
+
+  async logout() {
+    const provider = await this._activeAsync();
+    const previous = provider.getCurrentUser?.() ?? null;
+    const result = await provider.logout();
+    if (this.isFirebaseMode) {
+      bus.emit(EVT.USER_LOGOUT, previous);
+      bus.emit(EVT.AUTH_CHANGE, null);
+    }
+    return result;
+  }
+
+  getCurrentUser() {
+    const provider = this._activeSync();
+    if (provider) return provider.getCurrentUser();
+    return null;
+  }
+
+  async getCurrentUserAsync() {
+    const provider = await this._activeAsync();
+    return provider.getCurrentUser();
+  }
+
+  isAuthenticated() {
+    const provider = this._activeSync();
+    return provider ? provider.isAuthenticated() : false;
+  }
+
+  async isAuthenticatedAsync() {
+    const provider = await this._activeAsync();
+    return provider.isAuthenticated();
+  }
+
+  isApproved() {
+    if (!this.isFirebaseMode) return true;
+    return this._firebaseProviderInstance?.isApproved() === true;
+  }
+
+  async isApprovedAsync() {
+    if (!this.isFirebaseMode) return true;
+    const provider = await this._firebaseProvider();
+    return provider.isApproved();
+  }
+
+  isAdmin() {
+    const provider = this._activeSync();
+    return provider ? provider.isAdmin() : false;
+  }
+
+  requireAdmin() {
+    const provider = this._activeSync();
+    if (provider) return provider.requireAdmin();
+    throw new Error('Permissao negada: requer admin');
+  }
+
+  async pendingUsers() {
+    if (this.isFirebaseMode) return [];
+    return this._local().pendingUsers();
+  }
+
+  async listUsers() {
+    if (this.isFirebaseMode) return [];
+    return this._local().listUsers();
+  }
+
+  async approveUser(id) {
+    if (this.isFirebaseMode) throw new Error('Aprovacao Firebase deve ser feita pelo Console nesta fase.');
+    return this._local().approveUser(id);
+  }
+
+  async setStatus(id, status) {
+    if (this.isFirebaseMode) throw new Error('Gestao Firebase remota indisponivel nesta fase.');
+    return this._local().setStatus(id, status);
+  }
+
+  async setPerfil(id, perfil) {
+    if (this.isFirebaseMode) throw new Error('Admin Firebase requer custom claims.');
+    return this._local().setPerfil(id, perfil);
+  }
+
+  async deleteUser(id) {
+    if (this.isFirebaseMode) throw new Error('Gestao Firebase remota indisponivel nesta fase.');
+    return this._local().deleteUser(id);
+  }
+
+  async topApps(options) {
+    if (this.isFirebaseMode) return [];
+    return this._local().topApps(options);
+  }
+
+  async loginsByDay(days) {
+    if (this.isFirebaseMode) return [];
+    return this._local().loginsByDay(days);
+  }
+
+  async avgSessionDuration() {
+    if (this.isFirebaseMode) return 0;
+    return this._local().avgSessionDuration();
+  }
+
+  async _logStat(payload) {
+    if (this.isFirebaseMode) return;
+    return this._local()._logStat(payload);
+  }
+}
+
+export const authProvider = new AuthProviderFacade();

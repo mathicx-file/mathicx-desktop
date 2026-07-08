@@ -1,0 +1,117 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return signedIn() && request.auth.token.admin == true;
+    }
+
+    function userDoc(userId) {
+      return get(/databases/$(database)/documents/users/$(userId));
+    }
+
+    function isApproved(userId) {
+      return isAdmin()
+        || (isOwner(userId)
+          && exists(/databases/$(database)/documents/users/$(userId))
+          && userDoc(userId).data.accessStatus == 'approved');
+    }
+
+    function validAccessStatus(status) {
+      return status in ['pending', 'approved', 'rejected'];
+    }
+
+    function validRole(role) {
+      return role in ['user', 'admin'];
+    }
+
+    function validUserCreate(userId) {
+      return isOwner(userId)
+        && request.resource.data.keys().hasAll([
+          'uid',
+          'accessStatus',
+          'role',
+          'createdAt',
+          'updatedAt',
+          'schemaVersion'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'uid',
+          'displayName',
+          'email',
+          'photoURL',
+          'accessStatus',
+          'role',
+          'createdAt',
+          'updatedAt',
+          'lastLoginAt',
+          'schemaVersion'
+        ])
+        && request.resource.data.uid == userId
+        && validAccessStatus(request.resource.data.accessStatus)
+        && validRole(request.resource.data.role)
+        && request.resource.data.accessStatus == 'pending'
+        && request.resource.data.role == 'user'
+        && request.resource.data.schemaVersion is int;
+    }
+
+    function validOwnerProfileUpdate() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['displayName', 'photoURL', 'updatedAt', 'lastLoginAt']);
+    }
+
+    match /users/{userId} {
+      allow create: if validUserCreate(userId) || isAdmin();
+      allow read: if isOwner(userId) || isAdmin();
+      allow update: if isAdmin()
+        || (isOwner(userId)
+          && resource.data.accessStatus == request.resource.data.accessStatus
+          && resource.data.role == request.resource.data.role
+          && validOwnerProfileUpdate());
+      allow delete: if isAdmin();
+
+      match /desktop/{document=**} {
+        allow read, write: if isApproved(userId);
+      }
+
+      match /apps/{appId}/{document=**} {
+        allow read, write: if isApproved(userId);
+      }
+
+      match /migrations/{migrationId} {
+        allow read, write: if isApproved(userId);
+      }
+
+      match /{document=**} {
+        allow read, write: if false;
+      }
+    }
+
+    match /publicData/{documentId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /publicAppCatalog/{appId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /publicAppConfig/{configId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -6,7 +6,7 @@ Esta pasta concentra a documentacao tecnica viva do desktop virtual `mathicx-fil
 
 1. [README principal](../README.md): visao geral, execucao local, funcionalidades e fluxo de desenvolvimento.
 2. [architecture.md](architecture.md): arquitetura do host, boot, subsistemas, storage, autenticacao e modelo de apps.
-3. [firebase-migration.md](firebase-migration.md): estrategia atual recomendada para migrar identidade e dados para Firebase.
+3. [firebase-migration/](firebase-migration/): documentos de planejamento e auditoria da migracao Firebase.
 4. [app-integration.md](app-integration.md): passo a passo para integrar aplicacoes externas via iframe.
 5. [../roadmap.md](../roadmap.md): ordem sugerida de versoes e funcionalidades.
 
@@ -15,7 +15,7 @@ Esta pasta concentra a documentacao tecnica viva do desktop virtual `mathicx-fil
 | Documento | Quando usar |
 | --- | --- |
 | [architecture.md](architecture.md) | Para entender como o desktop virtual funciona internamente. |
-| [firebase-migration.md](firebase-migration.md) | Para planejar a migracao Firebase ajustada ao projeto atual. |
+| [firebase-migration/firebase-migration.md](firebase-migration/firebase-migration.md) | Para planejar a migracao Firebase ajustada ao projeto atual. |
 | [app-integration.md](app-integration.md) | Para adicionar apps independentes em `Applications/<app-id>` com wrapper em `src/apps/<app-id>`. |
 
 ## Arquivo Historico

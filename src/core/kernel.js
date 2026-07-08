@@ -27,6 +27,7 @@ import { logActivity } from '../ui/activity-log.js';
 import { uid } from './utils.js';
 import { authProvider } from '../auth/provider.js';
 import { LoginScreen } from '../auth/login-screen.js';
+import { desktopSync } from '../data/desktop/desktop-sync.js';
 
 class Kernel {
   constructor() {
@@ -61,8 +62,13 @@ class Kernel {
     }
 
     // Sem sessão → mostra login (ou setup do 1º admin)
+    const authenticated = await authProvider.isAuthenticatedAsync?.();
+    const approved = await authProvider.isApprovedAsync?.();
+    const initialMode = authenticated && !approved ? 'pending' : undefined;
+
     const loginScreen = new LoginScreen({
       auth: authProvider,
+      initialMode,
       onAuthenticated: () => {
         loginScreen.unmount();
         this._bootDesktop();
@@ -72,6 +78,8 @@ class Kernel {
   }
 
   async _bootDesktop() {
+    await desktopSync.init();
+
     // Tema (antes de renderizar UI)
     themeManager.init();
 

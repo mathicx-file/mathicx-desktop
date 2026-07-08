@@ -7,7 +7,7 @@ Esta pasta guarda documentos que foram substituidos por guias mais atuais ou con
 | Documento | Status |
 | --- | --- |
 | [local-auth-legacy.md](local-auth-legacy.md) | Resumo da autenticacao local antiga. Use apenas como referencia historica. |
-| [firebase-migration-original.md](firebase-migration-original.md) | Plano Firebase original. A fonte principal atual e [../firebase-migration.md](../firebase-migration.md). |
+| [firebase-migration-original.md](firebase-migration-original.md) | Plano Firebase original. A fonte principal atual e [../firebase-migration/firebase-migration.md](../firebase-migration/firebase-migration.md). |
 
 ## Regra de Uso
 
