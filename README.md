@@ -28,12 +28,13 @@ O projeto foi construido com HTML, CSS e JavaScript nativo usando ES Modules. Na
 - Sistema de janelas com abrir, focar, minimizar, maximizar, restaurar, fechar, arrastar, redimensionar e snap layouts.
 - Launcher com busca global por apps, categorias, pastas e documentos.
 - Taskbar com menu iniciar, apps abertos, apps fixados, relogio, perfil de usuario, tema e atalho para dashboard.
-- Autenticacao local com primeiro usuario administrador, usuarios pendentes, login, logout, sessao persistida e painel administrativo.
+- Autenticacao Firebase com usuarios pendentes/aprovados, login, logout, sessao persistida e painel administrativo legado para modo local.
 - Explorador de arquivos virtual persistido em IndexedDB, com pastas, documentos, favoritos, duplicacao, busca e operacoes de CRUD.
-- Temas claro, escuro e automatico, persistidos no navegador.
+- Temas claro e escuro, persistidos no navegador.
 - Persistencia local via LocalStorage e IndexedDB.
 - Apps internos carregados sob demanda com `import()`.
-- Apps externos isolados por iframe dentro de `Applications/`, ideal para integrar projetos independentes como `japanese-study`.
+- Apps externos isolados por iframe dentro de `Applications/`, incluindo `japanese-study`.
+- Sincronizacao Firebase local-first para desktop e Japanese Study, com dados separados por UID.
 
 ## Stack
 
@@ -45,7 +46,7 @@ O projeto foi construido com HTML, CSS e JavaScript nativo usando ES Modules. Na
 | Comunicacao | Event bus proprio em `src/core/event-bus.js` |
 | Persistencia leve | LocalStorage |
 | Persistencia estruturada | IndexedDB |
-| Autenticacao | Web Crypto API com PBKDF2 + IndexedDB |
+| Autenticacao | Firebase Auth, com provider local legado baseado em Web Crypto API + IndexedDB |
 | Apps internos | Modulos em `src/apps/<app-id>` |
 | Apps externos | Iframe apontando para `Applications/<app-id>/index.html` |
 | Build | Nenhum |
@@ -247,7 +248,15 @@ Templates prontos ficam em [docs/templates](docs/templates). O passo a passo com
 
 ## Autenticacao e Dados Locais
 
-A autenticacao e totalmente client-side:
+A autenticacao atual usa Firebase Auth quando `authMode === "firebase"`.
+
+- Novas contas entram como pendentes no Firestore.
+- O acesso ao desktop depende de `accessStatus: "approved"` no perfil do usuario.
+- A tela de login possui `Lembre de mim`, salvando apenas o e-mail/usuario no navegador.
+- Dados sincronizados do desktop e dos apps seguem o modelo `users/{uid}/...`.
+- O provider local continua no codigo como legado/desenvolvimento e fallback controlado por feature flag.
+
+No modo local legado:
 
 - Senhas sao derivadas com PBKDF2 via Web Crypto API.
 - Usuarios, sessoes e estatisticas ficam em IndexedDB.
@@ -379,9 +388,10 @@ Recomendacoes:
 
 ## Roadmap Sugerido
 
-- Integrar `japanese-study` como app externo via iframe.
-- Criar uma suite de testes automatizados para o host.
+- Evoluir a Fase 7 da integracao Firebase, com UI de status de sincronizacao e marcadores de migracao.
+- Aprofundar a integracao do `japanese-study` com widgets, deep links e busca global.
+- Criar uma suite de testes automatizados para o host alem dos testes de rules e do app Japanese Study.
 - Adicionar export/import global dos dados do desktop.
 - Evoluir para PWA com cache offline.
 - Criar manifestos dinamicos para reduzir edicoes manuais no registry.
-- Adicionar sincronizacao opcional com backend para dados nao sensiveis.
+- Expandir sincronizacao opcional para futuros apps em `users/{uid}/apps/{appId}`.

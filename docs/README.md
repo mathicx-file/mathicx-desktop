@@ -45,12 +45,13 @@ Os arquivos em [templates](templates) servem como ponto de partida para apps int
 | --- | --- |
 | [scripts/setup-novo-app.sh](scripts/setup-novo-app.sh) | Gera a estrutura inicial de um novo app externo a partir dos templates. |
 
-## Aplicacao Externa de Exemplo
+## Aplicacoes Externas de Exemplo
 
-O projeto ja inclui o app de financas pessoais em:
+O projeto ja inclui apps externos reais em `Applications/`:
 
-- Host wrapper: `src/apps/finanças`
-- App real: `Applications/finances`
-- README proprio: [Applications/finances/README.md](../Applications/finances/README.md)
+| App | Host wrapper | App real | Observacao |
+| --- | --- | --- | --- |
+| Japanese Study | `src/apps/japanese-study` | `Applications/japanese-study` | Integrado por iframe, com tema do host e sincronizacao Firebase local-first por usuario. |
+| Finances | wrapper em `src/apps/` | `Applications/finances` | App de financas pessoais. |
 
-Use essa integracao como referencia pratica para projetos independentes, como `japanese-study`.
+Use essas integracoes como referencia pratica para novos projetos independentes.

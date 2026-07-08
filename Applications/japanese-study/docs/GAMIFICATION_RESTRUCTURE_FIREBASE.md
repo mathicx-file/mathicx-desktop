@@ -2,7 +2,7 @@
 
 > Data: 2026-07-08
 >
-> Escopo: sistema local-first de XP, niveis, missoes e conquistas, preparado para sincronizacao futura por usuario no Mathicx-File.
+> Escopo: sistema local-first de XP, niveis, missoes e conquistas, preparado e integrado a sincronizacao por usuario no Mathicx-File.
 
 ## Objetivo
 
@@ -73,7 +73,7 @@ O `xp` total soma essas dimensoes e usa uma tabela de 10 niveis.
 
 ## Comportamento Local-First
 
-Hoje o app continua independente:
+O app continua independente quando aberto em modo standalone:
 
 - sem dependencia de Firebase;
 - sem usuario remoto;
@@ -81,17 +81,19 @@ Hoje o app continua independente:
 - importacao por mescla preserva eventos;
 - o Dashboard recalcula o nivel a partir dos dados locais.
 
+Quando roda dentro do Mathicx-File com Firebase ativo, o mesmo armazenamento local passa a usar escopo por UID e e sincronizado com Firestore.
+
 ## Preparacao para Firebase
 
-Quando o Japanese Study for integrado ao Mathicx-File, a estrutura recomendada e:
+Quando o Japanese Study roda dentro do Mathicx-File, a estrutura canonica e:
 
 ```text
-users/{uid}/japaneseStudy/profile/progression
-users/{uid}/japaneseStudy/events/{eventId}
-users/{uid}/japaneseStudy/achievements/{achievementId}
-users/{uid}/japaneseStudy/stats/summary
-users/{uid}/japaneseStudy/srs/{itemId}
-users/{uid}/japaneseStudy/settings/main
+users/{uid}/apps/japanese-study/profile/progression
+users/{uid}/apps/japanese-study/events/{eventId}
+users/{uid}/apps/japanese-study/achievements/{achievementId}
+users/{uid}/apps/japanese-study/stats/summary
+users/{uid}/apps/japanese-study/srs/{itemId}
+users/{uid}/apps/japanese-study/settings/main
 ```
 
 ### Eventos
@@ -138,33 +140,34 @@ Regra sugerida:
 
 ## Integracao com Mathicx-File
 
-Quando rodar como iframe:
+Quando roda como iframe:
 
-1. O Japanese Study inicializa Firebase separadamente.
-2. O app observa `onAuthStateChanged`.
+1. O Japanese Study usa a camada Firebase carregada pelo Mathicx-File.
+2. O app valida o usuario aprovado via Firebase Auth/Firestore.
 3. O path base vem do usuario autenticado:
 
 ```text
-users/{uid}/japaneseStudy
+users/{uid}/apps/japanese-study
 ```
 
 4. Nao enviar token por `postMessage`.
 5. Dicionario e dados estaticos continuam locais.
 6. Firestore sincroniza apenas dados pessoais de estudo.
+7. LocalStorage e IndexedDB usam escopo por UID para evitar mistura entre contas no mesmo navegador.
 
 ## Rules Futuras
 
 Exemplo conceitual:
 
 ```text
-match /users/{uid}/japaneseStudy/{document=**} {
+match /users/{uid}/apps/japanese-study/{document=**} {
   allow read, write: if request.auth != null
     && request.auth.uid == uid
     && get(/databases/$(database)/documents/users/$(uid)).data.accessStatus == "approved";
 }
 ```
 
-As rules reais devem ser adicionadas no projeto Mathicx-File quando o app for integrado.
+As rules reais no Mathicx-File usam wildcard seguro para `users/{uid}/apps/{appId}/...` e exigem usuario aprovado.
 
 ## Trade-offs
 
@@ -199,7 +202,9 @@ Status em 2026-07-08:
 1. Caderno visual de erros implementado no Dashboard a partir de `difficultyMap`, `recentErrors` e resumo de gamificacao.
 2. Metas configuraveis implementadas localmente em `settings.gamificationGoals`.
 3. Conquistas desbloqueadas persistidas em `settings.gamificationAchievements`, com estado de desbloqueio preservado em backup/importacao.
-4. Repositorio Firebase ainda nao implementado, por decisao de escopo. Deve ser criado apenas depois da integracao iframe no Mathicx-File.
+4. Repositorio/sync Firebase inicial implementado no contexto do Mathicx-File.
+5. Isolamento local por usuario Firebase implementado em LocalStorage e IndexedDB.
+6. Pendencias restantes: UI de status de sync, marcador de migracao e reconciliacao mais forte entre dispositivos.
 
 ## Novos Contratos Locais
 
@@ -239,13 +244,13 @@ Caderno de erros:
 - usa `difficultyMap` e `quizStats.recentErrors`;
 - pode iniciar treino focado usando script/categoria do item.
 
-## Pendencia para Mathicx-File
+## Integracao no Mathicx-File
 
-Quando a aplicacao estiver como iframe dentro do Mathicx-File, os campos locais acima devem migrar para:
+Quando a aplicacao esta como iframe dentro do Mathicx-File, os campos locais acima sincronizam para:
 
 ```text
-users/{uid}/japaneseStudy/settings/main
-users/{uid}/japaneseStudy/achievements/{achievementId}
+users/{uid}/apps/japanese-study/settings/main
+users/{uid}/apps/japanese-study/achievements/{achievementId}
 ```
 
-Nao implementar isso no app independente. O app atual deve continuar local-first e sem dependencia de Firebase.
+O app independente deve continuar local-first e sem dependencia obrigatoria de Firebase.

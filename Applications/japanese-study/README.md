@@ -2,7 +2,7 @@
 
 Aplicacao web local-first para estudar hiragana, katakana e Kanji N5, com pratica diaria, consulta rapida, repeticao espacada, quiz, digitacao guiada, escrita, backup e recomendacoes adaptativas.
 
-O projeto usa HTML, CSS e JavaScript vanilla com ES Modules. Nao ha framework, etapa de build, servidor de aplicacao ou banco externo obrigatorio: os dados-base ficam em JSON e o progresso do estudante fica salvo no navegador.
+O projeto usa HTML, CSS e JavaScript vanilla com ES Modules. Nao ha framework, etapa de build ou servidor de aplicacao obrigatorio: os dados-base ficam em JSON e o progresso do estudante fica salvo no navegador. Quando roda dentro do Mathicx-File com Firebase ativo, os dados pessoais tambem sao sincronizados por usuario aprovado.
 
 ## Sumario
 
@@ -37,6 +37,7 @@ O projeto usa HTML, CSS e JavaScript vanilla com ES Modules. Nao ha framework, e
 - Exportacao A4 de kana para tabela de consulta, folha de pratica com tracos, folha em branco, orientacao retrato/paisagem e linhas extras.
 - Exportacao, validacao, mescla, substituicao e exclusao de dados locais.
 - Integracao por iframe com o ecossistema Mathicx-File via `manifest.js` e `view.js`.
+- Sincronizacao Firebase local-first por UID quando executado dentro do Mathicx-File.
 
 ## Stack tecnica
 
@@ -46,7 +47,8 @@ O projeto usa HTML, CSS e JavaScript vanilla com ES Modules. Nao ha framework, e
 | UI | HTML5, CSS3 e DOM APIs |
 | Build | Nenhum build obrigatorio |
 | Dados-base | Arquivos JSON em `data/` |
-| Persistencia local | LocalStorage e IndexedDB |
+| Persistencia local | LocalStorage e IndexedDB, com escopo por UID quando ha usuario Firebase |
+| Sincronizacao opcional | Firestore via Mathicx-File |
 | Testes | `node --test` |
 | Integracao host | `postMessage`, `manifest.js` e `view.js` |
 
@@ -125,6 +127,7 @@ A suite atual cobre:
 - Quiz, fila de revisao de erros e modos de Kanji N5.
 - Busca de kanji por significado, leitura, radical, tag e vocabulario.
 - Validacao de backup e limpeza de dados locais.
+- Isolamento de dados locais por usuario Firebase.
 - Gamificacao local-first, eventos de XP, metas configuraveis e caderno de erros.
 
 ## Scripts disponiveis
@@ -213,8 +216,9 @@ O app e um SPA simples sem roteador formal. A navegacao principal acontece por a
 2. `app.js` inicializa a UI e carrega os JSONs de hiragana, katakana, kanji, dicionario e exercicios de digitacao.
 3. Os dados sao normalizados com `script` e `category`.
 4. `JapaneseSearch`, `JapaneseDictionary`, `JapaneseQuiz`, `JapaneseTypingContentProvider` e `JapaneseUI` recebem os dados.
-5. O dashboard e renderizado com estatisticas de `JapaneseStorage`.
-6. A busca, filtros, quiz, digitacao guiada, dicionario, backup e modal passam a responder aos eventos da UI.
+5. Quando ha Firebase disponivel pelo Mathicx-File, o sync define o escopo local pelo UID aprovado antes de ler preferencias e progresso.
+6. O dashboard e renderizado com estatisticas de `JapaneseStorage`.
+7. A busca, filtros, quiz, digitacao guiada, dicionario, backup e modal passam a responder aos eventos da UI.
 
 ### Modulos principais
 
@@ -275,7 +279,7 @@ Prioridade atual:
 
 ## Dados e persistencia
 
-O app e local-first. Dados do usuario nao sao enviados para servidor.
+O app e local-first. No modo standalone, dados do usuario nao sao enviados para servidor. Dentro do Mathicx-File com Firebase ativo, o app mantem o cache local e sincroniza dados pessoais no Firestore do usuario aprovado.
 
 ### Dados-base
 
@@ -296,6 +300,15 @@ O app e local-first. Dados do usuario nao sao enviados para servidor.
 | `japanese_srs` | Mapa de registros SRS por caractere. |
 | `japanese_settings` | Preferencias, quiz, diagnostico, mnemonicos, metas de gamificacao e conquistas persistidas. |
 
+Quando ha usuario Firebase aprovado, essas chaves recebem escopo por UID para evitar compartilhamento entre contas no mesmo navegador:
+
+```text
+japanese_favorites_{uid}
+japanese_dictionary_favorites_{uid}
+japanese_srs_{uid}
+japanese_settings_{uid}
+```
+
 ### IndexedDB
 
 | Campo | Valor |
@@ -304,6 +317,12 @@ O app e local-first. Dados do usuario nao sao enviados para servidor.
 | Versao | `2` |
 | Object store | `japanese_progress` |
 | Indices | `timestamp`, `type`, `charId`, `schemaVersion` |
+
+Quando ha usuario Firebase aprovado, o banco local tambem recebe escopo por UID:
+
+```text
+JapaneseStudyDB_{uid}
+```
 
 Tipos comuns de registro:
 
@@ -327,7 +346,7 @@ A aba "Dados" permite:
 - Validar um arquivo de backup antes de importar.
 - Mesclar backup com os dados atuais.
 - Substituir dados locais pelo backup.
-- Excluir dados locais com confirmacao.
+- Excluir dados locais com confirmacao visual na propria interface.
 
 Formato geral:
 
@@ -373,6 +392,30 @@ Mensagens aceitas pelo app:
 | `refresh` | Recarrega a aplicacao. |
 | `focus` | Solicita foco da janela/iframe. |
 
+### Firebase no Mathicx-File
+
+Quando executado dentro do Mathicx-File:
+
+- a identidade vem do Firebase Auth do host;
+- apenas usuarios com perfil aprovado acessam o desktop e iniciam o sync;
+- dados pessoais usam o namespace `users/{uid}/apps/japanese-study/...`;
+- LocalStorage e IndexedDB usam o UID como escopo local;
+- dicionario, kana, kanji, exercicios e assets continuam locais/estaticos;
+- o tema recebido do host e aplicado como `dark` ou `light`.
+
+Paths pessoais atualmente planejados/usados:
+
+```text
+users/{uid}/apps/japanese-study/settings/main
+users/{uid}/apps/japanese-study/profile/progression
+users/{uid}/apps/japanese-study/stats/summary
+users/{uid}/apps/japanese-study/events/{eventId}
+users/{uid}/apps/japanese-study/achievements/{achievementId}
+users/{uid}/apps/japanese-study/srs/{itemId}
+users/{uid}/apps/japanese-study/favorites/{entryId}
+users/{uid}/apps/japanese-study/dictionaryFavorites/{entryId}
+```
+
 Mensagens enviadas ao host:
 
 | Tipo | Quando |
@@ -400,14 +443,17 @@ Estado atual:
 - Digitacao guiada v2.1: concluido como MVP local-first com hiragana, copia guiada, JSON local, feedback e persistencia.
 - Gamificacao local-first: concluido com ledger de XP, niveis, metas configuraveis, missoes, conquistas e caderno de erros.
 - Assistente de Estudo Diario v2: iniciado com recomendacoes explicaveis e resumo pos-quiz.
+- Integracao Mathicx-File por iframe: concluida.
+- Sincronizacao Firebase por usuario aprovado: concluida como camada local-first inicial.
 
 Proximos passos recomendados:
 
-1. Integrar o app ao Mathicx-File como iframe em `Applications/japanese-study`, mantendo o modo standalone funcional.
-2. Adicionar sincronizacao Firebase por usuario aprovado para progresso pessoal, eventos de gamificacao, SRS, favoritos e settings.
-3. Aprofundar a integracao Mathicx-File com widget, launcher, deep links, notificacoes e status de estudo.
-4. Expandir a digitacao guiada com katakana, traducao guiada, dicas e textos medios.
-5. Expandir Kanji N5 em blocos pequenos, mantendo validacao de dados e compatibilidade com backup/sync.
+1. Adicionar UI de status da sincronizacao Firebase.
+2. Registrar marcador de migracao em `users/{uid}/migrations`.
+3. Melhorar reconciliacao de conflitos entre dispositivos.
+4. Aprofundar a integracao Mathicx-File com widget, launcher, deep links, notificacoes e status de estudo.
+5. Expandir a digitacao guiada com katakana, traducao guiada, dicas e textos medios.
+6. Expandir Kanji N5 em blocos pequenos, mantendo validacao de dados e compatibilidade com backup/sync.
 
 ## Futuro banco de dados
 
@@ -419,7 +465,7 @@ O app deve continuar funcionando localmente nesta fase. Ainda assim, a arquitetu
 - O assistente usa contratos versionados com `schemaVersion`.
 - IDs de kana, kanji, palavras e eventos sao estaveis o suficiente para sincronizacao futura.
 
-Firebase e o caminho planejado para sincronizacao pessoal quando o app for integrado ao Mathicx-File, mas nao e dependencia do app standalone atual. Outras alternativas tambem podem fazer sentido dependendo do objetivo:
+Firebase e o caminho atual para sincronizacao pessoal quando o app roda dentro do Mathicx-File, mas nao e dependencia do app standalone. Outras alternativas tambem podem fazer sentido dependendo do objetivo:
 
 - Firebase/Firestore para progresso por usuario, eventos de gamificacao, SRS, favoritos e settings.
 - Supabase/Postgres se o projeto precisar de consultas relacionais mais fortes.
