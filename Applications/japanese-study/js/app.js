@@ -29,10 +29,11 @@ const JapaneseApp = (() => {
   let currentTypingValue = '';
   let currentTypingResult = null;
 
-  function init() {
+  async function init() {
     if (initialized) return;
     initialized = true;
 
+    const firebaseSyncReady = setupFirebaseSync();
     JapaneseUI.init();
 
     const loadingEl = document.getElementById('loading-state');
@@ -44,7 +45,9 @@ const JapaneseApp = (() => {
       loadJSON('data/kanji.json'),
       loadJSON('data/dictionary.json'),
       loadJSON('data/typing-exercises.json')
-    ]).then(([hira, kata, kanji, dictionary, typingExercises]) => {
+    ]).then(async ([hira, kata, kanji, dictionary, typingExercises]) => {
+      await firebaseSyncReady;
+
       hiraganaData = (hira.characters || hira).map(c => ({ ...c, script: 'hiragana' }));
       katakanaData = (kata.characters || kata).map(c => ({ ...c, script: 'katakana' }));
       kanjiData = (kanji.kanji || kanji.characters || kanji).map(c => ({ ...c, script: 'kanji', category: c.level || 'N5' }));
@@ -188,7 +191,6 @@ const JapaneseApp = (() => {
       setupHostListener();
       setupStudyTimeTracking();
       setupStorageListener();
-      setupFirebaseSync();
       loadStats();
     }).catch(err => {
       console.error('Failed to load character data:', err);
@@ -420,8 +422,11 @@ const JapaneseApp = (() => {
   }
 
   async function clearLocalData() {
-    const confirmed = window.confirm('Excluir todos os dados locais de estudo deste navegador? Esta ação remove histórico, progresso, SRS, favoritos e preferências. Exporte um backup antes se quiser preservar algo.');
-    if (!confirmed) return;
+    const confirmation = document.getElementById('clear-data-confirm');
+    if (confirmation && !confirmation.checked) {
+      JapaneseUI.showClearDataStatus('Marque a confirmação antes de excluir os dados.', 'error');
+      return;
+    }
 
     try {
       await JapaneseStorage.clearAllUserData();

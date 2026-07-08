@@ -24,11 +24,40 @@ export const JapaneseStorage = (() => {
   const BACKUP_SCHEMA_VERSION = 1;
 
   let dbInstance = null;
+  let storageScope = 'local';
+
+  function sanitizeScope(scope) {
+    const value = String(scope || '').trim();
+    return value ? value.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 96) : 'local';
+  }
+
+  function getScopedDBName() {
+    return storageScope === 'local' ? DB_NAME : `${DB_NAME}_${storageScope}`;
+  }
+
+  function scopedKey(key) {
+    return storageScope === 'local' ? key : `${key}_${storageScope}`;
+  }
+
+  function setUserScope(scope) {
+    const next = sanitizeScope(scope);
+    if (next === storageScope) return storageScope;
+    if (dbInstance) {
+      dbInstance.close();
+      dbInstance = null;
+    }
+    storageScope = next;
+    return storageScope;
+  }
+
+  function getUserScope() {
+    return storageScope;
+  }
 
   function openDB() {
     return new Promise((resolve, reject) => {
       if (dbInstance) return resolve(dbInstance);
-      const request = indexedDB.open(DB_NAME, DB_VERSION);
+      const request = indexedDB.open(getScopedDBName(), DB_VERSION);
       request.onupgradeneeded = (event) => {
         const db = event.target.result;
         const store = db.objectStoreNames.contains(STORE_NAME)
@@ -56,7 +85,7 @@ export const JapaneseStorage = (() => {
 
   function getFavorites() {
     try {
-      const data = localStorage.getItem(FAVORITES_KEY);
+      const data = localStorage.getItem(scopedKey(FAVORITES_KEY));
       return data ? JSON.parse(data) : [];
     } catch {
       return [];
@@ -65,7 +94,7 @@ export const JapaneseStorage = (() => {
 
   function setFavorites(favs) {
     try {
-      localStorage.setItem(FAVORITES_KEY, JSON.stringify(favs));
+      localStorage.setItem(scopedKey(FAVORITES_KEY), JSON.stringify(favs));
     } catch (e) {
       console.warn('Failed to save favorites:', e);
     }
@@ -91,7 +120,7 @@ export const JapaneseStorage = (() => {
 
   function getSrsMap() {
     try {
-      const data = localStorage.getItem(SRS_KEY);
+      const data = localStorage.getItem(scopedKey(SRS_KEY));
       return data ? JSON.parse(data) : {};
     } catch {
       return {};
@@ -100,7 +129,7 @@ export const JapaneseStorage = (() => {
 
   function setSrsMap(map) {
     try {
-      localStorage.setItem(SRS_KEY, JSON.stringify(map));
+      localStorage.setItem(scopedKey(SRS_KEY), JSON.stringify(map));
     } catch (e) {
       console.warn('Failed to save SRS data:', e);
     }
@@ -321,7 +350,7 @@ export const JapaneseStorage = (() => {
 
   function getDictionaryFavorites() {
     try {
-      const data = localStorage.getItem(DICTIONARY_FAVORITES_KEY);
+      const data = localStorage.getItem(scopedKey(DICTIONARY_FAVORITES_KEY));
       return data ? JSON.parse(data) : [];
     } catch {
       return [];
@@ -330,7 +359,7 @@ export const JapaneseStorage = (() => {
 
   function setDictionaryFavorites(favs) {
     try {
-      localStorage.setItem(DICTIONARY_FAVORITES_KEY, JSON.stringify(favs));
+      localStorage.setItem(scopedKey(DICTIONARY_FAVORITES_KEY), JSON.stringify(favs));
     } catch (e) {
       console.warn('Failed to save dictionary favorites:', e);
     }
@@ -751,10 +780,10 @@ export const JapaneseStorage = (() => {
   async function clearAllUserData() {
     await replaceProgress([]);
     try {
-      localStorage.removeItem(FAVORITES_KEY);
-      localStorage.removeItem(DICTIONARY_FAVORITES_KEY);
-      localStorage.removeItem(SRS_KEY);
-      localStorage.removeItem(SETTINGS_KEY);
+      localStorage.removeItem(scopedKey(FAVORITES_KEY));
+      localStorage.removeItem(scopedKey(DICTIONARY_FAVORITES_KEY));
+      localStorage.removeItem(scopedKey(SRS_KEY));
+      localStorage.removeItem(scopedKey(SETTINGS_KEY));
     } catch (e) {
       console.warn('Failed to clear local storage:', e);
     }
@@ -826,7 +855,7 @@ export const JapaneseStorage = (() => {
 
   function getSettings() {
     try {
-      const data = localStorage.getItem(SETTINGS_KEY);
+      const data = localStorage.getItem(scopedKey(SETTINGS_KEY));
       return normalizeSettings(data ? JSON.parse(data) : {});
     } catch {
       return {};
@@ -835,7 +864,7 @@ export const JapaneseStorage = (() => {
 
   function setSettings(settings) {
     try {
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify(normalizeSettings(settings)));
+      localStorage.setItem(scopedKey(SETTINGS_KEY), JSON.stringify(normalizeSettings(settings)));
     } catch (e) {
       console.warn('Failed to save settings:', e);
     }
@@ -882,6 +911,8 @@ export const JapaneseStorage = (() => {
   }
 
   return {
+    setUserScope,
+    getUserScope,
     getFavorites,
     toggleFavorite,
     isFavorite,

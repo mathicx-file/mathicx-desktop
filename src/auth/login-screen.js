@@ -5,6 +5,8 @@
 
 import { toast } from '../ui/toast.js';
 
+const REMEMBER_LOGIN_KEY = 'mathicx.auth.rememberedLogin';
+
 const CSS = `
 .mx-auth {
   position: fixed; inset: 0; z-index: 1000;
@@ -33,6 +35,15 @@ const CSS = `
   border-radius: var(--r-md); color: var(--text); font-size: 14px;
 }
 .mx-auth input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.mx-auth .remember-field {
+  display: flex; align-items: center; gap: 8px; margin: -4px 0 var(--sp-3);
+}
+.mx-auth .remember-field input {
+  width: 16px; height: 16px; padding: 0; margin: 0; accent-color: var(--accent);
+}
+.mx-auth .remember-field label {
+  margin: 0; text-transform: none; letter-spacing: 0; font-size: 12px; color: var(--text);
+}
 .mx-auth .btn-auth {
   width: 100%; padding: 12px; margin-top: var(--sp-2);
   background: var(--brand-grad); color: #fff; border: none;
@@ -108,6 +119,7 @@ export class LoginScreen {
   }
 
   _formHTML({ isFirebase, isLogin, isSetup }) {
+    const rememberedLogin = isLogin ? this._getRememberedLogin() : '';
     return `
       <form data-el="form">
         ${!isLogin ? `
@@ -115,9 +127,14 @@ export class LoginScreen {
           ${isFirebase ? '' : '<div class="field"><label>Usuario</label><input data-f="username" type="text" placeholder="usuario"></div>'}
           <div class="field"><label>E-mail</label><input data-f="email" type="email" placeholder="voce@email.com"></div>
         ` : `
-          <div class="field"><label>${isFirebase ? 'E-mail' : 'Usuario ou e-mail'}</label><input data-f="login" type="${isFirebase ? 'email' : 'text'}" placeholder="${isFirebase ? 'voce@email.com' : 'usuario ou voce@email.com'}" autofocus></div>
+          <div class="field"><label>${isFirebase ? 'E-mail' : 'Usuario ou e-mail'}</label><input data-f="login" type="${isFirebase ? 'email' : 'text'}" placeholder="${isFirebase ? 'voce@email.com' : 'usuario ou voce@email.com'}" value="${escapeAttr(rememberedLogin)}" autofocus></div>
         `}
         <div class="field"><label>Senha</label><input data-f="senha" type="password" placeholder="********"></div>
+        ${isLogin ? `
+          <div class="remember-field">
+            <input data-f="remember" id="mx-auth-remember" type="checkbox" ${rememberedLogin ? 'checked' : ''}>
+            <label for="mx-auth-remember">Lembre de mim</label>
+          </div>` : ''}
         <button type="submit" class="btn-auth">${isLogin ? 'Entrar' : 'Criar e entrar'}</button>
       </form>
       ${isLogin ? '<div class="switch">Ainda nao tem conta? <button data-act="go-register">Criar agora</button></div>' : ''}
@@ -154,7 +171,7 @@ export class LoginScreen {
 
       try {
         if (this._mode === 'login') {
-          await this._submitLogin(get);
+          await this._submitLogin(get, form);
         } else {
           await this._submitRegister(get);
         }
@@ -175,12 +192,15 @@ export class LoginScreen {
     });
   }
 
-  async _submitLogin(get) {
-    const result = await this.auth.login(get('login'), get('senha'));
+  async _submitLogin(get, form) {
+    const login = get('login');
+    const result = await this.auth.login(login, get('senha'));
     if (!result.ok) {
       toast.error(result.error);
       return;
     }
+
+    this._persistRememberedLogin(form, login);
 
     if (result.pendente || (await this.auth.isApprovedAsync?.()) === false) {
       toast.success('Login realizado. Aguarde aprovacao do proprietario.');
@@ -223,4 +243,33 @@ export class LoginScreen {
     toast.success('Conta criada!');
     this.onAuthenticated?.();
   }
+
+  _getRememberedLogin() {
+    try {
+      return localStorage.getItem(REMEMBER_LOGIN_KEY) || '';
+    } catch {
+      return '';
+    }
+  }
+
+  _persistRememberedLogin(form, login) {
+    const remember = form?.querySelector('[data-f="remember"]')?.checked === true;
+    try {
+      if (remember && login) {
+        localStorage.setItem(REMEMBER_LOGIN_KEY, login);
+      } else {
+        localStorage.removeItem(REMEMBER_LOGIN_KEY);
+      }
+    } catch {
+      // Ignora ambientes com armazenamento bloqueado.
+    }
+  }
+}
+
+function escapeAttr(value) {
+  return String(value || '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('"', '&quot;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;');
 }

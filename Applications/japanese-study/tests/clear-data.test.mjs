@@ -68,3 +68,38 @@ test('clearAllUserData clears localStorage keys and progress store', async () =>
   assert.equal(storage.has('japanese_srs'), false);
   assert.equal(storage.has('japanese_settings'), false);
 });
+
+test('setUserScope isolates localStorage keys per Firebase user', async () => {
+  const storage = new Map();
+
+  globalThis.localStorage = {
+    getItem: key => storage.get(key) || null,
+    setItem: (key, value) => storage.set(key, value),
+    removeItem: key => storage.delete(key)
+  };
+  globalThis.document = {
+    dispatchEvent() {}
+  };
+  globalThis.CustomEvent = class {
+    constructor(type, init) {
+      this.type = type;
+      this.detail = init?.detail;
+    }
+  };
+
+  const moduleUrl = new URL(`../js/storage.js?scope-test=${Date.now()}-${Math.random()}`, import.meta.url);
+  const { JapaneseStorage } = await import(moduleUrl.href);
+
+  JapaneseStorage.setUserScope('firebase-user-a');
+  JapaneseStorage.toggleFavorite('kana-a');
+
+  JapaneseStorage.setUserScope('firebase-user-b');
+  assert.deepEqual(JapaneseStorage.getFavorites(), []);
+  JapaneseStorage.toggleFavorite('kana-b');
+
+  JapaneseStorage.setUserScope('firebase-user-a');
+  assert.deepEqual(JapaneseStorage.getFavorites(), ['kana-a']);
+
+  JapaneseStorage.setUserScope('firebase-user-b');
+  assert.deepEqual(JapaneseStorage.getFavorites(), ['kana-b']);
+});

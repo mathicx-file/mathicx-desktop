@@ -58,7 +58,7 @@ export function mount(host) {
         <div class="group">
           <h3>Aparência</h3>
           <div class="row">
-            <div class="label"><div class="t">Tema</div><div class="d">Claro, escuro ou seguir o sistema</div></div>
+            <div class="label"><div class="t">Tema</div><div class="d">Alternar entre claro e escuro</div></div>
             <div class="seg" data-el="theme"></div>
           </div>
         </div>
@@ -85,8 +85,8 @@ export function mount(host) {
 
   // Segmento de tema
   const themeSeg = host.querySelector('[data-el="theme"]');
-  const THEME_LABELS = { dark: 'Escuro', light: 'Claro', auto: 'Auto' };
-  ['dark', 'light', 'auto'].forEach((t) => {
+  const THEME_LABELS = { dark: 'Escuro', light: 'Claro' };
+  ['dark', 'light'].forEach((t) => {
     const b = document.createElement('button');
     b.textContent = THEME_LABELS[t];
     if (themeManager.current === t) b.classList.add('is-active');

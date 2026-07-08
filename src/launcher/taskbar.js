@@ -129,13 +129,15 @@ export class Taskbar {
         { label: '🚪 Sair', icon: '', danger: true,
           onSelect: () => this._logout() },
       ];
-      const taskbarRect = this._el.parentElement.getBoundingClientRect();
-      showContextMenu({ clientX: rect.left + rect.width / 2, clientY: rect.top }, items);
+      const taskbarRect = this._el.getBoundingClientRect();
+      showContextMenu({ clientX: rect.right, clientY: rect.top }, items);
       const menu = document.querySelector('.context-menu');
       if (menu) {
         const menuRect = menu.getBoundingClientRect();
         const top = taskbarRect.top - menuRect.height - 8;
+        const left = rect.right - menuRect.width;
         menu.style.top = Math.max(8, top) + 'px';
+        menu.style.left = Math.min(window.innerWidth - menuRect.width - 8, Math.max(8, left)) + 'px';
       }
     });
   }

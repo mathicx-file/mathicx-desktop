@@ -28,6 +28,7 @@ class JapaneseFirebaseSync {
     const user = await this.repo.getApprovedUser();
     if (!user?.uid) return { enabled: false, reason: 'user-not-approved' };
     this.uid = user.uid;
+    this.storage.setUserScope?.(user.uid);
 
     await this.hydrateLocalFromRemote();
 
