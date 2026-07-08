@@ -63,8 +63,10 @@ export class Launcher {
     this._attachEvents();
 
     // Abre apps via evento do bus
-    this.bus.on(EVT.APP_LAUNCH, (appId) => {
-      this.wm?.open(appId);
+    this.bus.on(EVT.APP_LAUNCH, (payload) => {
+      const request = normalizeLaunchPayload(payload);
+      if (!request.appId) return;
+      this.wm?.open(request.appId, request.options);
       this.close();
     });
   }
@@ -199,10 +201,7 @@ export class Launcher {
       // Clicks em resultados não-app (pastas/docs) abrem o explorer
       resultsEl.querySelectorAll('.result-item').forEach((el) => {
         if (!el.dataset.launch) {
-          el.addEventListener('click', () => {
-            this.bus.emit(EVT.APP_LAUNCH, 'arquivos');
-            this.close();
-          });
+          el.addEventListener('click', () => this._openSearchResult(el));
         }
       });
       return;
@@ -288,6 +287,28 @@ export class Launcher {
     sec.style.display = grid.children.length ? '' : 'none';
   }
 
+  _openSearchResult(el) {
+    if (el.dataset.launch) {
+      this.bus.emit(EVT.APP_LAUNCH, el.dataset.launch);
+      return;
+    }
+
+    if (el.dataset.type === 'action') {
+      const action = search.resolveAction(el.dataset.resid);
+      if (action) {
+        this.wm?.open(action.appId, {
+          action: action.action,
+          payload: action.payload,
+        });
+        this.close();
+      }
+      return;
+    }
+
+    this.bus.emit(EVT.APP_LAUNCH, 'arquivos');
+    this.close();
+  }
+
   toggle() { this._open ? this.close() : this.open(); }
   open() {
     this._open = true;
@@ -302,4 +323,16 @@ export class Launcher {
     this._el.classList.add('is-hidden');
     this.bus.emit(EVT.LAUNCHER_CLOSE);
   }
+}
+
+function normalizeLaunchPayload(payload) {
+  if (typeof payload === 'string') return { appId: payload, options: {} };
+  if (!payload || typeof payload !== 'object') return { appId: '', options: {} };
+  return {
+    appId: payload.appId || payload.id || '',
+    options: {
+      action: payload.action || '',
+      payload: payload.payload || {},
+    },
+  };
 }

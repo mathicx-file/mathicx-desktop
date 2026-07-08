@@ -65,6 +65,7 @@ export const EVT = Object.freeze({
 
   // Apps
   APP_LAUNCH: 'app:launch',
+  APP_ACTION: 'app:action',
   APP_INSTALLED: 'app:installed',
 
   // Atalhos / desktop

@@ -66,11 +66,15 @@ function postToIframe(iframe, type, payload) {
   iframe.contentWindow.postMessage({ type, value: payload, payload }, window.location.origin);
 }
 
+function postNavigation(iframe, payload = {}) {
+  postToIframe(iframe, 'navigate', payload);
+}
+
 function getResolvedTheme() {
   return themeManager.resolved || themeManager.current || document.documentElement.dataset.theme || '';
 }
 
-export function mount(host) {
+export function mount(host, context = {}) {
   injectStyle();
 
   host.innerHTML = `
@@ -82,6 +86,7 @@ export function mount(host) {
   const container = host.querySelector('.mxc-japanese-study');
   const appUrl = getAppUrl();
   const iframe = document.createElement('iframe');
+  const initialPayload = context.win?.launchOptions?.payload || {};
 
   iframe.src = appUrl;
   iframe.sandbox.add('allow-same-origin');
@@ -97,11 +102,18 @@ export function mount(host) {
   iframe.addEventListener('load', () => {
     container.querySelector('.spinner')?.remove();
     postToIframe(iframe, 'theme', getResolvedTheme());
+    if (initialPayload.view) postNavigation(iframe, initialPayload);
     setTimeout(() => postToIframe(iframe, 'theme', getResolvedTheme()), 150);
+    if (initialPayload.view) setTimeout(() => postNavigation(iframe, initialPayload), 250);
   }, { once: true });
 
   const unsubscribeTheme = bus.on(EVT.THEME_CHANGE, ({ resolved, theme } = {}) => {
     postToIframe(iframe, 'theme', resolved || theme || getResolvedTheme());
+  });
+
+  const unsubscribeAction = bus.on(EVT.APP_ACTION, ({ appId, payload } = {}) => {
+    if (appId !== 'japanese-study') return;
+    postNavigation(iframe, payload || {});
   });
 
   iframe.addEventListener('error', () => {
@@ -152,6 +164,7 @@ export function mount(host) {
   return () => {
     window.removeEventListener('message', handleHostMessage);
     unsubscribeTheme?.();
+    unsubscribeAction?.();
     try {
       iframe.src = 'about:blank';
       iframe.remove();

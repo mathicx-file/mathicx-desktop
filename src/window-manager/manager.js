@@ -55,11 +55,23 @@ export class WindowManager {
       const win = this._windows.get(existing);
       if (win.minimized) this.restore(win.id);
       this.focus(win.id);
+      if (opts.action || opts.payload) {
+        this.bus.emit(EVT.APP_ACTION, {
+          appId,
+          winId: win.id,
+          action: opts.action || 'open',
+          payload: opts.payload || {},
+        });
+      }
       return win;
     }
 
     const rect = this._computeRect(manifest, opts);
     const win = new AppWindow({ appId, manifest, rect, layer: this._layer });
+    win.launchOptions = {
+      action: opts.action || '',
+      payload: opts.payload || {},
+    };
     this._windows.set(win.id, win);
     this._byApp.set(appId, win.id);
 

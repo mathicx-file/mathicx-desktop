@@ -391,6 +391,7 @@ Mensagens aceitas pelo app:
 | `theme` | Sincroniza tema recebido do host. |
 | `refresh` | Recarrega a aplicacao. |
 | `focus` | Solicita foco da janela/iframe. |
+| `navigate` | Abre uma view interna especifica, como `quiz`, `dictionary`, `typing` ou `data`. |
 
 ### Firebase no Mathicx-File
 
@@ -456,13 +457,15 @@ Estado atual:
 - Status visual da sincronizacao Firebase: concluido.
 - Marcador de migracao `japanese-study-local-first-sync-v1`: concluido.
 - Botao `Sincronizar agora` e detalhes do ultimo sync: concluido.
+- Deep links por `postMessage` e acoes do launcher do Mathicx-File: iniciado.
 
 Proximos passos recomendados:
 
 1. Melhorar reconciliacao de conflitos entre dispositivos.
-2. Aprofundar a integracao Mathicx-File com widget, launcher, deep links, notificacoes e status de estudo.
-3. Expandir a digitacao guiada com katakana, traducao guiada, dicas e textos medios.
-4. Expandir Kanji N5 em blocos pequenos, mantendo validacao de dados e compatibilidade com backup/sync.
+2. Adicionar widget/resumo do Japanese Study no desktop ou dashboard do Mathicx-File.
+3. Aprofundar busca global com termos do dicionario local.
+4. Expandir a digitacao guiada com katakana, traducao guiada, dicas e textos medios.
+5. Expandir Kanji N5 em blocos pequenos, mantendo validacao de dados e compatibilidade com backup/sync.
 
 ## Futuro banco de dados
 

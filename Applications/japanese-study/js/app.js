@@ -35,6 +35,7 @@ const JapaneseApp = (() => {
     initialized = true;
 
     JapaneseUI.init();
+    setupHostListener();
     setupFirebaseSyncStatusListener();
     const firebaseSyncReady = setupFirebaseSync();
 
@@ -75,6 +76,9 @@ const JapaneseApp = (() => {
       JapaneseUI.renderGrid(initialChars);
       renderDictionary();
       renderTyping();
+      if (JapaneseUI.getCurrentView() === 'quiz') renderQuiz();
+      if (JapaneseUI.getCurrentView() === 'dictionary') renderDictionary();
+      if (JapaneseUI.getCurrentView() === 'typing') renderTyping();
 
       JapaneseSearch.onResults((results) => {
         JapaneseUI.renderGrid(results);
@@ -194,7 +198,6 @@ const JapaneseApp = (() => {
       });
 
       setupSearch();
-      setupHostListener();
       setupStudyTimeTracking();
       setupStorageListener();
       loadStats();
@@ -271,6 +274,9 @@ const JapaneseApp = (() => {
         case 'focus':
           window.focus();
           break;
+        case 'navigate':
+          handleHostNavigation(data.payload || data.value || {});
+          break;
       }
     });
   }
@@ -293,7 +299,38 @@ const JapaneseApp = (() => {
 
   function isValidHostMessage(data) {
     if (!data || typeof data !== 'object' || typeof data.type !== 'string') return false;
-    return ['theme', 'refresh', 'focus'].includes(data.type);
+    return ['theme', 'refresh', 'focus', 'navigate'].includes(data.type);
+  }
+
+  function handleHostNavigation(payload = {}) {
+    const view = normalizeHostView(payload.view || payload.target || '');
+    if (!view) return;
+    JapaneseUI.setCurrentView(view);
+
+    if (view === 'dictionary') renderDictionary();
+    if (view === 'quiz') renderQuiz();
+    if (view === 'typing') renderTyping();
+    if (view === 'home') loadStats();
+  }
+
+  function normalizeHostView(view) {
+    const value = String(view || '').toLowerCase();
+    const aliases = {
+      sync: 'data',
+      settings: 'data',
+      config: 'data',
+      dictionary: 'dictionary',
+      dicionario: 'dictionary',
+      quiz: 'quiz',
+      typing: 'typing',
+      digitacao: 'typing',
+      home: 'home',
+      inicio: 'home',
+      characters: 'characters',
+      caracteres: 'characters',
+      data: 'data',
+    };
+    return aliases[value] || '';
   }
 
   function normalizeTheme(theme) {
