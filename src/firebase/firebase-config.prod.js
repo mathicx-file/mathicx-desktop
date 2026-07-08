@@ -1,16 +1,9 @@
-/**
- * Production Firebase Web App configuration placeholder.
- *
- * Phase 1 keeps Firebase disabled by feature flag, so placeholder values are
- * safe here. For production, either replace these public Web App values or
- * generate this file in GitHub Actions before publishing the static artifact.
- */
-
 export const firebaseConfig = {
-  apiKey: 'YOUR_FIREBASE_API_KEY',
-  authDomain: 'YOUR_PROJECT_ID.firebaseapp.com',
-  projectId: 'YOUR_PROJECT_ID',
-  storageBucket: 'YOUR_PROJECT_ID.firebasestorage.app',
-  messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-  appId: 'YOUR_FIREBASE_APP_ID',
+  apiKey: 'AIzaSyCUIYFlUH4K_irOhF3QCuHlP5qgScCrhks',
+  authDomain: 'mathicx-file-desktop.firebaseapp.com',
+  projectId: 'mathicx-file-desktop',
+  storageBucket: 'mathicx-file-desktop.firebasestorage.app',
+  messagingSenderId: '883696620025',
+  appId: '1:883696620025:web:135b5d1bbf638a24056d28',
+  measurementId: 'G-C6FZ87VV0T',
 };
