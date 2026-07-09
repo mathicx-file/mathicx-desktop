@@ -70,7 +70,12 @@ export class Desktop {
   /* ---- Widgets ---- */
   _renderWidgets() {
     const container = this._root.querySelector('[data-el="widgets"]');
-    const widgetOrder = this.store.get('widgetLayout') || WIDGET_DEFS.filter((w) => w.default).map((w) => w.id);
+    const defaultWidgetIds = WIDGET_DEFS.filter((w) => w.default).map((w) => w.id);
+    const savedLayout = this.store.get('widgetLayout');
+    const savedWidgetOrder = Array.isArray(savedLayout) ? savedLayout : null;
+    const widgetOrder = savedWidgetOrder
+      ? [...savedWidgetOrder, ...defaultWidgetIds.filter((id) => !savedWidgetOrder.includes(id))]
+      : defaultWidgetIds;
     const hidden = this.store.get('widgets') || {};
 
     container.innerHTML = '';

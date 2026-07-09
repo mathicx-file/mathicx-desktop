@@ -167,6 +167,59 @@
   padding: 2px 0;
 }
 .widget-activity .w-act .w-time { color: var(--muted); margin-left: auto; font-size: 10.5px; }
+.widget-japanese {
+  display: flex; flex-direction: column; gap: var(--sp-3);
+}
+.widget-japanese .wj-summary {
+  display: flex; flex-direction: column; gap: 3px;
+}
+.widget-japanese .wj-main {
+  font-size: 13px; font-weight: 800; color: var(--text-strong);
+}
+.widget-japanese .wj-sub {
+  font-size: 11.5px; font-weight: 600; color: var(--muted);
+  line-height: 1.35;
+}
+.widget-japanese .wj-grid {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.widget-japanese .wj-grid span {
+  min-width: 0;
+  padding: 7px 6px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.widget-japanese .wj-grid strong {
+  font-family: var(--font-mono); font-size: 15px; color: var(--text-strong);
+  max-width: 100%; overflow: hidden; text-overflow: ellipsis;
+}
+.widget-japanese .wj-grid small {
+  font-size: 9px; font-weight: 800; color: var(--muted);
+  letter-spacing: .04em; text-transform: uppercase;
+}
+.widget-japanese .wj-actions {
+  display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 6px;
+}
+.widget-japanese .wj-action {
+  min-width: 0;
+  height: 30px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 11.5px; font-weight: 800;
+}
+.widget-japanese .wj-action:hover {
+  background: var(--surface-hover);
+}
+.widget-japanese .wj-action.primary {
+  border-color: transparent;
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
 
 /* ===== Grid de ícones (atalhos / pastas) ===== */
 .icon-grid {

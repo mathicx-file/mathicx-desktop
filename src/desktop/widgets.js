@@ -10,6 +10,8 @@ import { pad2, WEEKDAYS_SHORT, MONTHS, WEEKDAYS_LONG, cap, debounce } from '../c
 import { ls } from '../storage/local-storage.js';
 import { themeManager } from '../themes/theme-manager.js';
 import { logActivity } from '../ui/activity-log.js';
+import { authProvider } from '../auth/provider.js';
+import { firestorePaths } from '../firebase/firestore-paths.js';
 
 /* ============ Relógio (header do desktop) ============ */
 export function tickClock(el) {
@@ -152,6 +154,128 @@ function timeAgo(ts) {
   return `${d}d`;
 }
 
+/* ============ Widget Japanese Study ============ */
+export function initJapaneseStudyWidget(container) {
+  const body = container.querySelector('[data-el="wbody"]');
+  if (!body) return;
+
+  body.innerHTML = `
+    <div class="widget-japanese">
+      <div class="wj-summary">
+        <span class="wj-main">Carregando progresso...</span>
+        <span class="wj-sub">Buscando dados sincronizados.</span>
+      </div>
+      <div class="wj-grid" aria-live="polite">
+        <span><strong>--</strong><small>SRS</small></span>
+        <span><strong>--</strong><small>Eventos</small></span>
+        <span><strong>--</strong><small>Favoritos</small></span>
+      </div>
+      <div class="wj-actions">
+        <button type="button" class="wj-action primary" data-jp-view="home">Estudar</button>
+        <button type="button" class="wj-action" data-jp-view="quiz">Quiz</button>
+        <button type="button" class="wj-action" data-jp-view="data">Sync</button>
+      </div>
+    </div>`;
+
+  body.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-jp-view]');
+    if (!button) return;
+    bus.emit(EVT.APP_LAUNCH, {
+      appId: 'japanese-study',
+      action: 'navigate',
+      payload: { view: button.dataset.jpView },
+    });
+  });
+
+  loadJapaneseStudySummary()
+    .then((summary) => renderJapaneseStudySummary(body, summary))
+    .catch((error) => {
+      console.warn('[japanese-study-widget] falha ao carregar resumo', error);
+      renderJapaneseStudySummary(body, {
+        main: 'Resumo indisponivel',
+        sub: 'Abra o app para sincronizar novamente.',
+        srsItems: 0,
+        events: 0,
+        favorites: 0,
+      });
+    });
+}
+
+async function loadJapaneseStudySummary() {
+  if (!authProvider.isFirebaseMode) {
+    return {
+      main: 'Japanese Study local',
+      sub: 'Abra o app para revisar seus estudos.',
+      srsItems: 0,
+      events: 0,
+      favorites: 0,
+    };
+  }
+
+  const user = authProvider.getCurrentUser();
+  if (!user?.uid || !authProvider.isApproved()) {
+    return {
+      main: 'Aguardando acesso',
+      sub: 'Entre com uma conta aprovada para ver o resumo.',
+      srsItems: 0,
+      events: 0,
+      favorites: 0,
+    };
+  }
+
+  const [{ initFirebase }, firestoreApi] = await Promise.all([
+    import('../firebase/firebase-client.js'),
+    import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js'),
+  ]);
+  const services = await initFirebase({ force: true });
+  const { doc, getDocFromServer } = firestoreApi;
+  const [progressSnap, settingsSnap] = await Promise.all([
+    getDocFromServer(doc(services.firestore, firestorePaths.japaneseProgression(user.uid))),
+    getDocFromServer(doc(services.firestore, firestorePaths.japaneseSettings(user.uid))),
+  ]);
+
+  const progress = progressSnap.exists() ? progressSnap.data() : {};
+  const settings = settingsSnap.exists() ? settingsSnap.data() : {};
+  const srsItems = countObject(progress.srsItems);
+  const events = countObject(progress.gamificationEvents);
+  const favorites = countObject(progress.favorites) + countObject(progress.dictionaryFavorites);
+  const updatedAt = resolveTimestamp(progress.updatedAt) || resolveTimestamp(settings.updatedAt);
+
+  return {
+    main: srsItems > 0 ? `${srsItems} itens no SRS` : 'Japanese Study sincronizado',
+    sub: updatedAt ? `Atualizado ha ${timeAgo(updatedAt)}` : 'Abra o app para gerar o primeiro resumo.',
+    srsItems,
+    events,
+    favorites,
+  };
+}
+
+function renderJapaneseStudySummary(body, summary) {
+  const main = body.querySelector('.wj-main');
+  const sub = body.querySelector('.wj-sub');
+  const counters = body.querySelectorAll('.wj-grid strong');
+
+  if (main) main.textContent = summary.main;
+  if (sub) sub.textContent = summary.sub;
+  if (counters[0]) counters[0].textContent = String(summary.srsItems ?? 0);
+  if (counters[1]) counters[1].textContent = String(summary.events ?? 0);
+  if (counters[2]) counters[2].textContent = String(summary.favorites ?? 0);
+}
+
+function countObject(value) {
+  if (!value || typeof value !== 'object') return 0;
+  return Object.keys(value).length;
+}
+
+function resolveTimestamp(value) {
+  if (!value) return null;
+  if (typeof value === 'number') return value;
+  if (value instanceof Date) return value.getTime();
+  if (typeof value.toMillis === 'function') return value.toMillis();
+  if (typeof value.seconds === 'number') return value.seconds * 1000;
+  return null;
+}
+
 /* ============ Construtor de widgets do dashboard ============ */
 export const WIDGET_DEFS = [
   {
@@ -188,5 +312,9 @@ export const WIDGET_DEFS = [
     id: 'activity', title: 'Atividades', icon: '📊', default: true,
     body: (el) => { renderActivitiesWidget(el); },
     template: `<div class="widget-activity"><div data-el="wacts"></div></div>`,
+  },
+  {
+    id: 'japanese-study', title: 'Japanese Study', icon: 'JP', default: true,
+    body: (el) => { initJapaneseStudyWidget(el); },
   },
 ];

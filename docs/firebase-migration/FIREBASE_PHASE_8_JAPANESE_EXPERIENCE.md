@@ -16,6 +16,32 @@ O primeiro recorte implementado foi:
 
 ## Implementado
 
+### Widget no desktop
+
+O desktop agora inclui um widget nativo do Japanese Study com resumo por usuario Firebase.
+
+O widget consulta:
+
+```text
+users/{uid}/apps/japanese-study/profile/progression
+users/{uid}/apps/japanese-study/settings/main
+```
+
+Informacoes exibidas:
+
+- quantidade de itens SRS sincronizados;
+- quantidade de eventos de gamificacao registrados;
+- total de favoritos do app e do dicionario;
+- horario relativo da ultima atualizacao, quando disponivel.
+
+Acoes rapidas:
+
+- `Estudar`: abre `home`;
+- `Quiz`: abre `quiz`;
+- `Sync`: abre `data`.
+
+Para usuarios que ja tinham layout de widgets salvo, o desktop passa a anexar novos widgets padrao que ainda nao existiam no layout salvo. Isso evita a necessidade de restaurar manualmente o layout para visualizar o widget do Japanese Study.
+
 ### Deep links internos
 
 O wrapper `src/apps/japanese-study/view.js` agora entende acoes de navegacao e repassa para o iframe via `postMessage`:
@@ -78,16 +104,21 @@ Se o app ja estiver aberto, a janela e focada/restaurada e o evento `EVT.APP_ACT
 - `src/launcher/search.js`
 - `src/launcher/launcher.js`
 - `src/apps/japanese-study/view.js`
+- `src/desktop/desktop.js`
+- `src/desktop/widgets.js`
+- `styles/desktop.css`
 - `Applications/japanese-study/js/app.js`
 
 ## Validacao
 
 - `npm.cmd test` em `Applications/japanese-study`: 49 testes passando.
 - Imports ESM de `src/launcher/search.js` e `src/apps/japanese-study/manifest.js`: OK.
+- Imports ESM de `src/desktop/widgets.js`, `src/desktop/desktop.js` e `src/launcher/search.js`: OK.
+- `npm.cmd run test:firestore-rules`: 10 testes passando.
 
 ## Proximos Incrementos da Fase 8
 
-1. Widget/resumo do Japanese Study no desktop ou dashboard.
-2. Botao "Estudar agora" fora do app, abrindo direto a recomendacao diaria.
-3. Busca global consultando termos do dicionario local.
-4. Indicadores de SRS pendente, streak e ultimo sync no host.
+1. Botao "Estudar agora" abrindo uma recomendacao diaria real, assim que o Japanese Study expuser esse criterio.
+2. Busca global consultando termos do dicionario local.
+3. Indicadores mais ricos de SRS pendente, streak e ultimo sync no host.
+4. Persistir um documento `stats/summary` agregado para reduzir leituras do widget no futuro.
