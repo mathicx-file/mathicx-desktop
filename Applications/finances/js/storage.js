@@ -7,12 +7,46 @@
 (function (global) {
   'use strict';
 
-  const STORAGE_KEY = 'financas_pessoais_v1';
+  const BASE_STORAGE_KEY = 'financas_pessoais_v1';
   const SCHEMA_VERSION = 1;
+  let userScope = getInitialUserScope();
 
   /* ---------- IDs ---------- */
   const uid = (prefix = 'id') =>
     `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+
+  function sanitizeScope(scope) {
+    const value = String(scope || '').trim();
+    if (!value) return 'local';
+    return value.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 96) || 'local';
+  }
+
+  function getInitialUserScope() {
+    try {
+      const params = new URLSearchParams(global.location?.search || '');
+      return sanitizeScope(params.get('desktopUserScope') || 'local');
+    } catch {
+      return 'local';
+    }
+  }
+
+  function getStorageKey() {
+    return `${BASE_STORAGE_KEY}:${userScope}`;
+  }
+
+  function setUserScope(scope, { reload = true } = {}) {
+    const nextScope = sanitizeScope(scope);
+    if (nextScope === userScope) return state;
+    userScope = nextScope;
+    if (global.Store) {
+      global.Store.STORAGE_KEY = getStorageKey();
+    }
+    if (reload) {
+      load();
+      emit({ type: 'scope:change', payload: { scope: userScope } });
+    }
+    return state;
+  }
 
   /* ---------- Categorias padrão ---------- */
   function defaultCategories() {
@@ -238,7 +272,7 @@
 
   function load() {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem(getStorageKey());
       if (!raw) {
         state = seedSampleData(emptyState());
         save();
@@ -264,7 +298,7 @@
     if (saveTimer) clearTimeout(saveTimer);
     saveTimer = setTimeout(() => {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        localStorage.setItem(getStorageKey(), JSON.stringify(state));
       } catch (err) {
         console.error('Erro ao salvar:', err);
       }
@@ -354,8 +388,10 @@
 
   /* ---------- API pública ---------- */
   global.Store = {
-    STORAGE_KEY,
+    STORAGE_KEY: getStorageKey(),
+    BASE_STORAGE_KEY,
     uid,
+    getStorageKey, setUserScope,
     load, save, getState,
     subscribe, emit,
     exportJSON, importJSON, resetAll, clearAndSeed,

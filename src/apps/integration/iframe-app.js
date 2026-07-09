@@ -204,7 +204,8 @@ function injectIframeStyle({ styleId, className }) {
 
 function resolveAppUrl(appPath) {
   try {
-    return new URL(appPath, window.location.href).pathname;
+    const url = new URL(appPath, window.location.href);
+    return `${url.pathname}${url.search}${url.hash}`;
   } catch {
     return appPath.startsWith('/') ? appPath : `/${appPath}`;
   }

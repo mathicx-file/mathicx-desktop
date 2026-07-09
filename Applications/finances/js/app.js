@@ -69,6 +69,7 @@
 
   /* ---------- Boot ---------- */
   function init() {
+    setupHostListener();
     Store.load();
     Store.subscribe(onStoreChange);
     buildNav();
@@ -86,6 +87,75 @@
         if (VIEWS[currentView]) VIEWS[currentView]();
       }
     });
+  }
+
+  function setupHostListener() {
+    if (setupHostListener.ready) return;
+    setupHostListener.ready = true;
+
+    window.addEventListener('message', (event) => {
+      if (!isAllowedHostMessage(event)) return;
+      const data = event.data || {};
+      const payload = data.payload || data.value || {};
+
+      if (data.type === 'user-scope') {
+        const previousKey = Store.getStorageKey?.();
+        Store.setUserScope?.(payload.scope || payload.uid || payload.userId || 'local');
+        if (Store.getStorageKey?.() !== previousKey) {
+          renderAfterScopeChange();
+        }
+        return;
+      }
+
+      if (data.type === 'theme') {
+        applyHostTheme(payload);
+        return;
+      }
+
+      if (data.type === 'navigate') {
+        const view = normalizeHostView(payload.view || payload.target || '');
+        if (view) navigate(view);
+      }
+    });
+  }
+
+  function isAllowedHostMessage(event) {
+    if (event.source !== window.parent && event.source !== window.opener && event.source !== window) return false;
+    if (event.origin !== window.location.origin && !(event.origin === 'null' && window.location.protocol === 'file:')) return false;
+    return event.data && typeof event.data === 'object' && typeof event.data.type === 'string';
+  }
+
+  function normalizeHostView(view) {
+    const value = String(view || '').toLowerCase();
+    return {
+      dashboard: 'dashboard',
+      home: 'dashboard',
+      transactions: 'transactions',
+      movimentacoes: 'transactions',
+      calendar: 'calendar',
+      calendario: 'calendar',
+      profiles: 'profiles',
+      perfis: 'profiles',
+      settings: 'settings',
+      configuracoes: 'settings',
+      reports: 'reports',
+      relatorios: 'reports',
+    }[value] || '';
+  }
+
+  function renderAfterScopeChange() {
+    renderProfileSelector();
+    updatePeriodLabel();
+    renderAlerts();
+    if (VIEWS[currentView]) VIEWS[currentView]();
+  }
+
+  function applyHostTheme(value) {
+    const theme = String(value || '').toLowerCase();
+    if (!['dark', 'light'].includes(theme)) return;
+    const s = Store.getState()?.settings;
+    if (!s || s.theme !== 'auto') return;
+    document.documentElement.setAttribute('data-theme', theme);
   }
 
   /* ---------- Navegação ---------- */
