@@ -293,15 +293,13 @@ export class Launcher {
       return;
     }
 
-    if (el.dataset.type === 'action') {
-      const action = search.resolveAction(el.dataset.resid);
-      if (action) {
-        this.wm?.open(action.appId, {
-          action: action.action,
-          payload: action.payload,
-        });
-        this.close();
-      }
+    const action = search.resolveAction(el.dataset.resid);
+    if (action) {
+      this.wm?.open(action.appId, {
+        action: action.action,
+        payload: action.payload,
+      });
+      this.close();
       return;
     }
 

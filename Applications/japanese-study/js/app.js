@@ -307,10 +307,21 @@ const JapaneseApp = (() => {
     if (!view) return;
     JapaneseUI.setCurrentView(view);
 
-    if (view === 'dictionary') renderDictionary();
+    if (view === 'dictionary') {
+      applyHostDictionaryQuery(payload);
+      renderDictionary();
+    }
     if (view === 'quiz') renderQuiz();
     if (view === 'typing') renderTyping();
     if (view === 'home') loadStats();
+  }
+
+  function applyHostDictionaryQuery(payload = {}) {
+    const query = payload.query || payload.search || payload.term || '';
+    if (!query) return;
+    const input = document.getElementById('dictionary-search-input');
+    if (!input) return;
+    input.value = String(query);
   }
 
   function normalizeHostView(view) {

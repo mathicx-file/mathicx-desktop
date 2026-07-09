@@ -14,7 +14,13 @@ export const SEARCH_TYPES = {
   folder: { label: 'Pasta', icon: 'DIR' },
   doc: { label: 'Documento', icon: 'DOC' },
   category: { label: 'Categoria', icon: 'TAG' },
+  dictionary: { label: 'Dicionario', icon: 'JP' },
 };
+
+const JAPANESE_DICTIONARY_URL = new URL('../../Applications/japanese-study/data/dictionary.json', import.meta.url);
+const JAPANESE_DICTIONARY_LIMIT = 6;
+let japaneseDictionaryPromise = null;
+let japaneseDictionaryCache = [];
 
 const JAPANESE_ACTIONS = [
   {
@@ -92,6 +98,17 @@ export async function globalSearch(query) {
     }
   });
 
+  const dictionaryMatches = await searchJapaneseDictionary(q);
+  dictionaryMatches.forEach((word) => {
+    add(
+      'dictionary',
+      `japanese-study:dictionary:${word.id}`,
+      'JP',
+      formatDictionaryResultName(word),
+      `${word.romaji || word.reading || word.script || 'Japanese Study'}`,
+    );
+  });
+
   try {
     const nodes = await fs.search(q);
     nodes.forEach((n) => {
@@ -112,10 +129,96 @@ export async function globalSearch(query) {
 
 export function resolveAction(id) {
   const action = JAPANESE_ACTIONS.find((item) => item.id === id);
-  if (!action) return null;
+  if (action) {
+    return {
+      appId: action.appId,
+      action: 'navigate',
+      payload: { view: action.view },
+    };
+  }
+
+  const dictionaryWord = japaneseDictionaryCache
+    .find((word) => `japanese-study:dictionary:${word.id}` === id);
+  if (!dictionaryWord) return null;
+
   return {
-    appId: action.appId,
+    appId: 'japanese-study',
     action: 'navigate',
-    payload: { view: action.view },
+    payload: {
+      view: 'dictionary',
+      query: dictionaryWord.romaji || dictionaryWord.reading || dictionaryWord.word || dictionaryWord.definition || '',
+      dictionaryId: dictionaryWord.id,
+    },
   };
+}
+
+async function searchJapaneseDictionary(query) {
+  if (query.length < 2) return [];
+
+  try {
+    const words = await loadJapaneseDictionary();
+    return words
+      .map((word) => ({ word, score: scoreDictionaryWord(word, query) }))
+      .filter((item) => item.score > 0)
+      .sort((a, b) => b.score - a.score || String(a.word.romaji || '').localeCompare(String(b.word.romaji || '')))
+      .slice(0, JAPANESE_DICTIONARY_LIMIT)
+      .map((item) => item.word);
+  } catch (error) {
+    console.info('[launcher-search] Japanese dictionary unavailable', error?.message || error);
+    return [];
+  }
+}
+
+async function loadJapaneseDictionary() {
+  if (!japaneseDictionaryPromise) {
+    japaneseDictionaryPromise = fetch(JAPANESE_DICTIONARY_URL)
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then((data) => normalizeDictionaryPayload(data))
+      .then((words) => {
+        japaneseDictionaryCache = words;
+        return words;
+      })
+      .catch((error) => {
+        japaneseDictionaryPromise = null;
+        japaneseDictionaryCache = [];
+        throw error;
+      });
+  }
+  return japaneseDictionaryPromise;
+}
+
+function normalizeDictionaryPayload(data) {
+  const words = Array.isArray(data?.words) ? data.words : data;
+  return Array.isArray(words)
+    ? words.filter((word) => word?.id && (word.word || word.romaji || word.definition))
+    : [];
+}
+
+function scoreDictionaryWord(word, query) {
+  const fields = {
+    word: norm(word.word),
+    reading: norm(word.reading),
+    romaji: norm(word.romaji),
+    definition: norm(word.definition),
+    category: norm(word.category),
+    script: norm(word.script),
+  };
+
+  if (fields.word === query || fields.romaji === query || fields.reading === query) return 100;
+  if (fields.word.startsWith(query) || fields.romaji.startsWith(query) || fields.reading.startsWith(query)) return 80;
+  if (fields.definition === query) return 70;
+  if (fields.definition.startsWith(query)) return 55;
+  if (Object.values(fields).some((value) => value.includes(query))) return 35;
+  return 0;
+}
+
+function formatDictionaryResultName(word) {
+  const term = word.word || word.romaji || word.reading || 'Verbete';
+  const reading = word.romaji || word.reading || '';
+  const definition = word.definition || word.category || '';
+  const detail = [reading, definition].filter(Boolean).join(' - ');
+  return detail ? `${term} - ${detail}` : term;
 }

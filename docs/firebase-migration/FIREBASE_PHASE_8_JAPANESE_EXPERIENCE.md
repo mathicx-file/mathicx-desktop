@@ -109,6 +109,27 @@ A busca global agora inclui acoes para o Japanese Study:
 
 Essas acoes abrem o app e navegam direto para a aba correspondente.
 
+### Busca de dicionario no launcher
+
+O launcher tambem consulta o dicionario local do Japanese Study em:
+
+```text
+Applications/japanese-study/data/dictionary.json
+```
+
+Quando a busca encontra um verbete, o resultado aparece como tipo `Dicionario`.
+Ao clicar, o Mathicx-File abre o Japanese Study na aba `dictionary` e envia o termo encontrado como `query`, preenchendo a busca interna do app.
+
+Payload usado pelo host:
+
+```js
+{
+  view: 'dictionary',
+  query: 'mizu',
+  dictionaryId: 'hira_mizu'
+}
+```
+
 ### Reuso de janela aberta
 
 O `WindowManager.open(appId, opts)` agora aceita:
@@ -141,6 +162,8 @@ Se o app ja estiver aberto, a janela e focada/restaurada e o evento `EVT.APP_ACT
 - Imports ESM de `src/launcher/search.js` e `src/apps/japanese-study/manifest.js`: OK.
 - Imports ESM de `src/desktop/widgets.js`, `src/desktop/desktop.js` e `src/launcher/search.js`: OK.
 - `npm.cmd run test:firestore-rules`: 10 testes passando.
+- Busca mockada do launcher por `mizu`: resultado de dicionario encontrado e acao resolvida para `view: dictionary`.
+- Fetch HTTP local de `Applications/japanese-study/data/dictionary.json`: OK.
 
 ## Proximos Incrementos da Fase 8
 
