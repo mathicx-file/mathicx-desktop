@@ -94,6 +94,31 @@ request.auth.uid == uid
 
 Nada financeiro pessoal deve ser salvo em colecao global.
 
+## Paths Formalizados
+
+Os helpers em `src/firebase/firestore-paths.js` agora incluem os caminhos do Finances:
+
+```js
+firestorePaths.financesSettings(uid)
+firestorePaths.financesSnapshot(uid)
+firestorePaths.financesTransaction(uid, transactionId)
+firestorePaths.financesInstallment(uid, installmentId)
+firestorePaths.financesRecurring(uid, recurringId)
+firestorePaths.financesCard(uid, cardId)
+firestorePaths.financesGoal(uid, goalId)
+firestorePaths.financesCategory(uid, categoryId)
+firestorePaths.financesBudget(uid, budgetId)
+firestorePaths.financesTransfer(uid, transferId)
+```
+
+As regras Firestore continuam usando o match generico:
+
+```text
+users/{uid}/apps/{appId}/{document=**}
+```
+
+Com isso, o app `finances` herda a mesma regra de isolamento por usuario ja usada pelo Japanese Study.
+
 ## Observacoes Tecnicas
 
 - O app continua funcionando standalone com escopo `local`.
@@ -107,9 +132,12 @@ Nada financeiro pessoal deve ser salvo em colecao global.
 - `node test/smoke.js` e `node test/functional.js` falham diretamente porque os testes usam CommonJS em um repositorio com `"type": "module"`.
 - Os mesmos testes rodaram com copias temporarias `.cjs`: smoke OK, functional OK, 37 asserts passando.
 - Teste isolado de escopo por usuario: OK.
+- Helpers `firestorePaths.finances*`: OK.
 - Imports ESM dos wrappers integrados (`japanese-study`, `finanças`) e do helper `mountIframeApp`: OK.
 - `npm.cmd test` em `Applications/japanese-study`: 49 testes passando.
 - `npm.cmd run test:firestore-rules`: 10 testes passando.
+- Testes Firestore incluem acesso permitido a `users/{uid}/apps/finances/...` para usuario aprovado.
+- Testes Firestore incluem negacao para usuario pendente e para outro usuario tentando acessar dados do Finances.
 
 ## Proximos Passos Recomendados
 

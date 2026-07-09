@@ -40,6 +40,22 @@ export const firestorePaths = Object.freeze({
     `users/${uid}/apps/japanese-study/customLists/${listId}/items/${entryId}`
   ),
 
+  financesBase: (uid) => `users/${uid}/apps/finances`,
+  financesSettings: (uid) => `users/${uid}/apps/finances/settings/main`,
+  financesSnapshot: (uid) => `users/${uid}/apps/finances/profile/snapshot`,
+  financesTransaction: (uid, transactionId) => (
+    `users/${uid}/apps/finances/transactions/${transactionId}`
+  ),
+  financesInstallment: (uid, installmentId) => (
+    `users/${uid}/apps/finances/installments/${installmentId}`
+  ),
+  financesRecurring: (uid, recurringId) => `users/${uid}/apps/finances/recurring/${recurringId}`,
+  financesCard: (uid, cardId) => `users/${uid}/apps/finances/cards/${cardId}`,
+  financesGoal: (uid, goalId) => `users/${uid}/apps/finances/goals/${goalId}`,
+  financesCategory: (uid, categoryId) => `users/${uid}/apps/finances/categories/${categoryId}`,
+  financesBudget: (uid, budgetId) => `users/${uid}/apps/finances/budgets/${budgetId}`,
+  financesTransfer: (uid, transferId) => `users/${uid}/apps/finances/transfers/${transferId}`,
+
   publicDictionary: () => 'publicData/dictionary',
   publicAppCatalog: (appId) => `publicAppCatalog/${appId}`,
   publicAppConfig: (configId) => `publicAppConfig/${configId}`,

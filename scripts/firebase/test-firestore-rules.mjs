@@ -42,6 +42,41 @@ const desktopSettings = {
   schemaVersion: 1,
 };
 
+const financesSettings = {
+  schemaVersion: 1,
+  currency: 'BRL',
+  activeProfileId: 'prof-main',
+  updatedAt: now,
+};
+
+const financesSnapshot = {
+  schemaVersion: 1,
+  transactionsCount: 1,
+  cardsCount: 1,
+  goalsCount: 1,
+  updatedAt: now,
+};
+
+const financesTransaction = {
+  schemaVersion: 1,
+  type: 'expense',
+  description: 'Mercado',
+  amount: 125.5,
+  dueDate: '2026-07-09',
+  status: 'paid',
+  profileId: 'prof-main',
+  updatedAt: now,
+};
+
+const financesGoal = {
+  schemaVersion: 1,
+  name: 'Reserva',
+  targetAmount: 10000,
+  currentAmount: 1500,
+  profileId: 'prof-main',
+  updatedAt: now,
+};
+
 const tests = [];
 
 function test(name, fn) {
@@ -110,6 +145,8 @@ test('pending owner cannot access desktop/app/migration subcollections', async (
   const alice = userDb(env, 'alice');
   await assertFails(setDoc(doc(alice, 'users/alice/desktop/settings'), desktopSettings));
   await assertFails(setDoc(doc(alice, 'users/alice/apps/japanese-study/settings/main'), desktopSettings));
+  await assertFails(setDoc(doc(alice, 'users/alice/apps/finances/settings/main'), financesSettings));
+  await assertFails(setDoc(doc(alice, 'users/alice/apps/finances/transactions/tx-1'), financesTransaction));
   await assertFails(setDoc(doc(alice, 'users/alice/migrations/local-v1'), { done: true }));
 });
 
@@ -142,6 +179,10 @@ test('approved owner can access own desktop/app/migration subcollections', async
     unlocked: true,
     updatedAt: now,
   }));
+  await assertSucceeds(setDoc(doc(alice, 'users/alice/apps/finances/settings/main'), financesSettings));
+  await assertSucceeds(setDoc(doc(alice, 'users/alice/apps/finances/profile/snapshot'), financesSnapshot));
+  await assertSucceeds(setDoc(doc(alice, 'users/alice/apps/finances/transactions/tx-1'), financesTransaction));
+  await assertSucceeds(setDoc(doc(alice, 'users/alice/apps/finances/goals/goal-1'), financesGoal));
   await assertSucceeds(setDoc(doc(alice, 'users/alice/migrations/local-v1'), { done: true }));
   await assertSucceeds(setDoc(doc(alice, 'users/alice/migrations/japanese-study-local-first-sync-v1'), {
     appId: 'japanese-study',
@@ -156,10 +197,13 @@ test('approved user cannot access another user subcollections', async (env) => {
     'users/alice': profile('alice', 'approved'),
     'users/bob': profile('bob', 'approved'),
     'users/alice/desktop/settings': desktopSettings,
+    'users/alice/apps/finances/settings/main': financesSettings,
   });
   const bob = userDb(env, 'bob');
   await assertFails(getDoc(doc(bob, 'users/alice/desktop/settings')));
   await assertFails(setDoc(doc(bob, 'users/alice/desktop/settings'), desktopSettings));
+  await assertFails(getDoc(doc(bob, 'users/alice/apps/finances/settings/main')));
+  await assertFails(setDoc(doc(bob, 'users/alice/apps/finances/transactions/tx-2'), financesTransaction));
 });
 
 test('signed-in users can read public metadata but only admins can write', async (env) => {
