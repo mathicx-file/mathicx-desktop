@@ -42,6 +42,31 @@ Acoes rapidas:
 
 Para usuarios que ja tinham layout de widgets salvo, o desktop passa a anexar novos widgets padrao que ainda nao existiam no layout salvo. Isso evita a necessidade de restaurar manualmente o layout para visualizar o widget do Japanese Study.
 
+### Customizacao de widgets
+
+O app `Configuracoes` agora possui uma aba `Widgets`, voltada para personalizar a tela inicial.
+
+Controles disponiveis:
+
+- adicionar/remover widgets do desktop;
+- reordenar widgets com botoes de subir/descer;
+- restaurar a configuracao padrao de widgets.
+
+As preferencias usam o mesmo estado ja sincronizado do desktop:
+
+```text
+widgets
+widgetLayout
+```
+
+Em modo Firebase, essas chaves sao persistidas por usuario em:
+
+```text
+users/{uid}/desktop/settings
+```
+
+Com isso, cada usuario pode ter uma tela inicial diferente sem afetar os demais usuarios.
+
 ### Deep links internos
 
 O wrapper `src/apps/japanese-study/view.js` agora entende acoes de navegacao e repassa para o iframe via `postMessage`:
@@ -104,6 +129,7 @@ Se o app ja estiver aberto, a janela e focada/restaurada e o evento `EVT.APP_ACT
 - `src/launcher/search.js`
 - `src/launcher/launcher.js`
 - `src/apps/japanese-study/view.js`
+- `src/apps/configuracoes/view.js`
 - `src/desktop/desktop.js`
 - `src/desktop/widgets.js`
 - `styles/desktop.css`

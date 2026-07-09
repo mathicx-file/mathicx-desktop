@@ -25,6 +25,7 @@ export class Desktop {
     this._clockInterval = null;
     this._dashboardOpen = false;
     this._widgetCleanups = [];
+    this._widgetsClickAttached = false;
   }
 
   init() {
@@ -57,6 +58,7 @@ export class Desktop {
 
     // Re-render quando shortcuts mudam
     this.bus.on(EVT.DESKTOP_REFRESH, () => this._renderShortcuts());
+    this.bus.on(EVT.WIDGET_UPDATE, () => this._renderWidgets());
     this.bus.on(EVT.THEME_CHANGE, () => this._updateThemeChip());
   }
 
@@ -110,17 +112,20 @@ export class Desktop {
     }
 
     // Event delegation para ocultar widgets
-    container.addEventListener('click', (e) => {
-      const hideBtn = e.target.closest('[data-act="hide"]');
-      if (!hideBtn) return;
-      const wEl = hideBtn.closest('.widget');
-      if (!wEl) return;
-      const wId = wEl.dataset.widgetId;
-      const h = { ...(this.store.get('widgets') || {}) };
-      h[wId] = true;
-      this.store.set('widgets', h);
-      wEl.remove();
-    });
+    if (!this._widgetsClickAttached) {
+      container.addEventListener('click', (e) => {
+        const hideBtn = e.target.closest('[data-act="hide"]');
+        if (!hideBtn) return;
+        const wEl = hideBtn.closest('.widget');
+        if (!wEl) return;
+        const wId = wEl.dataset.widgetId;
+        const h = { ...(this.store.get('widgets') || {}) };
+        h[wId] = true;
+        this.store.set('widgets', h);
+        this.bus.emit(EVT.WIDGET_UPDATE, { source: 'desktop-hide', widgetId: wId });
+      });
+      this._widgetsClickAttached = true;
+    }
   }
 
   /* ---- Shortcuts (grid de ícones) ---- */
