@@ -3,6 +3,8 @@
 > Data: 2026-07-08
 >
 > Escopo: aproximar o Japanese Study da experiencia nativa do Mathicx-File, com deep links e acoes no launcher.
+>
+> Status: concluida em 2026-07-09.
 
 ## Objetivo
 
@@ -118,7 +120,7 @@ Applications/japanese-study/data/dictionary.json
 ```
 
 Quando a busca encontra um verbete, o resultado aparece como tipo `Dicionario`.
-Ao clicar, o Mathicx-File abre o Japanese Study na aba `dictionary` e envia o termo encontrado como `query`, preenchendo a busca interna do app.
+Ao clicar, o Mathicx-File abre o Japanese Study na aba `dictionary`. A busca refinada e o filtro final permanecem dentro do proprio Japanese Study, que e a ferramenta principal de consulta.
 
 Payload usado pelo host:
 
@@ -129,6 +131,8 @@ Payload usado pelo host:
   dictionaryId: 'hira_mizu'
 }
 ```
+
+Decisao de escopo: a integracao do launcher deve priorizar descoberta e entrada rapida no app. A filtragem detalhada do dicionario nao sera aprofundada nesta fase.
 
 ### Reuso de janela aberta
 
@@ -164,10 +168,22 @@ Se o app ja estiver aberto, a janela e focada/restaurada e o evento `EVT.APP_ACT
 - `npm.cmd run test:firestore-rules`: 10 testes passando.
 - Busca mockada do launcher por `mizu`: resultado de dicionario encontrado e acao resolvida para `view: dictionary`.
 - Fetch HTTP local de `Applications/japanese-study/data/dictionary.json`: OK.
+- Teste manual no GitHub Pages: busca por `mizu` aparece no launcher e abre o Japanese Study na secao `Dicionario`.
 
-## Proximos Incrementos da Fase 8
+## Fechamento
+
+A Fase 8 esta concluida com:
+
+- deep links internos para o Japanese Study;
+- acoes do Japanese Study no launcher;
+- widget/resumo no desktop;
+- aba de customizacao de widgets;
+- busca do dicionario local aparecendo no launcher;
+- preferencias de widgets sincronizadas por usuario Firebase.
+
+Itens que ficam para fases futuras:
 
 1. Botao "Estudar agora" abrindo uma recomendacao diaria real, assim que o Japanese Study expuser esse criterio.
-2. Busca global consultando termos do dicionario local.
-3. Indicadores mais ricos de SRS pendente, streak e ultimo sync no host.
-4. Persistir um documento `stats/summary` agregado para reduzir leituras do widget no futuro.
+2. Indicadores mais ricos de SRS pendente, streak e ultimo sync no host.
+3. Persistir um documento `stats/summary` agregado para reduzir leituras do widget no futuro.
+4. Preparar o mesmo padrao `/users/{uid}/apps/{appId}/...` para proximos apps, como `finances`.
