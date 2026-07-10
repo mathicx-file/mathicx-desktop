@@ -1,5 +1,5 @@
 /**
- * mathicx-file · apps/finanças/manifest.js
+ * mathicx-file · apps/finances/manifest.js
  * Aplicação de Finanças Pessoais integrada via iframe
  * 
  * A aplicação roda isolada em um iframe para máxima performance e
@@ -7,7 +7,8 @@
  */
 
 export default {
-  id: 'finanças',
+  id: 'finances',
+  legacyIds: ['finanças'],
   name: 'Finanças',
   icon: '💰',
   category: 'trabalho',

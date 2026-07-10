@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "test": "node test/smoke.js && node test/functional.js && node --test test/firebase-sync-utils.test.mjs",
+    "test:smoke": "node test/smoke.js",
+    "test:functional": "node test/functional.js",
+    "test:firebase-sync": "node --test test/firebase-sync-utils.test.mjs"
+  }
+}

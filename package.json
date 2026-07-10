@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test:app-ids": "node scripts/test-app-id-migration.mjs",
     "test:firestore-rules": "firebase emulators:exec --only firestore \"node scripts/firebase/test-firestore-rules.mjs\" --project desktop-main"
   },
   "devDependencies": {

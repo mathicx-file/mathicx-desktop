@@ -6,6 +6,7 @@ import { authProvider } from '../../auth/provider.js';
 import { featureFlags } from '../../firebase/feature-flags.js';
 import { store } from '../../core/state.js';
 import { FirestoreDesktopRepository } from './firestore-desktop-repository.js';
+import { canonicalAppId } from '../../apps/registry.js';
 
 const SETTINGS_KEYS = ['theme', 'widgets', 'widgetLayout', 'shortcuts', 'favorites', 'pinned'];
 const WRITE_DEBOUNCE_MS = 600;
@@ -36,7 +37,11 @@ class DesktopSync {
     try {
       const remote = await this._repo.loadSettings();
       if (remote) {
-        store.set(_settingsFromRemote(remote));
+        const normalized = _settingsFromRemote(remote);
+        store.set(normalized);
+        if (featureFlags.firestoreDesktopWriteEnabled && _hasLegacyAppIds(remote, normalized)) {
+          await this._repo.saveSettings(normalized);
+        }
       } else if (featureFlags.firestoreDesktopWriteEnabled) {
         await this._repo.saveSettings(_settingsFromStore());
       }
@@ -75,9 +80,9 @@ function _settingsFromStore() {
     theme: store.get('theme', 'dark'),
     widgets: store.get('widgets', null),
     widgetLayout: store.get('widgetLayout', null),
-    shortcuts: store.get('shortcuts', null),
-    favorites: store.get('favorites', []),
-    pinned: store.get('pinned', []),
+    shortcuts: _canonicalShortcuts(store.get('shortcuts', null)),
+    favorites: _canonicalAppIds(store.get('favorites', [])),
+    pinned: _canonicalAppIds(store.get('pinned', [])),
   };
 }
 
@@ -86,10 +91,31 @@ function _settingsFromRemote(remote) {
     theme: remote.theme ?? 'dark',
     widgets: remote.widgets ?? null,
     widgetLayout: remote.widgetLayout ?? null,
-    shortcuts: remote.shortcuts ?? null,
-    favorites: Array.isArray(remote.favorites) ? remote.favorites : [],
-    pinned: Array.isArray(remote.pinned) ? remote.pinned : [],
+    shortcuts: _canonicalShortcuts(remote.shortcuts),
+    favorites: _canonicalAppIds(remote.favorites),
+    pinned: _canonicalAppIds(remote.pinned),
   };
+}
+
+function _canonicalAppIds(items) {
+  return [...new Set(
+    (Array.isArray(items) ? items : []).map(canonicalAppId).filter(Boolean)
+  )];
+}
+
+function _canonicalShortcuts(shortcuts) {
+  if (!Array.isArray(shortcuts)) return shortcuts ?? null;
+  return shortcuts.map((shortcut) => (
+    shortcut?.appId
+      ? { ...shortcut, appId: canonicalAppId(shortcut.appId) }
+      : shortcut
+  ));
+}
+
+function _hasLegacyAppIds(remote, normalized) {
+  return JSON.stringify(remote.favorites ?? []) !== JSON.stringify(normalized.favorites)
+    || JSON.stringify(remote.pinned ?? []) !== JSON.stringify(normalized.pinned)
+    || JSON.stringify(remote.shortcuts ?? null) !== JSON.stringify(normalized.shortcuts);
 }
 
 export const desktopSync = new DesktopSync();

@@ -18,6 +18,9 @@ export const featureFlags = Object.freeze({
   firestoreJapaneseReadEnabled: true,
   firestoreJapaneseWriteEnabled: true,
 
+  firestoreFinancesReadEnabled: true,
+  firestoreFinancesWriteEnabled: true,
+
   dictionaryProviderV2Enabled: false,
   dictionaryRemoteManifestEnabled: false,
   dictionaryChunkLoadingEnabled: false,

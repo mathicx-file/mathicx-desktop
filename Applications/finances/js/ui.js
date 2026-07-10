@@ -62,7 +62,8 @@
       if (e.key === 'Escape' && !isStatic) close();
     };
     clone.querySelectorAll('[data-close]').forEach(b => {
-      b.addEventListener('click', () => { if (!isStatic) close(); });
+      if (isStatic) b.remove();
+      else b.addEventListener('click', close);
     });
     document.addEventListener('keydown', onKey);
     global.UI._currentModal = { close, panel, bodyEl, footerEl };

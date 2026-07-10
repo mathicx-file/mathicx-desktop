@@ -5,13 +5,18 @@
  */
 
 import { store } from '../core/state.js';
-import { appRegistry } from '../apps/registry.js';
+import { appRegistry, canonicalAppId } from '../apps/registry.js';
+
+const canonicalList = (items) => [...new Set(
+  (Array.isArray(items) ? items : []).map(canonicalAppId).filter(Boolean)
+)];
 
 /** Lista de apps favoritos (ids). */
-export function getFavorites() { return store.get('favorites', []); }
+export function getFavorites() { return canonicalList(store.get('favorites', [])); }
 
 /** Toggle favorito. */
 export function toggleFavorite(appId) {
+  appId = canonicalAppId(appId);
   const favs = getFavorites();
   const idx = favs.indexOf(appId);
   if (idx >= 0) favs.splice(idx, 1);
@@ -20,7 +25,7 @@ export function toggleFavorite(appId) {
   return favs.includes(appId);
 }
 
-export function isFavorite(appId) { return getFavorites().includes(appId); }
+export function isFavorite(appId) { return getFavorites().includes(canonicalAppId(appId)); }
 
 /** Apps recentes (ordenados por última abertura). */
 export function getRecents() {
@@ -39,9 +44,10 @@ export function getTopUsed(limit = 5) {
 }
 
 /** Apps fixados na taskbar. */
-export function getPinned() { return store.get('pinned', []); }
+export function getPinned() { return canonicalList(store.get('pinned', [])); }
 
 export function togglePinned(appId) {
+  appId = canonicalAppId(appId);
   const pinned = getPinned();
   const idx = pinned.indexOf(appId);
   if (idx >= 0) pinned.splice(idx, 1);

@@ -2,7 +2,7 @@
 
 > Data: 2026-07-09
 >
-> Status: iniciada
+> Status: concluida tecnicamente, aguardando consolidacao em commit
 >
 > Objetivo: transformar o aprendizado da integracao do Japanese Study em um padrao reutilizavel para proximos apps.
 
@@ -15,7 +15,7 @@ O primeiro recorte implementado nesta fase e de padronizacao:
 - documentar responsabilidades entre host e app;
 - criar uma ponte reutilizavel para apps em iframe;
 - manter o Japanese Study como referencia funcional;
-- deixar `finances` como candidato futuro, sem migracao de dados nesta etapa.
+- validar o padrao com isolamento e sincronizacao do `finances`.
 
 ## Responsabilidades do Host
 
@@ -139,12 +139,39 @@ Comportamentos preservados:
 - reusa janela existente;
 - limpa iframe no fechamento.
 
+## Ajuste de Isolamento do Desktop
+
+Durante a revisao da Fase 9 foi identificado que o Dashboard do Mathicx-File ainda usava chaves globais de `localStorage` para dados locais leves:
+
+```text
+mathicx:activity
+mathicx:recents
+mathicx:usage
+```
+
+Isso podia misturar atividades recentes, apps recentes e contadores de uso entre usuarios diferentes no mesmo navegador.
+
+O Kernel passou a hidratar e persistir esses dados com escopo por usuario:
+
+```text
+mathicx:activity:{uid}
+mathicx:recents:{uid}
+mathicx:usage:{uid}
+```
+
+As chaves globais antigas deixam de ser carregadas para usuarios autenticados. Em logout, o estado em memoria desses itens e limpo antes do recarregamento da aplicacao.
+
 ## Validacao
 
 - Imports ESM de `src/apps/integration/iframe-app.js`, `src/apps/japanese-study/view.js` e `src/apps/japanese-study/manifest.js`: OK.
 - `npm.cmd test` em `Applications/japanese-study`: 49 testes passando.
 - `npm.cmd run test:firestore-rules`: 10 testes passando.
 - `git diff --check`: OK.
+- Dashboard local: `activity`, `recents` e `usage` isolados por usuario no `localStorage`.
+- `npm.cmd run test:app-ids`: alias legado e id canonico do Finances validados.
+- Boot local no navegador: tela de autenticacao carregada sem erros de modulo ou console.
+- Finances: 37 testes funcionais e 5 testes de sync passando.
+- Japanese Study: 49 testes passando apos a padronizacao do Finances.
 
 ## Checklist Para Proximos Apps
 
@@ -160,14 +187,16 @@ Comportamentos preservados:
 - [ ] Regras Firestore previstas antes de salvar dados pessoais.
 - [ ] Documentacao especifica do app criada ou atualizada.
 
-## Proximo Candidato
+## App de Validacao
 
-`finances` e o candidato natural para validar a Fase 9, mas o proximo passo recomendado e primeiro revisar o estado atual dele:
+O `finances` validou o padrao da Fase 9 com:
 
-- confirmar estrutura em `Applications/finances`;
-- revisar manifest e id publico;
-- decidir se o id sera `finances` ou `financas`;
-- verificar suporte a tema;
-- mapear dados que futuramente iriam para Firebase.
+- wrapper reutilizavel por iframe;
+- id canonico `finances` e alias legado `finanças`;
+- isolamento local por usuario;
+- snapshot Firestore em `users/{uid}/apps/finances/profile/snapshot`;
+- revisao transacional e resolucao visivel de conflitos;
+- retomada de alteracoes locais pendentes entre sessoes;
+- testes funcionais e regras de isolamento no Firestore.
 
-Somente depois dessa revisao deve comecar a migracao de dados do app.
+O snapshot permanece como estrategia recomendada para o volume atual. A granularizacao em colecoes por entidade deve ser reavaliada apenas quando consultas parciais, colaboracao ou crescimento de volume justificarem a complexidade adicional.

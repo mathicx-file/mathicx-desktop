@@ -29,7 +29,7 @@ Foi escolhida a estratégia de **iframe sandboxed** por ser a mais eficiente em 
 ## 📁 Estrutura Criada
 
 ```
-src/apps/finanças/
+src/apps/finances/
 ├── manifest.js    → Metadados do app (id, ícone, categoria, etc.)
 └── view.js        → View controller (monta iframe + spinner + error handling)
 ```
@@ -53,7 +53,7 @@ src/apps/finanças/
 
 ### URL de carregamento
 ```javascript
-// src/apps/finanças/view.js
+// src/apps/finances/view.js
 getAppUrl() {
   return '/Applications/finances/index.html';
 }
@@ -94,13 +94,13 @@ Para debug, abra o DevTools e acesse:
 
 ```javascript
 // Ver app na registry
-window.app.modules.launcher.registry.get('finanças')
+window.app.modules.launcher.registry.get('finances')
 
 // Listar todos os apps
 window.app.modules.launcher.registry.list()
 
 // Lançar app manualmente
-window.app.launchApp('finanças')
+window.app.launchApp('finances')
 ```
 
 ## 🎨 Customização Futura
@@ -126,16 +126,16 @@ window.addEventListener('message', (e) => { /* receber */ });
 O app foi registrado em `src/apps/registry.js`:
 
 ```javascript
-import finanças from './finanças/manifest.js';
+import finances from './finances/manifest.js';
 
 registerAll() {
-  [calculadora, notas, arquivos, formularios, configuracoes, finanças].forEach(...);
+  [calculadora, notas, arquivos, formularios, configuracoes, finances].forEach(...);
 }
 ```
 
 ## ✅ Checklist
 
-- [x] Criar pasta `src/apps/finanças/`
+- [x] Criar pasta `src/apps/finances/`
 - [x] Criar `manifest.js` com metadados
 - [x] Criar `view.js` com iframe otimizado
 - [x] Implementar spinner de carregamento

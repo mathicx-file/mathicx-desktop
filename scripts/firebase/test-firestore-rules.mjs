@@ -50,10 +50,34 @@ const financesSettings = {
 };
 
 const financesSnapshot = {
+  appId: 'finances',
+  format: 'finances-backup',
   schemaVersion: 1,
-  transactionsCount: 1,
-  cardsCount: 1,
-  goalsCount: 1,
+  revision: 1,
+  sourceSchemaVersion: 1,
+  source: 'test',
+  state: {
+    settings: financesSettings,
+    profiles: [{ id: 'prof-main', name: 'Pessoal' }],
+    transactions: [{
+      schemaVersion: 1,
+      type: 'expense',
+      description: 'Mercado',
+      amount: 125.5,
+      dueDate: '2026-07-09',
+      status: 'paid',
+      profileId: 'prof-main',
+    }],
+    cards: [],
+    goals: [],
+  },
+  counts: {
+    settings: 1,
+    profiles: 1,
+    transactions: 1,
+    cards: 0,
+    goals: 0,
+  },
   updatedAt: now,
 };
 
@@ -198,11 +222,13 @@ test('approved user cannot access another user subcollections', async (env) => {
     'users/bob': profile('bob', 'approved'),
     'users/alice/desktop/settings': desktopSettings,
     'users/alice/apps/finances/settings/main': financesSettings,
+    'users/alice/apps/finances/profile/snapshot': financesSnapshot,
   });
   const bob = userDb(env, 'bob');
   await assertFails(getDoc(doc(bob, 'users/alice/desktop/settings')));
   await assertFails(setDoc(doc(bob, 'users/alice/desktop/settings'), desktopSettings));
   await assertFails(getDoc(doc(bob, 'users/alice/apps/finances/settings/main')));
+  await assertFails(getDoc(doc(bob, 'users/alice/apps/finances/profile/snapshot')));
   await assertFails(setDoc(doc(bob, 'users/alice/apps/finances/transactions/tx-2'), financesTransaction));
 });
 

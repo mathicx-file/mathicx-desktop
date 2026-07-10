@@ -86,13 +86,13 @@
     $('#sApplyIncome').addEventListener('change', () => {
       if ($('#sApplyIncome').checked) {
         Store.getState().settings.monthIncomeBudget = parseFloat($('#sIncome').value) || 0;
-        Store.save();
+        Store.emit({ type: 'settings:budget-income' });
       }
     });
     $('#sIncome').addEventListener('change', () => {
       if ($('#sApplyIncome').checked) {
         Store.getState().settings.monthIncomeBudget = parseFloat($('#sIncome').value) || 0;
-        Store.save();
+        Store.emit({ type: 'settings:budget-income' });
       }
     });
     $('#btnConfirm').addEventListener('click', confirmCreate);

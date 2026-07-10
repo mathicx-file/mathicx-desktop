@@ -8,7 +8,7 @@ export function mount(host, context = {}) {
   const appPath = `./Applications/finances/index.html?desktopUserScope=${encodeURIComponent(userScope)}`;
 
   return mountIframeApp(host, {
-    appId: 'finanças',
+    appId: APP_ID,
     appPath,
     title: 'Finanças',
     className: 'mxc-finances',

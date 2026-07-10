@@ -58,6 +58,12 @@
     const d = new Date();
     return { year: d.getFullYear(), month: d.getMonth() };
   })();
+  let firebaseSyncModule = null;
+  let firebaseSyncStatus = {
+    state: 'checking',
+    message: 'Sincronizacao ainda nao inicializada.',
+  };
+  let firebaseConflictModalOpen = false;
 
   function getContext() { return context; }
   function setContext(c) { Object.assign(context, c); updatePeriodLabel(); }
@@ -74,9 +80,11 @@
     Store.subscribe(onStoreChange);
     buildNav();
     bindGlobalUI();
+    bindFirebaseSyncStatus();
     applyTheme();
     navigate('dashboard');
     renderAlerts();
+    setupFirebaseSync();
 
     // Verifica vencimentos atrasados a cada minuto (atualiza badges)
     setInterval(renderAlerts, 60000);
@@ -86,6 +94,149 @@
         renderAlerts();
         if (VIEWS[currentView]) VIEWS[currentView]();
       }
+    });
+  }
+
+  async function setupFirebaseSync() {
+    if (!shouldAttemptFirebaseSync()) {
+      setFirebaseSyncStatus({
+        state: 'disabled',
+        message: 'Sincronizacao remota indisponivel neste modo.',
+      });
+      return;
+    }
+
+    try {
+      const module = await import('./firebase/finances-firebase-sync.js');
+      firebaseSyncModule = module;
+      const result = await module.financesFirebaseSync.init({ storage: Store });
+      if (result.enabled) {
+        console.info('[finances-firebase-sync] enabled for current user');
+      }
+    } catch (error) {
+      console.info('[finances-firebase-sync] unavailable in this runtime', error?.message || error);
+      setFirebaseSyncStatus({
+        state: 'error',
+        message: 'Nao foi possivel inicializar a sincronizacao remota.',
+        error: error?.message || String(error),
+      });
+    }
+  }
+
+  function shouldAttemptFirebaseSync() {
+    const location = global.location;
+    if (!location?.protocol) return false;
+    if (location.protocol === 'file:') return false;
+    const params = new URLSearchParams(location.search || '');
+    const scope = String(params.get('desktopUserScope') || '').trim();
+    return Boolean(scope && scope !== 'local');
+  }
+
+  function bindFirebaseSyncStatus() {
+    window.addEventListener('finances:firebase-sync-status', (event) => {
+      setFirebaseSyncStatus(event.detail || {});
+    });
+  }
+
+  function setFirebaseSyncStatus(detail) {
+    firebaseSyncStatus = {
+      ...firebaseSyncStatus,
+      ...detail,
+    };
+    updateFirebaseSyncPanel();
+    if (firebaseSyncStatus.state === 'conflict') {
+      showFirebaseConflictModal(firebaseSyncStatus);
+    }
+  }
+
+  function getFirebaseSyncStatus() {
+    return { ...firebaseSyncStatus };
+  }
+
+  async function syncFirebaseNow() {
+    if (!firebaseSyncModule?.financesFirebaseSync) {
+      setFirebaseSyncStatus({
+        state: 'checking',
+        message: 'A sincronizacao ainda esta inicializando.',
+      });
+      return { ok: false, reason: 'not-ready' };
+    }
+    return firebaseSyncModule.financesFirebaseSync.syncNow();
+  }
+
+  async function resolveFirebaseConflict(strategy) {
+    if (!firebaseSyncModule?.financesFirebaseSync) {
+      return { ok: false, reason: 'not-ready' };
+    }
+    return firebaseSyncModule.financesFirebaseSync.resolveConflict(strategy);
+  }
+
+  function showFirebaseConflictModal(status) {
+    if (firebaseConflictModalOpen || status?.state !== 'conflict') return;
+    if (!global.UI?.openModal) return;
+    if (global.UI._currentModal) {
+      setTimeout(() => showFirebaseConflictModal(getFirebaseSyncStatus()), 400);
+      return;
+    }
+
+    firebaseConflictModalOpen = true;
+    const remoteDate = status.remoteUpdatedAt
+      ? new Date(status.remoteUpdatedAt).toLocaleString('pt-BR')
+      : 'horario nao informado';
+    const body = el('div', { class: 'sync-conflict-modal' }, [
+      el('div', { class: 'sync-conflict-modal__alert', text: 'Seus dados nao foram sobrescritos.' }),
+      el('p', {
+        text: 'Este dispositivo possui alteracoes locais, mas o Firebase tambem recebeu uma versao mais recente. Escolha qual delas deve continuar.'
+      }),
+      el('div', { class: 'sync-conflict-modal__meta' }, [
+        el('span', { text: `Revisao remota: ${status.revision ?? 'nao informada'}` }),
+        el('span', { text: `Atualizada em: ${remoteDate}` }),
+      ]),
+    ]);
+    const remoteButton = el('button', {
+      class: 'btn btn--ghost',
+      text: 'Usar versao do Firebase',
+    });
+    const localButton = el('button', {
+      class: 'btn btn--primary',
+      text: 'Manter versao deste dispositivo',
+    });
+    const footer = el('div', { class: 'sync-conflict-modal__actions' }, [remoteButton, localButton]);
+
+    const resolve = async (strategy) => {
+      remoteButton.disabled = true;
+      localButton.disabled = true;
+      let result;
+      try {
+        result = await resolveFirebaseConflict(strategy);
+      } catch (error) {
+        console.warn('[finances] failed to resolve sync conflict', error);
+        result = { ok: false, reason: 'resolution-failed' };
+      }
+      if (result?.ok) {
+        UI.closeModal();
+        UI.toast(
+          strategy === 'remote' ? 'Versao do Firebase carregada.' : 'Versao deste dispositivo salva no Firebase.',
+          { type: 'success' }
+        );
+        if (strategy === 'remote') navigate('dashboard');
+        return;
+      }
+
+      UI.closeModal();
+      UI.toast('O conflito mudou enquanto era processado. Revise as versoes novamente.', { type: 'warn' });
+      setTimeout(() => showFirebaseConflictModal(getFirebaseSyncStatus()), 100);
+    };
+
+    remoteButton.addEventListener('click', () => resolve('remote'));
+    localButton.addEventListener('click', () => resolve('local'));
+    UI.openModal({
+      title: 'Conflito de sincronizacao',
+      body,
+      footer,
+      size: 'sm',
+      static: true,
+      onClose: () => { firebaseConflictModalOpen = false; },
     });
   }
 
@@ -219,7 +370,7 @@
     renderProfileSelector();
     $('#profileSelector').addEventListener('change', (e) => {
       Store.getState().settings.activeProfileId = e.target.value || null;
-      Store.save();
+      Store.emit({ type: 'settings:active-profile' });
       updatePeriodLabel();
       if (VIEWS[currentView]) VIEWS[currentView]();
       renderAlerts();
@@ -413,6 +564,76 @@
   }
 
   /* ---------- Reagir a mudanças no Store ---------- */
+  function updateFirebaseSyncPanel() {
+    const panel = document.getElementById('firebaseSyncStatus');
+    const button = document.getElementById('btnFirebaseSyncNow');
+    const details = document.getElementById('firebaseSyncDetails');
+    const conflictActions = document.getElementById('firebaseConflictActions');
+    if (!panel && !button && !details) return;
+
+    const status = getFirebaseSyncStatus();
+    if (panel) {
+      panel.dataset.state = normalizeSyncState(status.state);
+      panel.innerHTML = `
+        <span class="sync-dot" aria-hidden="true"></span>
+        <span><strong>${syncStateLabel(status.state)}</strong><small>${Utils.escapeHtml(status.message || '')}</small></span>
+      `;
+    }
+    if (button) {
+      button.disabled = !['synced', 'error'].includes(status.state);
+      button.textContent = status.state === 'syncing' || status.state === 'hydrating'
+        ? 'Sincronizando...'
+        : 'Sincronizar agora';
+    }
+    if (details) {
+      details.innerHTML = buildSyncDetails(status);
+    }
+    if (conflictActions) {
+      conflictActions.hidden = status.state !== 'conflict';
+    }
+  }
+
+  function normalizeSyncState(state) {
+    return ['checking', 'disabled', 'pending', 'hydrating', 'syncing', 'synced', 'conflict', 'error'].includes(state)
+      ? state
+      : 'checking';
+  }
+
+  function syncStateLabel(state) {
+    return {
+      checking: 'Verificando',
+      disabled: 'Desativado',
+      pending: 'Aguardando aprovacao',
+      hydrating: 'Carregando',
+      syncing: 'Sincronizando',
+      synced: 'Sincronizado',
+      conflict: 'Conflito detectado',
+      error: 'Erro',
+    }[state] || 'Verificando';
+  }
+
+  function buildSyncDetails(status) {
+    if (!status.lastSyncedAt && !status.counts && !status.error && status.state !== 'conflict') {
+      return 'Os detalhes aparecerao depois da primeira sincronizacao.';
+    }
+    const rows = [
+      ['Ultima sync', status.lastSyncedAt ? new Date(status.lastSyncedAt).toLocaleString('pt-BR') : 'Ainda nao registrada'],
+      ['Motivo', status.reason || 'automatico'],
+      ['Revisao', status.revision ?? 'Nao registrada'],
+      ['Movimentacoes', status.counts?.transactions ?? 0],
+      ['Parcelamentos', status.counts?.installments ?? 0],
+      ['Cartoes', status.counts?.cards ?? 0],
+      ['Metas', status.counts?.goals ?? 0],
+    ];
+    if (status.error) rows.push(['Erro', status.error]);
+    if (status.remoteUpdatedAt) {
+      rows.push(['Versao remota', new Date(status.remoteUpdatedAt).toLocaleString('pt-BR')]);
+    }
+    return `<div class="sync-details-list">${rows.map(([label, value]) =>
+      `<div><strong>${label}</strong><span>${Utils.escapeHtml(String(value))}</span></div>`
+    ).join('')}</div>`;
+  }
+
   function onStoreChange(evt) {
     renderAlerts();
     renderProfileSelector();
@@ -436,7 +657,11 @@
     NAV, VIEWS,
     init, navigate, getContext, setContext,
     applyTheme, getActiveProfileId,
-    renderProfileSelector
+    renderProfileSelector,
+    getFirebaseSyncStatus,
+    syncFirebaseNow,
+    resolveFirebaseConflict,
+    updateFirebaseSyncPanel
   });
   global.App = App;
 

@@ -110,11 +110,33 @@
         </div>
       </div>
 
+      <!-- Firebase -->
+      <div class="card card--pad-lg mb-2">
+        <div class="card__title mb-2">Sincronizacao Firebase</div>
+        <div class="sync-status" id="firebaseSyncStatus" data-state="checking">
+          <span class="sync-dot" aria-hidden="true"></span>
+          <span><strong>Verificando</strong><small>Sincronizacao ainda nao inicializada.</small></span>
+        </div>
+        <div class="sync-actions mt-2">
+          <button class="btn btn--primary" id="btnFirebaseSyncNow" disabled>Sincronizar agora</button>
+        </div>
+        <div class="sync-conflict-actions mt-2" id="firebaseConflictActions" hidden>
+          <p class="text-muted fs-12">Escolha qual versao deve continuar. Os dados locais permanecem intactos ate sua decisao.</p>
+          <div class="sync-actions">
+            <button class="btn btn--ghost" id="btnUseFirebaseData">Usar versao do Firebase</button>
+            <button class="btn btn--primary" id="btnKeepLocalData">Manter versao deste dispositivo</button>
+          </div>
+        </div>
+        <div class="sync-details mt-2" id="firebaseSyncDetails">
+          Os detalhes aparecerao depois da primeira sincronizacao.
+        </div>
+      </div>
+
       <div class="card card--pad-lg">
         <div class="card__title mb-1">ℹ️ Sobre</div>
         <p class="text-muted fs-12">
-          <strong>Finanças Pessoais</strong> — aplicação 100% local: seus dados nunca saem do seu navegador.
-          Feita com HTML5, CSS3 e JavaScript puro + Chart.js, jsPDF e SheetJS.
+          <strong>Finanças Pessoais</strong> — seus dados ficam disponíveis localmente e podem ser sincronizados
+          com sua conta aprovada no Mathicx-File. Feita com HTML5, CSS3 e JavaScript puro + Chart.js, jsPDF e SheetJS.
         </p>
       </div>
     `;
@@ -155,7 +177,7 @@
     // Orçamento
     $('#budgetIncome').addEventListener('change', (e) => {
       state.settings.monthIncomeBudget = parseFloat(e.target.value) || 0;
-      Store.save();
+      Store.emit({ type: 'settings:budget-income' });
     });
     $('#btnAddBudget').addEventListener('click', addBudgetRow);
     renderBudgets();
@@ -191,6 +213,27 @@
         App.navigate('dashboard');
       });
     });
+    $('#btnFirebaseSyncNow').addEventListener('click', async () => {
+      const result = await App.syncFirebaseNow?.();
+      if (result?.ok) UI.toast('Sincronizacao Firebase concluida.', { type: 'success' });
+      else if (result?.reason === 'conflict') UI.toast('Conflito detectado. Escolha qual versao deve continuar.', { type: 'warn' });
+      else UI.toast('Sincronizacao Firebase ainda nao esta disponivel.', { type: 'warn' });
+    });
+    $('#btnUseFirebaseData').addEventListener('click', async () => {
+      const result = await App.resolveFirebaseConflict?.('remote');
+      if (result?.ok) {
+        UI.toast('Versao do Firebase carregada.', { type: 'success' });
+        App.navigate('dashboard');
+      } else {
+        UI.toast('Nao foi possivel resolver o conflito.', { type: 'error' });
+      }
+    });
+    $('#btnKeepLocalData').addEventListener('click', async () => {
+      const result = await App.resolveFirebaseConflict?.('local');
+      if (result?.ok) UI.toast('Versao deste dispositivo salva no Firebase.', { type: 'success' });
+      else UI.toast('O Firebase mudou novamente. Revise o conflito antes de continuar.', { type: 'warn' });
+    });
+    App.updateFirebaseSyncPanel?.();
     updateStorageSize();
   }
 

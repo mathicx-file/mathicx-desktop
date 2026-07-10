@@ -294,15 +294,19 @@
   }
 
   let saveTimer = null;
+  function persistNow() {
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = null;
+    try {
+      localStorage.setItem(getStorageKey(), JSON.stringify(state));
+    } catch (err) {
+      console.error('Erro ao salvar:', err);
+    }
+  }
+
   function save() {
     if (saveTimer) clearTimeout(saveTimer);
-    saveTimer = setTimeout(() => {
-      try {
-        localStorage.setItem(getStorageKey(), JSON.stringify(state));
-      } catch (err) {
-        console.error('Erro ao salvar:', err);
-      }
-    }, 80);
+    saveTimer = setTimeout(persistNow, 80);
   }
 
   function getState() { return state; }
@@ -342,6 +346,23 @@
     return state;
   }
 
+  function exportSnapshot() {
+    return JSON.parse(exportJSON());
+  }
+
+  function importSnapshot(snapshot, { replace = false, source = 'remote' } = {}) {
+    if (!snapshot || typeof snapshot !== 'object') return state;
+    if (replace) {
+      state = Object.assign(emptyState(), snapshot);
+    } else {
+      state = mergeState(state, snapshot);
+    }
+    state.settings = Object.assign(emptyState().settings, state.settings || {});
+    migrateState(state);
+    emit({ type: 'snapshot:import', payload: { source } });
+    return state;
+  }
+
   function resetAll() {
     state = emptyState();
     emit({ type: 'reset' });
@@ -350,6 +371,43 @@
   function clearAndSeed() {
     state = seedSampleData(emptyState());
     emit({ type: 'reset' });
+  }
+
+  function mergeState(current, incoming) {
+    const next = Object.assign(emptyState(), current || {});
+    next.meta = Object.assign({}, next.meta || {}, incoming.meta || {});
+    next.settings = Object.assign({}, next.settings || {}, incoming.settings || {});
+    ['profiles', 'categories', 'transactions', 'installments', 'recurring', 'cards', 'goals', 'transfers']
+      .forEach(key => {
+        next[key] = mergeById(next[key], incoming[key]);
+      });
+    next.budgets = mergeBudgets(next.budgets, incoming.budgets);
+    return next;
+  }
+
+  function mergeById(localItems, remoteItems) {
+    const merged = new Map();
+    (Array.isArray(localItems) ? localItems : []).forEach(item => {
+      if (!item || typeof item !== 'object') return;
+      merged.set(item.id || uid('item'), item);
+    });
+    (Array.isArray(remoteItems) ? remoteItems : []).forEach(item => {
+      if (!item || typeof item !== 'object') return;
+      merged.set(item.id || uid('item'), item);
+    });
+    return Array.from(merged.values());
+  }
+
+  function mergeBudgets(localItems, remoteItems) {
+    const merged = new Map();
+    const keyOf = (item) => `${item?.perfilId || 'global'}:${item?.categoryId || uid('budget')}`;
+    (Array.isArray(localItems) ? localItems : []).forEach(item => {
+      if (item && typeof item === 'object') merged.set(keyOf(item), item);
+    });
+    (Array.isArray(remoteItems) ? remoteItems : []).forEach(item => {
+      if (item && typeof item === 'object') merged.set(keyOf(item), item);
+    });
+    return Array.from(merged.values());
   }
 
   /* ---------- Helpers de Perfil ---------- */
@@ -392,11 +450,12 @@
     BASE_STORAGE_KEY,
     uid,
     getStorageKey, setUserScope,
-    load, save, getState,
+    load, save, flush: persistNow, getState,
     subscribe, emit,
-    exportJSON, importJSON, resetAll, clearAndSeed,
+    exportJSON, importJSON, exportSnapshot, importSnapshot, resetAll, clearAndSeed,
     emptyState, seedSampleData,
     getActiveProfileId, setActiveProfileId,
     getProfiles, getProfile, addProfile, updateProfile, removeProfile
   };
+  global.addEventListener?.('pagehide', persistNow);
 })(window);

@@ -48,15 +48,15 @@ Evidencias:
 - `README.md:235` documenta a estrutura `src/apps/japanese-study/`.
 - `README.md:243` indica `Applications/japanese-study/index.html`.
 - `src/apps/registry.js:48` registra os apps atuais em `registerAll()`.
-- `src/apps/finanças/view.js:83` resolve `./Applications/finances/index.html`.
-- `src/apps/finanças/view.js:112` a `src/apps/finanças/view.js:116` configura sandbox do iframe.
+- `src/apps/finances/view.js` resolve `./Applications/finances/index.html`.
+- `src/apps/finances/view.js` delega a configuracao segura do iframe ao helper compartilhado.
 
 ## 3. Baseline do app externo existente
 
 O app `finances` e a referencia pratica atual:
 
 ```text
-src/apps/finanças/
+src/apps/finances/
   manifest.js
   view.js
 

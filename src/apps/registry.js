@@ -17,9 +17,18 @@ import notas from './notas/manifest.js';
 import arquivos from './arquivos/manifest.js';
 import formularios from './formularios/manifest.js';
 import configuracoes from './configuracoes/manifest.js';
-import finanças from './finanças/manifest.js';
+import finances from './finances/manifest.js';
 import admin from './admin/manifest.js';
 import japaneseStudy from './japanese-study/manifest.js';
+
+const APP_ID_ALIASES = new Map([
+  ['finanças', 'finances'],
+]);
+
+export function canonicalAppId(id) {
+  const value = String(id || '').trim();
+  return APP_ID_ALIASES.get(value) || value;
+}
 
 /** Catálogo de categorias disponíveis (para filtros do launcher). */
 export const CATEGORIES = [
@@ -40,18 +49,21 @@ class AppRegistry {
   register(manifest) {
     if (!manifest?.id) throw new Error('App manifest precisa de id');
     this._apps.set(manifest.id, manifest);
+    (manifest.legacyIds || []).forEach((legacyId) => {
+      if (legacyId) APP_ID_ALIASES.set(legacyId, manifest.id);
+    });
     bus.emit(EVT.APP_INSTALLED, manifest);
     return manifest;
   }
 
   /** Registra todos os apps built-in. */
   registerAll() {
-    [calculadora, notas, arquivos, formularios, configuracoes, finanças, admin, japaneseStudy]
+    [calculadora, notas, arquivos, formularios, configuracoes, finances, admin, japaneseStudy]
       .forEach((m) => this.register(m));
   }
 
-  get(id) { return this._apps.get(id); }
-  has(id) { return this._apps.has(id); }
+  get(id) { return this._apps.get(canonicalAppId(id)); }
+  has(id) { return this._apps.has(canonicalAppId(id)); }
 
   /** Lista todos os manifestos (array). */
   list() { return [...this._apps.values()]; }

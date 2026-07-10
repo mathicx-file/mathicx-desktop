@@ -20,11 +20,9 @@ import { WindowManager } from '../window-manager/manager.js';
 import { Desktop } from '../desktop/desktop.js';
 import { Launcher } from '../launcher/launcher.js';
 import { Taskbar } from '../launcher/taskbar.js';
-import { appRegistry } from '../apps/registry.js';
+import { appRegistry, canonicalAppId } from '../apps/registry.js';
 import { explorerProvider } from '../explorer/fs-store.js';
 import { toast } from '../ui/toast.js';
-import { logActivity } from '../ui/activity-log.js';
-import { uid } from './utils.js';
 import { authProvider } from '../auth/provider.js';
 import { LoginScreen } from '../auth/login-screen.js';
 import { desktopSync } from '../data/desktop/desktop-sync.js';
@@ -78,6 +76,7 @@ class Kernel {
   }
 
   async _bootDesktop() {
+    this._hydrateScopedDesktopState();
     await desktopSync.init();
 
     // Tema (antes de renderizar UI)
@@ -151,12 +150,10 @@ class Kernel {
     });
 
     // Logout registra duração da sessão (já em provider.logout())
-    this.bus.on(EVT.USER_LOGOUT, () => openAt.clear());
-
-    // Persistir activity-log (gap atual: só ficava em memória)
-    ['activity'].forEach((k) =>
-      this.store.subscribe(k, () => this.ls.set(k, this.store.get(k)))
-    );
+    this.bus.on(EVT.USER_LOGOUT, () => {
+      openAt.clear();
+      this._clearScopedDesktopState();
+    });
 
     // Notifica admin sobre pendentes ao logar
     this.bus.on(EVT.AUTH_CHANGE, async (payload) => {
@@ -176,12 +173,12 @@ class Kernel {
       theme: prefs.theme ?? 'dark',
       widgets: prefs.widgets ?? null, // null = default
       widgetLayout: prefs.widgetLayout ?? null,
-      shortcuts: prefs.shortcuts ?? null,
-      favorites: ls.get('favorites', []),
-      recents: ls.get('recents', []),
-      usage: ls.get('usage', {}),
-      pinned: ls.get('pinned', []),
-      activity: ls.get('activity', []),
+      shortcuts: this._normalizeShortcuts(prefs.shortcuts),
+      favorites: this._normalizeAppIds(ls.get('favorites', [])),
+      recents: [],
+      usage: {},
+      pinned: this._normalizeAppIds(ls.get('pinned', [])),
+      activity: [],
     });
 
     // Persistência: ao mudar prefs relevantes, salva.
@@ -197,9 +194,69 @@ class Kernel {
     ['theme', 'widgets', 'widgetLayout', 'shortcuts'].forEach((k) =>
       store.subscribe(k, persistPrefs)
     );
-    ['favorites', 'recents', 'usage', 'pinned'].forEach((k) =>
+    ['favorites', 'pinned'].forEach((k) =>
       store.subscribe(k, () => ls.set(k, store.get(k)))
     );
+    this._wireScopedDesktopPersistence();
+  }
+
+  // Estado local do dashboard e launcher é persistido por usuário autenticado.
+  _wireScopedDesktopPersistence() {
+    ['activity', 'recents', 'usage'].forEach((key) =>
+      this.store.subscribe(key, () => {
+        this.ls.set(this._scopedDesktopKey(key), this.store.get(key));
+      })
+    );
+  }
+
+  _hydrateScopedDesktopState() {
+    const usage = ls.get(this._scopedDesktopKey('usage'), {});
+    store.set({
+      activity: ls.get(this._scopedDesktopKey('activity'), []),
+      recents: this._normalizeAppIds(ls.get(this._scopedDesktopKey('recents'), [])),
+      usage: this._normalizeUsage(usage),
+    });
+  }
+
+  _normalizeAppIds(items) {
+    return [...new Set(
+      (Array.isArray(items) ? items : []).map(canonicalAppId).filter(Boolean)
+    )];
+  }
+
+  _normalizeShortcuts(shortcuts) {
+    if (!Array.isArray(shortcuts)) return shortcuts ?? null;
+    return shortcuts.map((shortcut) => (
+      shortcut?.appId
+        ? { ...shortcut, appId: canonicalAppId(shortcut.appId) }
+        : shortcut
+    ));
+  }
+
+  _normalizeUsage(usage) {
+    if (!usage || typeof usage !== 'object' || Array.isArray(usage)) return {};
+    return Object.entries(usage).reduce((result, [appId, count]) => {
+      const canonicalId = canonicalAppId(appId);
+      result[canonicalId] = (result[canonicalId] || 0) + (Number(count) || 0);
+      return result;
+    }, {});
+  }
+
+  _clearScopedDesktopState() {
+    store.set({
+      activity: [],
+      recents: [],
+      usage: {},
+    });
+  }
+
+  _scopedDesktopKey(key) {
+    return `${key}:${this._currentUserScope()}`;
+  }
+
+  _currentUserScope() {
+    const user = authProvider.getCurrentUser?.();
+    return user?.uid || user?.id || 'local';
   }
 
   _registerHotkeys() {

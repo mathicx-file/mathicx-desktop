@@ -48,6 +48,7 @@ export class WindowManager {
   open(appId, opts = {}) {
     const manifest = appRegistry.get(appId);
     if (!manifest) { toast.error(`App desconhecido: ${appId}`); return null; }
+    appId = manifest.id;
 
     // Já aberta? Foca/restaura.
     const existing = this._byApp.get(appId);
