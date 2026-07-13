@@ -193,6 +193,39 @@ test('lazy runtime preserves stable IDs and resolves legacy favorites through co
   assert.equal(runtime.getMetrics().searches, 1);
 });
 
+test('lazy runtime browses a selected package and forwards package-scoped searches', async () => {
+  const stableMizu = {
+    id: 'jmdict-1371260',
+    headword: '水',
+    readings: ['みず'],
+    romaji: ['mizu'],
+    meanings: [{ language: 'pt-BR', text: 'agua' }],
+    scripts: ['kanji'],
+    tags: [],
+  };
+  let searchOptions = null;
+  const source = {
+    id: 'paged-test',
+    async load() { return { entries: [], metadata: { lazy: true } }; },
+    async search(_query, options) { searchOptions = options; return [stableMizu]; },
+    async browse(options) {
+      return { entries: [stableMizu], page: options.page, pageSize: 50, total: 1, hasNext: false };
+    },
+  };
+  const runtime = new DictionaryRuntime({
+    providerEnabled: true,
+    provider: new DictionaryProvider({ source }),
+    legacyDictionary: createLegacyDictionaryStub(),
+    loadLegacyEntries: async () => dictionaryData,
+  });
+
+  const page = await runtime.browse({ packageId: 'full', page: 1 });
+  assert.equal(page.entries[0].word, '水');
+  assert.equal(page.total, 1);
+  await runtime.search('mizu', { packageId: 'full' });
+  assert.equal(searchOptions.packageId, 'full');
+});
+
 test('lazy runtime falls back per query without hiding intentional aborts', async () => {
   const legacyDictionary = createLegacyDictionaryStub();
   let error = new Error('network unavailable');

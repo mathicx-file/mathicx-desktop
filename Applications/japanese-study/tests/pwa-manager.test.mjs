@@ -47,6 +47,7 @@ test('enables and fully removes the optional shell cache', async () => {
     scriptUrl: 'https://example.test/app/service-worker.js',
     options: { scope: registration.scope, updateViaCache: 'none' },
   });
+  assert.equal(registration.updateCalls, 1);
 
   const disabled = await manager.disable();
   assert.equal(disabled.enabled, false);
@@ -100,6 +101,8 @@ test('service worker keeps dictionary artifacts outside Cache Storage', async ()
   assert.match(source, /url\.pathname\.includes\(DICTIONARY_PATH_MARKER\)/u);
   assert.match(source, /request\.mode === 'navigate'/u);
   assert.match(source, /networkFirst\(request, INDEX_URL\)/u);
+  assert.match(source, /\$\{SHELL_CACHE_PREFIX\}v3/u);
+  assert.match(source, /fetch\(request, \{ cache: 'no-store' \}\)/u);
   assert.match(source, /REBUILD_SHELL_CACHE/u);
   assert.match(source, /SHELL_REPAIR_CACHE_NAME/u);
   assert.match(source, /installed-dictionary-packages-source\.js/u);
@@ -117,7 +120,11 @@ function createRegistration(scope) {
   return {
     scope,
     active,
+    updateCalls: 0,
     unregistered: false,
+    async update() {
+      this.updateCalls += 1;
+    },
     async unregister() {
       this.unregistered = true;
       return true;

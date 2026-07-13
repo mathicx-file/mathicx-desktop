@@ -460,7 +460,9 @@ Subfases previstas:
 - `15.3`: quota, tamanho e persistencia - **concluida**;
 - `15.4`: experiencia offline e recuperacao - **concluida**;
 - `15.5`: Service Worker opcional - **concluida**;
-- `15.6`: validacao e primeira promocao real - **concluida**.
+- `15.6`: validacao e primeira promocao real - **concluida**;
+- `15.7`: navegacao pelos pacotes instalados - **implementada; aguardando
+  validacao do proprietario**.
 
 Criterios de aceite:
 
@@ -582,6 +584,15 @@ busca online/offline, remocao isolada, hashes e mojibake passaram. O Pages final
 possui 1.319 arquivos e 27.108.873 bytes; `core/full` estao disponiveis e a base
 essencial ativa e `2026.07.13-3`.
 
+A extensao `15.7` integrou o conteudo instalado a aba **Dicionario**: o usuario
+escolhe `essential`, `core` ou `full`, navega em paginas de 50 verbetes e limita
+a busca ao pacote selecionado. O runtime percorre os shards sob demanda e mantem
+apenas quatro buckets decodificados em memoria. O Service Worker foi atualizado
+para `v3`, com modulos versionados, para impedir a mistura de arquivos de
+releases diferentes depois de um deploy. A implementacao automatizada passou em
+desktop e celular, e o artefato final validado possui 1.319 arquivos e
+27.120.050 bytes. A subfase aguarda apenas a validacao visual do proprietario.
+
 Validacao final:
 
 ```text
@@ -590,6 +601,10 @@ Fase 15.6 concluida
   -> release essencial 2026.07.13-3 promovida
   -> busca offline e remocao isolada validadas
   -> rollback real para 2026.07.13-2 concluido
+Fase 15.7 implementada
+  -> seletor e paginacao por pacote instalado
+  -> busca limitada ao pacote selecionado
+  -> atualizacao consistente do shell validada
 ```
 
 Nenhuma intervencao no Console Firebase e necessaria. A promocao modifica apenas

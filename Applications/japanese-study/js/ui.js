@@ -272,12 +272,13 @@ export const JapaneseUI = (() => {
     grid.appendChild(frag);
   }
 
-  function renderDictionary(words) {
+  function renderDictionary(words, options = {}) {
     currentDictionaryWords = words || [];
     const grid = elements.dictionaryGrid;
 
     if (elements.dictionaryCount) {
-      elements.dictionaryCount.textContent = currentDictionaryWords.length + (currentDictionaryWords.length === 1 ? ' palavra' : ' palavras');
+      elements.dictionaryCount.textContent = options.countLabel
+        || currentDictionaryWords.length + (currentDictionaryWords.length === 1 ? ' palavra' : ' palavras');
     }
 
     if (!currentDictionaryWords.length) {

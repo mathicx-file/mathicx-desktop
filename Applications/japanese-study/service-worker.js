@@ -1,5 +1,5 @@
 const SHELL_CACHE_PREFIX = 'mathicx-japanese-shell-';
-const SHELL_CACHE_NAME = `${SHELL_CACHE_PREFIX}v2`;
+const SHELL_CACHE_NAME = `${SHELL_CACHE_PREFIX}v3`;
 const SHELL_REPAIR_CACHE_NAME = `${SHELL_CACHE_NAME}-repair`;
 const DICTIONARY_PATH_MARKER = '/data/dictionary/';
 const SHELL_PATHS = [
@@ -96,7 +96,7 @@ self.addEventListener('message', (event) => {
 async function networkFirst(request, fallbackUrl = '') {
   const cache = await caches.open(SHELL_CACHE_NAME);
   try {
-    const response = await fetch(request);
+    const response = await fetch(request, { cache: 'no-store' });
     if (response.ok) await cache.put(request, response.clone());
     return response;
   } catch (error) {

@@ -2,7 +2,7 @@ import { JapaneseStorage } from './storage.js';
 import { JapaneseSearch } from './search.js';
 import { JapaneseStrokePlayer } from './stroke-player.js';
 import { JapanesePractice } from './practice.js';
-import { JapaneseUI } from './ui.js';
+import { JapaneseUI } from './ui.js?v=15.7';
 import { JapaneseDictionary } from './dictionary.js';
 import { JapaneseQuiz } from './quiz.js';
 import { JapaneseStudyEngine } from './study-engine.js';
@@ -12,18 +12,18 @@ import { JapaneseTypingContentProvider } from './typing-content-provider.js';
 import { JapaneseTypingEvaluator } from './typing-evaluator.js';
 import { createTypingSession } from './typing-session.js';
 import { JapaneseKanaPrintExport } from './kana-print-export.js';
-import { createDictionaryRuntime } from './dictionary/dictionary-runtime.js';
+import { createDictionaryRuntime } from './dictionary/dictionary-runtime.js?v=15.7';
 import { DictionaryCacheRepository } from './dictionary/dictionary-cache-repository.js';
-import { LazyDictionarySource } from './dictionary/lazy-dictionary-source.js';
+import { LazyDictionarySource } from './dictionary/lazy-dictionary-source.js?v=15.7';
 import { DictionaryReleaseClient } from './dictionary/dictionary-release-client.js';
 import { DictionaryUpdateManager } from './dictionary/dictionary-update-manager.js';
 import { DictionaryPackageManager } from './dictionary/dictionary-package-manager.js';
 import { DictionaryStorageManager } from './dictionary/dictionary-storage-manager.js';
-import { JapaneseAppShellManager } from './pwa-manager.js';
+import { JapaneseAppShellManager } from './pwa-manager.js?v=15.7';
 import {
   InstalledDictionaryPackagesSource,
   LayeredDictionarySource,
-} from './dictionary/installed-dictionary-packages-source.js';
+} from './dictionary/installed-dictionary-packages-source.js?v=15.7';
 
 const JapaneseApp = (() => {
   let allData = [];
@@ -49,6 +49,8 @@ const JapaneseApp = (() => {
   let dictionaryReleaseCheck = null;
   let dictionaryCandidateVersion = '';
   let dictionaryPackages = [];
+  let dictionaryBrowsePage = 1;
+  const dictionaryBrowsePageSize = 50;
   let appShellManager = null;
   let appShellState = null;
 
@@ -61,6 +63,7 @@ const JapaneseApp = (() => {
     setupFirebaseSyncStatusListener();
     setupDictionaryUpdateControls();
     setupDictionaryPackageControls();
+    setupDictionaryBrowseControls();
     setupAppShellControls();
     void initializeAppShell();
     const firebaseSyncReady = setupFirebaseSync();
@@ -116,6 +119,7 @@ const JapaneseApp = (() => {
       });
 
       JapaneseUI.onDictionaryFilterChangeCallback(() => {
+        dictionaryBrowsePage = 1;
         renderDictionary();
       });
 
@@ -353,6 +357,22 @@ const JapaneseApp = (() => {
     });
     window.addEventListener('online', () => renderDictionaryOfflineReadiness(dictionaryPackages));
     window.addEventListener('offline', () => renderDictionaryOfflineReadiness(dictionaryPackages));
+  }
+
+  function setupDictionaryBrowseControls() {
+    document.getElementById('dictionary-package-filter')?.addEventListener('change', () => {
+      dictionaryBrowsePage = 1;
+      void renderDictionary();
+    });
+    document.getElementById('dictionary-page-previous')?.addEventListener('click', () => {
+      if (dictionaryBrowsePage <= 1) return;
+      dictionaryBrowsePage -= 1;
+      void renderDictionary();
+    });
+    document.getElementById('dictionary-page-next')?.addEventListener('click', () => {
+      dictionaryBrowsePage += 1;
+      void renderDictionary();
+    });
   }
 
   function setupAppShellControls() {
@@ -598,6 +618,7 @@ const JapaneseApp = (() => {
     const summary = document.getElementById('dictionary-package-status');
     if (!list || !summary) return;
     dictionaryPackages = packages;
+    renderDictionaryPackageFilter(packages);
     list.replaceChildren(...packages.map(createDictionaryPackageRow));
     renderDictionaryOfflineReadiness(packages);
     renderAppShellState();
@@ -606,6 +627,22 @@ const JapaneseApp = (() => {
       summary.dataset.state = 'ready';
       summary.textContent = `${installed} de ${packages.length} pacotes ${installed === 1 ? 'instalado' : 'instalados'} neste navegador.`;
     }
+  }
+
+  function renderDictionaryPackageFilter(packages) {
+    const select = document.getElementById('dictionary-package-filter');
+    if (!select) return;
+    const previous = select.value || 'essential';
+    const available = packages.filter((item) => item.id === 'essential' || item.installed);
+    select.replaceChildren(...available.map((item) => {
+      const option = document.createElement('option');
+      option.value = item.id;
+      option.textContent = `${item.name} (${formatNumber(item.entryCount)})`;
+      return option;
+    }));
+    const selected = available.some((item) => item.id === previous) ? previous : 'essential';
+    if (selected !== previous) dictionaryBrowsePage = 1;
+    select.value = selected;
   }
 
   function createDictionaryPackageRow(item) {
@@ -900,6 +937,7 @@ const JapaneseApp = (() => {
 
     if (dictionaryInput) {
       dictionaryInput.addEventListener('input', () => {
+        dictionaryBrowsePage = 1;
         clearTimeout(dictionarySearchTimer);
         dictionarySearchTimer = setTimeout(renderDictionary, 150);
       });
@@ -1196,7 +1234,9 @@ const JapaneseApp = (() => {
     const dictionaryInput = document.getElementById('dictionary-search-input');
     const query = dictionaryInput ? dictionaryInput.value : '';
     const filters = JapaneseUI.getDictionaryFilters();
+    const packageId = document.getElementById('dictionary-package-filter')?.value || 'essential';
     let results = [];
+    let browseResult = null;
 
     try {
       if (filters.tab === 'history') {
@@ -1208,8 +1248,21 @@ const JapaneseApp = (() => {
         const ids = JapaneseStorage.getDictionaryFavorites();
         results = await dictionaryRuntime.filterByIds(ids, { ...filters, signal });
         results = filterDictionaryWords(results, query);
+      } else if (!query.trim() && typeof dictionaryRuntime.browse === 'function') {
+        browseResult = await dictionaryRuntime.browse({
+          ...filters,
+          packageId,
+          page: dictionaryBrowsePage,
+          pageSize: dictionaryBrowsePageSize,
+          signal,
+        });
+        if (!browseResult.entries.length && dictionaryBrowsePage > 1) {
+          dictionaryBrowsePage -= 1;
+          return renderDictionary();
+        }
+        results = browseResult.entries;
       } else {
-        results = await dictionaryRuntime.search(query, { ...filters, signal });
+        results = await dictionaryRuntime.search(query, { ...filters, packageId, signal });
       }
     } catch (error) {
       if (error?.name === 'AbortError') return;
@@ -1218,8 +1271,44 @@ const JapaneseApp = (() => {
     }
 
     if (sequence === dictionaryRenderSequence && !signal.aborted) {
-      JapaneseUI.renderDictionary(results);
+      JapaneseUI.renderDictionary(results, {
+        countLabel: browseResult ? dictionaryBrowseCountLabel(browseResult) : '',
+      });
+      renderDictionaryPagination(browseResult, { query, tab: filters.tab, packageId });
     }
+  }
+
+  function dictionaryBrowseCountLabel(result) {
+    if (!result.entries.length) return '0 palavras';
+    const start = (result.page - 1) * result.pageSize + 1;
+    const end = start + result.entries.length - 1;
+    return Number.isSafeInteger(result.total)
+      ? `${formatNumber(start)}-${formatNumber(end)} de ${formatNumber(result.total)} palavras`
+      : `${formatNumber(start)}-${formatNumber(end)} palavras`;
+  }
+
+  function renderDictionaryPagination(result, context = {}) {
+    const pagination = document.getElementById('dictionary-pagination');
+    const previous = document.getElementById('dictionary-page-previous');
+    const next = document.getElementById('dictionary-page-next');
+    const number = document.getElementById('dictionary-page-number');
+    const summary = document.getElementById('dictionary-page-summary');
+    const packageFilter = document.getElementById('dictionary-package-filter');
+    if (!pagination || !previous || !next || !number || !summary || !packageFilter) return;
+    const browsing = Boolean(result) && !context.query.trim() && context.tab === 'all';
+    packageFilter.disabled = context.tab !== 'all';
+    pagination.hidden = !browsing;
+    summary.textContent = browsing
+      ? `${dictionaryPackageName(context.packageId)} | ${result.dictionaryVersion || 'base local'}`
+      : context.tab === 'all' ? `Pesquisa em ${dictionaryPackageName(context.packageId)}` : '';
+    if (!browsing) return;
+    previous.disabled = !result.hasPrevious;
+    next.disabled = !result.hasNext;
+    number.textContent = `Pagina ${formatNumber(result.page)}`;
+  }
+
+  function dictionaryPackageName(packageId) {
+    return dictionaryPackages.find((item) => item.id === packageId)?.name || 'Essencial N5';
   }
 
   function renderQuiz() {

@@ -4,6 +4,7 @@ import { sha256Hex, verifyArtifact } from './dictionary-cache-installer.js';
 const DEFAULT_DATA_URL = new URL('../../data/dictionary/', import.meta.url);
 const DEFAULT_MANIFEST_URL = new URL('manifests/2026.07.13-3.json', DEFAULT_DATA_URL);
 const INDEX_KINDS = ['written', 'reading', 'romaji', 'pt'];
+const MAX_BROWSE_BUCKET_CACHE = 4;
 
 export class LazyDictionarySource {
   constructor(options = {}) {
@@ -23,6 +24,8 @@ export class LazyDictionarySource {
     this.routes = null;
     this.initPromise = null;
     this.metrics = createMetrics();
+    this.browseBucketCounts = new Map();
+    this.browseBucketCache = new Map();
 
     if (typeof this.fetchImpl !== 'function') {
       throw new Error('Fetch is unavailable for the sharded dictionary source.');
@@ -168,6 +171,57 @@ export class LazyDictionarySource {
     return requested.map((id) => byId.get(id)).filter(Boolean);
   }
 
+  async browse(options = {}) {
+    await this.load();
+    const page = normalizePositiveInteger(options.page, 1);
+    const pageSize = Math.min(normalizePositiveInteger(options.pageSize, 50), 100);
+    const script = normalizeScript(options.script);
+    const offset = (page - 1) * pageSize;
+    const entries = [];
+    let matched = 0;
+    let exhausted = true;
+
+    for (const [bucket, descriptor] of Object.entries(this.routes.entries.buckets)
+      .sort(([left], [right]) => left.localeCompare(right))) {
+      throwIfAborted(options.signal);
+      const countKey = `${script}:${bucket}`;
+      const knownCount = this.browseBucketCounts.get(countKey);
+      if (knownCount !== undefined && matched + knownCount <= offset) {
+        matched += knownCount;
+        continue;
+      }
+
+      const bucketEntries = filterByScript(
+        await this.loadBrowseBucket(bucket, descriptor, options.signal),
+        script,
+      );
+      this.browseBucketCounts.set(countKey, bucketEntries.length);
+      for (const entry of bucketEntries) {
+        if (matched >= offset && entries.length < pageSize + 1) entries.push(entry);
+        matched += 1;
+        if (entries.length > pageSize) {
+          exhausted = false;
+          break;
+        }
+      }
+      if (!exhausted) break;
+    }
+
+    const hasNext = entries.length > pageSize;
+    if (hasNext) entries.pop();
+    const total = script ? (exhausted ? matched : null) : Number(this.routes.entries.coverage?.entries || 0);
+    return {
+      entries,
+      page,
+      pageSize,
+      total,
+      hasPrevious: page > 1,
+      hasNext: hasNext || (Number.isSafeInteger(total) && offset + entries.length < total),
+      packageId: this.manifest.packageId,
+      dictionaryVersion: this.manifest.dictionaryVersion,
+    };
+  }
+
   getMetrics() {
     return { ...this.metrics };
   }
@@ -194,6 +248,25 @@ export class LazyDictionarySource {
       found.push(...convertPayloadEntries(entries, shard.translations, options.romajiHints));
     }
     return found;
+  }
+
+  async loadBrowseBucket(bucket, descriptor, signal) {
+    if (this.browseBucketCache.has(bucket)) {
+      const entries = this.browseBucketCache.get(bucket);
+      this.browseBucketCache.delete(bucket);
+      this.browseBucketCache.set(bucket, entries);
+      return entries;
+    }
+    const bytes = await this.loadArtifact(descriptor, 'entry-shard', signal);
+    this.metrics.entryShardsRead += 1;
+    const shard = parseJson(bytes, descriptor.path, this.decoder);
+    validateEntryShard(shard, this.manifest, bucket);
+    const entries = convertPayloadEntries(shard.entries, shard.translations);
+    this.browseBucketCache.set(bucket, entries);
+    while (this.browseBucketCache.size > MAX_BROWSE_BUCKET_CACHE) {
+      this.browseBucketCache.delete(this.browseBucketCache.keys().next().value);
+    }
+    return entries;
   }
 
   async loadArtifact(descriptor, kind, signal) {
@@ -509,6 +582,16 @@ function filterByScript(entries, script) {
 function normalizeLimit(value) {
   const limit = Number(value);
   return Number.isSafeInteger(limit) && limit > 0 ? limit : Number.MAX_SAFE_INTEGER;
+}
+
+function normalizePositiveInteger(value, fallback) {
+  const number = Number(value);
+  return Number.isSafeInteger(number) && number > 0 ? number : fallback;
+}
+
+function normalizeScript(value) {
+  const script = String(value || '').trim().toLowerCase();
+  return !script || script === 'all' || script === 'todas' ? '' : script;
 }
 
 function normalizeConcurrency(value) {

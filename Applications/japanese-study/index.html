@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#e63946">
   <link rel="icon" href="data:,">
   <title>Japanese Study - Aprenda Kana e Kanji N5</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/styles.css?v=15.7">
 </head>
 <body>
   <header class="app-header">
@@ -162,7 +162,20 @@
         </div>
       </div>
 
+      <div class="dictionary-catalog-bar">
+        <label class="dictionary-package-filter" for="dictionary-package-filter">
+          <span>Pacote</span>
+          <select id="dictionary-package-filter" aria-label="Pacote do dicionario"></select>
+        </label>
+        <span id="dictionary-page-summary" class="dictionary-page-summary" aria-live="polite"></span>
+      </div>
+
       <div id="dictionary-grid" class="dictionary-table"></div>
+      <nav id="dictionary-pagination" class="dictionary-pagination" aria-label="Paginas do dicionario" hidden>
+        <button id="dictionary-page-previous" type="button">Anterior</button>
+        <span id="dictionary-page-number">Pagina 1</span>
+        <button id="dictionary-page-next" type="button">Proxima</button>
+      </nav>
     </section>
 
     <section id="quiz-section" class="quiz-section" style="display:none" aria-label="Quiz de japonês">
@@ -431,6 +444,6 @@
     </div>
   </div>
 
-  <script type="module" src="js/app.js"></script>
+  <script type="module" src="js/app.js?v=15.7"></script>
 </body>
 </html>
