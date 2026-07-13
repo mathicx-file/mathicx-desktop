@@ -138,6 +138,25 @@ test('loads the essential pack only for an empty dictionary query', async () => 
   await source.repository.close();
 });
 
+test('browses deterministic essential pages without loading search indexes', async () => {
+  const requests = [];
+  const source = createSource('browse', createFileFetch(requests));
+  await source.load();
+
+  const first = await source.browse({ page: 1, pageSize: 10 });
+  const second = await source.browse({ page: 2, pageSize: 10 });
+  assert.equal(first.entries.length, 10);
+  assert.equal(first.total, 44);
+  assert.equal(first.hasPrevious, false);
+  assert.equal(first.hasNext, true);
+  assert.equal(second.entries.length, 10);
+  assert.equal(second.hasPrevious, true);
+  assert.equal(new Set([...first.entries, ...second.entries].map((entry) => entry.id)).size, 20);
+  assert.ok(requests.some((item) => item.includes('/shards/entries/')));
+  assert.ok(!requests.some((item) => item.includes('/indexes/')));
+  await source.repository.close();
+});
+
 test('resolves stable IDs lazily and leaves legacy aliases for runtime fallback', async () => {
   const source = createSource('ids', createFileFetch([]));
   await source.load();

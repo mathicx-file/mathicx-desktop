@@ -197,6 +197,36 @@ Resultado da promocao:
 
 Validacao do proprietario: modelo e promocao aprovados em 2026-07-13.
 
+### 15.7 - Navegacao pelos pacotes instalados
+
+Status: **Implementada em 2026-07-13; aguardando validacao do proprietario**.
+
+- seletor de fonte adicionado a aba **Dicionario**, exibindo `essential` e os
+  pacotes opcionais efetivamente instalados;
+- quantidade de verbetes apresentada junto ao nome de cada pacote;
+- listagem paginada em blocos de 50 verbetes, com intervalo atual, total e
+  controles anterior/proxima;
+- navegacao deterministica pelos shards do pacote, sem montar o catalogo
+  completo em memoria;
+- cache limitado a quatro buckets decodificados para manter o consumo de
+  memoria previsivel;
+- busca textual limitada ao pacote selecionado; historico e favoritos continuam
+  agregados porque representam dados pessoais, nao conteudo de um pacote;
+- filtros por escrita continuam disponiveis e reiniciam a navegacao na primeira
+  pagina;
+- troca ou remocao de pacote atualiza imediatamente as opcoes da aba;
+- runtime legado preservado como fallback quando a fonte nao implementa
+  navegacao paginada;
+- Service Worker atualizado para `v3`, com verificacao explicita de atualizacao
+  e requisicoes network-first sem cache HTTP intermediario;
+- URLs dos modulos alterados na `15.7` foram versionadas para impedir a mistura
+  de shell novo com runtime antigo depois de uma publicacao.
+
+Validacao automatizada: paginas consecutivas do pacote `full` retornaram 50
+verbetes sem sobreposicao, a busca exclusiva por `暗色` encontrou o verbete
+esperado e a interface foi verificada em desktop e celular sem erros de pagina.
+O artefato final manteve 1.319 arquivos e passou a 27.120.050 bytes.
+
 ## 4. Decisao Para Iniciar
 
 Confirmar o modelo em camadas recomendado ou escolher entre:
@@ -223,4 +253,6 @@ Nenhuma intervencao no Console Firebase e necessaria para iniciar a `15.1`.
 - `15.5`: concluida e aprovada pelo proprietario;
 - `15.6`: concluida com promocao comprimida, integracao com a busca e rollback
   real validados;
+- `15.7`: implementada com seletor por pacote, navegacao paginada e consistencia
+  de atualizacao do shell; aguarda validacao do proprietario;
 - Fase 15 concluida; a proxima fase oficial e a Fase 16.

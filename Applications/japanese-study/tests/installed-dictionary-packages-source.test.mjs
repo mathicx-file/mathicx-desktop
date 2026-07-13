@@ -34,6 +34,12 @@ test('searches a gzip package from cache and composes it with the essential sour
 
   const byId = await layered.getMany(['jmdict-999', 'jmdict-1']);
   assert.deepEqual(byId.map((entry) => entry.id), ['jmdict-999', 'jmdict-1']);
+
+  const page = await layered.browse({ packageId: 'core', page: 1, pageSize: 20 });
+  assert.deepEqual(page.entries.map((entry) => entry.id), ['jmdict-999']);
+  assert.equal(page.total, 1);
+  assert.equal(page.hasNext, false);
+  assert.deepEqual((await layered.search('inu', { packageId: 'core' })).map((entry) => entry.id), ['jmdict-999']);
 });
 
 test('ignores optional packages for one-character Latin searches', async () => {
@@ -94,6 +100,7 @@ function createInstalledFixture() {
       packageId,
       dictionaryVersion: version,
       routing: { strategy: 'sha256-id-prefix', prefixLength: 1 },
+      coverage: { shards: 1, entries: 1 },
       buckets: { [entryBucket]: entryDescriptor },
     }, 'route'),
     indexes: {

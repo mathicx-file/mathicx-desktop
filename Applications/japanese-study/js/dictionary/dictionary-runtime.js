@@ -51,6 +51,7 @@ export class DictionaryRuntime {
         const entries = await this.provider.search(query, {
           script: filters.script,
           category: filters.category,
+          packageId: filters.packageId,
           limit: filters.limit,
           signal: filters.signal,
         });
@@ -61,6 +62,30 @@ export class DictionaryRuntime {
       }
     }
     return this.legacyDictionary.search(query, filters);
+  }
+
+  async browse(options = {}) {
+    await this.init();
+    if (this.mode !== 'provider' || typeof this.provider.source?.browse !== 'function') {
+      const entries = this.legacyDictionary.search('', options);
+      const page = Number(options.page) || 1;
+      const pageSize = Number(options.pageSize) || 50;
+      const offset = (page - 1) * pageSize;
+      return {
+        entries: entries.slice(offset, offset + pageSize),
+        page,
+        pageSize,
+        total: entries.length,
+        hasPrevious: page > 1,
+        hasNext: offset + pageSize < entries.length,
+        packageId: 'essential',
+      };
+    }
+    const result = await this.provider.source.browse(options);
+    return {
+      ...result,
+      entries: result.entries.map(toLegacyDictionaryEntry),
+    };
   }
 
   async filterByIds(ids, filters = {}) {

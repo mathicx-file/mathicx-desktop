@@ -1,4 +1,4 @@
-import { LazyDictionarySource } from './lazy-dictionary-source.js';
+import { LazyDictionarySource } from './lazy-dictionary-source.js?v=15.7';
 
 const PACKAGE_FORMAT = 'mathicx-japanese-dictionary-offline-package';
 
@@ -36,6 +36,7 @@ export class InstalledDictionaryPackagesSource {
           decodeArtifact: (bytes, descriptor) => this.decodeArtifact(bytes, descriptor),
           fetchImpl: async () => { throw new Error(`Installed package artifact is missing: ${state.packageId}`); },
         });
+        source.installedPackageId = state.packageId;
         await source.load();
         sources.push(source);
       } catch (error) {
@@ -50,7 +51,10 @@ export class InstalledDictionaryPackagesSource {
   async search(query, options = {}) {
     await this.refresh();
     if (isShortLatinQuery(query)) return [];
-    const groups = await Promise.all(this.sources.map(async (source) => {
+    const sources = options.packageId
+      ? this.sources.filter((source) => source.installedPackageId === options.packageId)
+      : this.sources;
+    const groups = await Promise.all(sources.map(async (source) => {
       try {
         return await source.search(query, options);
       } catch (error) {
@@ -59,6 +63,13 @@ export class InstalledDictionaryPackagesSource {
       }
     }));
     return dedupeEntries(groups.flat());
+  }
+
+  async browse(packageId, options = {}) {
+    await this.refresh();
+    const source = this.sources.find((item) => item.installedPackageId === packageId);
+    if (!source) throw new Error(`Dictionary package is not installed: ${packageId}`);
+    return source.browse(options);
   }
 
   async getMany(ids, options = {}) {
@@ -103,11 +114,20 @@ export class LayeredDictionarySource {
   }
 
   async search(query, options = {}) {
+    if (options.packageId === 'essential') return this.baseSource.search(query, options);
+    if (options.packageId) return this.installedSource.search(query, options);
     const [base, installed] = await Promise.all([
       this.baseSource.search(query, options),
       this.installedSource.search(query, options),
     ]);
     return dedupeEntries([...base, ...installed]).slice(0, normalizeLimit(options.limit));
+  }
+
+  browse(options = {}) {
+    const packageId = options.packageId || 'essential';
+    return packageId === 'essential'
+      ? this.baseSource.browse(options)
+      : this.installedSource.browse(packageId, options);
   }
 
   async getById(id, options = {}) {

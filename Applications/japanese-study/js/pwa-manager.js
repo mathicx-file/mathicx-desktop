@@ -34,6 +34,7 @@ export class JapaneseAppShellManager {
       scope: this.scopeUrl,
       updateViaCache: 'none',
     });
+    await registration.update?.();
     await waitForActiveWorker(registration);
     if (options.persistPreference !== false) {
       this.storage?.setItem(JAPANESE_SHELL_PREFERENCE_KEY, '1');
@@ -55,6 +56,7 @@ export class JapaneseAppShellManager {
       scope: this.scopeUrl,
       updateViaCache: 'none',
     });
+    await registration.update?.();
     await waitForActiveWorker(registration);
     const worker = registration.active || registration.waiting;
     if (!worker || typeof this.MessageChannelClass !== 'function') {
@@ -101,7 +103,7 @@ export class JapaneseAppShellManager {
 }
 
 async function waitForActiveWorker(registration) {
-  const worker = registration.active || registration.waiting || registration.installing;
+  const worker = registration.installing || registration.waiting || registration.active;
   if (!worker || worker.state === 'activated') return;
   await new Promise((resolve, reject) => {
     const timeout = setTimeout(() => reject(new Error('Tempo esgotado ao preparar o aplicativo offline.')), 15000);
