@@ -1,6 +1,6 @@
 # Fase 13: Pipeline do Dicionario no GitHub Pages
 
-> Status: implementacao local concluida; publicacao e smoke test pendentes
+> Status: concluida
 >
 > Atualizado em: 2026-07-13
 
@@ -81,7 +81,7 @@ repositorio.
 
 ### 13.4 - Smoke test publico
 
-Status: **Pendente de push e deploy**.
+Status: **Concluida em 2026-07-13**.
 
 Depois do push para `main`:
 
@@ -91,6 +91,15 @@ Depois do push para `main`:
 4. Pesquisar uma palavra e confirmar que nao ha respostas 404 ou erros de hash.
 5. Abrir `Applications/japanese-study/data/dictionary/releases/current.json`
    sob a URL publica e confirmar a versao esperada.
+
+Evidencias da primeira publicacao:
+
+- commit publicado: `ef6fce1`;
+- workflow `Deploy GitHub Pages #16`: jobs `build` e `deploy` aprovados;
+- raiz, `src/main.js` e Japanese Study responderam HTTP 200;
+- release publica `2026.07.13-2`, com 137 artefatos;
+- manifesto, routes, shard de entradas e indice de romaji responderam HTTP 200;
+- descritores versionados conferidos por tamanho e SHA-256.
 
 ### 13.5 - Rollback
 
@@ -107,6 +116,5 @@ Firestore e alterado pelo rollback do Pages.
 
 ## 5. Criterio de Conclusao
 
-A fase sera marcada como concluida somente quando o primeiro deploy pelo novo
-workflow passar e o smoke test da subfase 13.4 for aprovado na URL publica.
-
+**Atendido.** O primeiro deploy pelo novo workflow passou e o smoke test da
+subfase 13.4 confirmou a distribuicao versionada na URL publica.

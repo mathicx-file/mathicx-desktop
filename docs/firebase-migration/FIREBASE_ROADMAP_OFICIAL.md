@@ -4,7 +4,7 @@
 >
 > Status: fonte oficial de planejamento e execucao
 >
-> Fase atual: Fase 13 em andamento; publicacao e smoke test pendentes
+> Fase atual: Fase 13 concluida; proxima Fase 14
 
 ## 1. Autoridade Deste Documento
 
@@ -66,7 +66,7 @@ Fase 10.3 Metricas de equivalencia com o JSON legado
 | 10 | Abstracao do dicionario | Concluida | Antiga Fase 7 revisada |
 | 11 | Pipeline e pacote essencial | Concluida | Antiga Fase 8 revisada |
 | 12 | Indices, shards e cache | Concluida | Antiga Fase 9 revisada |
-| 13 | Pipeline do dicionario no GitHub Pages | Em andamento | Antiga Fase 10 revisada |
+| 13 | Pipeline do dicionario no GitHub Pages | Concluida | Antiga Fase 10 revisada |
 | 14 | Manifesto remoto, atualizacao e rollback | Planejada | Antiga Fase 11 revisada |
 | 15 | Pacotes offline e PWA | Planejada | Antiga Fase 12 revisada |
 | 16 | Confiabilidade, backup e recuperacao | Planejada | Melhoria incorporada |
@@ -354,7 +354,7 @@ Intervencao do proprietario: validar experiencia e tamanho dos downloads.
 
 ### Fase 13: Pipeline do Dicionario no GitHub Pages
 
-Status: **Em andamento**.
+Status: **Concluida**.
 
 Origem: antiga Fase 10 revisada.
 
@@ -375,17 +375,20 @@ Entregue localmente:
 - testes de adulteracao de hash e inclusao de arquivo sensivel;
 - rollback por commit ou tag no acionamento manual do workflow.
 
-Ainda falta:
+Validacao publica:
 
-- executar o novo workflow depois do push;
-- testar os caminhos dos chunks e o login na URL publica.
+- commit `ef6fce1` publicado pelo workflow `Deploy GitHub Pages #16`;
+- jobs `build` e `deploy` concluidos com sucesso;
+- app principal, Japanese Study e modulos de boot responderam HTTP 200;
+- release `2026.07.13-2`, manifesto, routes, shard e indice acessiveis;
+- descritores remotos conferidos por tamanho e SHA-256.
 
 Subfases previstas:
 
-- `13.1`: job de geracao e validacao - concluida localmente;
-- `13.2`: configuracao Firebase de producao validada - concluida localmente;
-- `13.3`: artifact estatico versionado - concluida localmente;
-- `13.4`: smoke test da URL publica - pendente de deploy;
+- `13.1`: job de geracao e validacao - concluida;
+- `13.2`: configuracao Firebase de producao validada - concluida;
+- `13.3`: artifact estatico versionado - concluida;
+- `13.4`: smoke test da URL publica - concluida;
 - `13.5`: rollback documentado - concluida.
 
 Criterio de conclusao: o app e o pacote versionado do dicionario sao gerados, validados e publicados pelo mesmo fluxo controlado.
@@ -547,23 +550,22 @@ Cada item aprovado deve virar subfase `18.x`, com motivacao, custo, risco e crit
 
 ## 7. Direcao Atual
 
-O projeto esta na **Fase 13: Pipeline do Dicionario no GitHub Pages**. O
-artefato minimo e versionado, sua validacao e o novo workflow foram
-implementados localmente. A conclusao depende do primeiro deploy desse fluxo e
-da validacao da URL publica pelo proprietario.
+O projeto concluiu a **Fase 13: Pipeline do Dicionario no GitHub Pages**. O
+artefato minimo e versionado foi gerado, validado e publicado pelo novo
+workflow. A release publica `2026.07.13-2` foi confirmada com manifesto, routes,
+shards e indices acessiveis no subdiretorio do Pages.
 
 Proximo recorte recomendado:
 
 ```text
-Fase 13.4
-  -> enviar as alteracoes para main
-  -> acompanhar os jobs build e deploy
-  -> validar login, Japanese Study e chunks na URL publica
-  -> confirmar releases/current.json na versao esperada
+Fase 14
+  -> revisar o contrato do manifesto remoto ja publicado
+  -> definir deteccao e oferta de atualizacao no cliente
+  -> separar atualizacao automatica de ativacao da nova versao
+  -> ampliar rollback entre versoes instaladas
 ```
 
-Nenhuma intervencao no Console Firebase e necessaria. A proxima intervencao do
-proprietario e o push e o smoke test publico descrito no documento da Fase 13.
+Nenhuma intervencao no Console Firebase e necessaria para iniciar a Fase 14.
 
 ## 8. Protocolo de Atualizacao do Roteiro
 
