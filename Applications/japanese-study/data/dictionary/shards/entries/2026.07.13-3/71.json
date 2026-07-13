@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-entry-shard",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-3",
+  "shardId": "71",
+  "entries": [
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1387990",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1387990"
+      },
+      "writtenForms": [
+        "先生"
+      ],
+      "readings": [
+        "せんせい"
+      ],
+      "common": true,
+      "priorityTags": [],
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1387990:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "teacher",
+              "instructor",
+              "master"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1387990:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)",
+            "noun, used as a suffix"
+          ],
+          "fields": [],
+          "misc": [
+            "honorific or respectful (sonkeigo) language"
+          ],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "sensei",
+              "title or form of address for a teacher, master, doctor, lawyer, etc."
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1387990:sense:3",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [
+            "familiar language",
+            "jocular, humorous term"
+          ],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "intimate or teasing form of address"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1387990:sense:4",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [
+            "archaic"
+          ],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "one's elder"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "translations": [
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1387990:jmdict-1387990:sense:1",
+      "entryId": "jmdict-1387990",
+      "senseId": "jmdict-1387990:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "professor"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_sensei"
+      },
+      "reviewedAt": "2026-07-13"
+    }
+  ]
+}

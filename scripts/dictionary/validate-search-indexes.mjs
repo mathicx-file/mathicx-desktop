@@ -19,7 +19,7 @@ const files = [];
 for (const indexKind of config.indexKinds) {
   const indexDir = path.join(indexesRoot, indexKind);
   const names = (await fs.readdir(indexDir, { withFileTypes: true }))
-    .filter((item) => item.isFile() && /^(?:[a-z0-9_]|u-[a-f0-9]{2,6})\.json$/u.test(item.name))
+    .filter((item) => item.isFile() && /^(?:[a-z0-9]{1,2}|_|u-[a-f0-9]{2,6})\.json$/u.test(item.name))
     .map((item) => item.name)
     .sort();
   files.push(...names.map((name) => ({ indexKind, path: path.join(indexDir, name) })));

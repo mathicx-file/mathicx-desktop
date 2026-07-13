@@ -11,6 +11,7 @@ import {
   tokenizePortuguese,
   validateSearchIndexes,
 } from '../lib/search-indexes.mjs';
+import { normalizeLexicalEntry } from '../lib/pipeline-schema.mjs';
 
 const projectRoot = new URL('../../../', import.meta.url);
 
@@ -38,6 +39,7 @@ test('normalizes kana, Hepburn romaji and Portuguese tokens deterministically', 
   assert.equal(createIndexBucket('reading', 'ばす'), 'u-3070');
   assert.equal(createIndexBucket('written', '食べる'), 'u-98');
   assert.equal(createIndexBucket('romaji', 'basu'), 'b');
+  assert.equal(createIndexBucket('romaji', 'basu', 'first-ascii-prefix-2'), 'ba');
 });
 
 test('generates separate term-to-id indexes without embedding entries', () => {
@@ -55,6 +57,20 @@ test('generates separate term-to-id indexes without embedding entries', () => {
   assert.equal(result.report.indexes.reading.entriesCovered, 3);
   assert.equal(result.report.indexes.romaji.entriesCovered, 3);
   assert.deepEqual(result, createSearchIndexes(createPackage(), CONFIG));
+});
+
+test('keeps numeric object keys in deterministic JavaScript property order', () => {
+  const packageData = createPackage();
+  packageData.entries.push(normalizeLexicalEntry({
+    sourceEntryId: '9999999',
+    source: { id: 'jmdict', version: 'fixture', entryId: '9999999' },
+    writtenForms: ['10', '2'],
+    readings: ['じゅう'],
+    senses: [{ englishGlosses: ['ten'] }],
+  }));
+  const result = createSearchIndexes(packageData, CONFIG);
+  const numericShard = result.shards.find((shard) => shard.indexKind === 'written' && shard.bucket === 'u-00');
+  assert.deepEqual(Object.keys(numericShard.terms).slice(0, 2), ['2', '10']);
 });
 
 test('rejects missing shards, wrong buckets, unknown ids and size overflow', () => {

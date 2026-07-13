@@ -11,27 +11,51 @@ export class DictionaryCacheInstaller {
     this.crypto = options.crypto || globalThis.crypto;
     this.textEncoder = options.textEncoder || new TextEncoder();
     this.textDecoder = options.textDecoder || new TextDecoder();
+    this.now = options.now || (() => Date.now());
   }
 
-  async installAndPromote(manifest) {
+  async installAndPromote(manifest, options = {}) {
+    const candidate = await this.downloadCandidate(manifest, options);
+    if (candidate.status === 'already-active') return candidate;
+    return this.promoteCandidate(candidate.version, candidate);
+  }
+
+  async downloadCandidate(manifest, options = {}) {
     const version = validateManifest(manifest);
     const cacheState = await this.repository.getCacheState();
 
-    if (cacheState.activeVersion === version) {
+    if (cacheState.activeVersion === version && options.revalidate !== true) {
       return { status: 'already-active', version, ...cacheState };
     }
-    if (cacheState.previousVersion === version) {
+    if (cacheState.previousVersion === version && cacheState.activeVersion !== version) {
       throw new Error(`Cannot overwrite the rollback dictionary cache version: ${version}`);
     }
 
-    await this.repository.prepareVersion(version, {
-      packageId: manifest.packageId,
-      releaseStatus: manifest.releaseStatus,
-    });
+    const candidateState = await this.repository.getVersionState(version);
+    if (candidateState?.status === 'ready' && options.revalidate !== true) {
+      return { status: 'ready', version, ...candidateState, ...cacheState };
+    }
+    const resumable = ['installing', 'interrupted'].includes(candidateState?.status)
+      && candidateState?.packageId === manifest.packageId;
+    const revalidating = options.revalidate === true && candidateState?.status === 'ready'
+      && candidateState?.packageId === manifest.packageId;
+    if (resumable || revalidating) {
+      await this.repository.setVersionState(version, {
+        status: 'installing',
+        ...(revalidating ? { revalidatedAt: this.now() } : { resumedAt: this.now() }),
+      });
+    } else {
+      await this.repository.prepareVersion(version, {
+        packageId: manifest.packageId,
+        releaseStatus: manifest.releaseStatus,
+      });
+    }
 
     let currentPath = '';
     try {
       const installed = new Map();
+      let downloadedArtifacts = 0;
+      let reusedArtifacts = 0;
       const install = async (descriptor, kind) => {
         validateDescriptor(descriptor);
         currentPath = descriptor.path;
@@ -43,10 +67,26 @@ export class DictionaryCacheInstaller {
           return existing.bytes;
         }
 
+        const cached = await this.repository.getArtifact(version, descriptor.path);
+        if (cached) {
+          try {
+            await verifyArtifact(cached.bytes, descriptor, this.crypto);
+            const bytes = new Uint8Array(cached.bytes);
+            installed.set(descriptor.path, { ...descriptor, bytes });
+            reusedArtifacts += 1;
+            options.onProgress?.({ version, path: descriptor.path, state: 'reused' });
+            return bytes;
+          } catch {
+            await this.repository.deleteArtifact(version, descriptor.path);
+          }
+        }
+
         const bytes = toUint8Array(await this.loadArtifact(descriptor.path));
         await verifyArtifact(bytes, descriptor, this.crypto);
         await this.repository.putArtifact(version, descriptor, bytes, kind);
         installed.set(descriptor.path, { ...descriptor, bytes });
+        downloadedArtifacts += 1;
+        options.onProgress?.({ version, path: descriptor.path, state: 'downloaded' });
         return bytes;
       };
 
@@ -75,20 +115,41 @@ export class DictionaryCacheInstaller {
         byteLength: manifestBytes.byteLength,
         sha256: await sha256Hex(manifestBytes, this.crypto),
       };
-      await this.repository.putArtifact(version, manifestDescriptor, manifestBytes, 'manifest');
+      const cachedManifest = await this.repository.getArtifact(version, manifestDescriptor.path);
+      if (cachedManifest) {
+        try {
+          await verifyArtifact(cachedManifest.bytes, manifestDescriptor, this.crypto);
+          reusedArtifacts += 1;
+        } catch {
+          await this.repository.deleteArtifact(version, manifestDescriptor.path);
+          await this.repository.putArtifact(version, manifestDescriptor, manifestBytes, 'manifest');
+          downloadedArtifacts += 1;
+        }
+      } else {
+        await this.repository.putArtifact(version, manifestDescriptor, manifestBytes, 'manifest');
+        downloadedArtifacts += 1;
+      }
 
       const artifactCount = installed.size + 1;
       const byteLength = [...installed.values()].reduce((total, item) => total + item.byteLength, 0)
         + manifestBytes.byteLength;
       await this.repository.setVersionState(version, {
         status: 'ready',
-        completedAt: Date.now(),
+        completedAt: this.now(),
         artifactCount,
         byteLength,
         manifestPath,
+        manifestDescriptor,
       });
-      const promoted = await this.repository.promoteVersion(version);
-      return { status: 'promoted', version, artifactCount, byteLength, ...promoted };
+      return {
+        status: 'ready',
+        version,
+        artifactCount,
+        byteLength,
+        downloadedArtifacts,
+        reusedArtifacts,
+        ...cacheState,
+      };
     } catch (error) {
       const failure = {
         version,
@@ -96,10 +157,19 @@ export class DictionaryCacheInstaller {
         code: classifyFailure(error),
         message: error?.message || String(error),
       };
-      await this.repository.deleteVersion(version).catch(() => {});
+      await this.repository.setVersionState(version, {
+        status: 'interrupted',
+        interruptedAt: this.now(),
+        failure,
+      }).catch(() => {});
       await this.repository.recordFailure(failure).catch(() => {});
       throw error;
     }
+  }
+
+  async promoteCandidate(version, candidate = {}) {
+    const promoted = await this.repository.promoteVersion(version);
+    return { ...candidate, status: 'promoted', version, ...promoted };
   }
 
   rollback() {

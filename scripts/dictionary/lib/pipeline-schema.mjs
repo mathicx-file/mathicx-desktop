@@ -45,6 +45,7 @@ export function normalizeLexicalEntry(entry) {
     writtenForms,
     readings,
     common: Boolean(entry.common),
+    priorityTags: uniqueTexts(entry.priorityTags),
     tags: uniqueTexts(entry.tags),
     senses,
   });
@@ -170,8 +171,8 @@ export function normalizeBootstrapPackage(payload, options = {}) {
     strokeAssets: toArray(payload.strokeAssets).map(normalizeStrokeAsset),
   };
 
-  if (result.id !== BOOTSTRAP_PACKAGE_ID) {
-    throw new TypeError(`Dictionary package id must be ${BOOTSTRAP_PACKAGE_ID}.`);
+  if (![BOOTSTRAP_PACKAGE_ID, 'core-common', 'full-jmdict-kanjidic2'].includes(result.id)) {
+    throw new TypeError(`Unsupported dictionary package id: ${result.id}.`);
   }
   if (!result.version) throw new TypeError('Dictionary package requires a version.');
   assertUniqueIds(result.sources, 'source');

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-search-index-shard",
+  "indexKind": "romaji",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-3",
+  "bucket": "a",
+  "normalization": "wanakana-5.3.1-hepburn-ascii-v1",
+  "terms": {
+    "amerika": [
+      "jmdict-1149830"
+    ],
+    "asa": [
+      "jmdict-1428280"
+    ]
+  }
+}

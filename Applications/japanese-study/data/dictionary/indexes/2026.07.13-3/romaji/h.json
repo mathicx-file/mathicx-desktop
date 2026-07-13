@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-search-index-shard",
+  "indexKind": "romaji",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-3",
+  "bucket": "h",
+  "normalization": "wanakana-5.3.1-hepburn-ascii-v1",
+  "terms": {
+    "hana": [
+      "jmdict-1194500",
+      "jmdict-1486720"
+    ],
+    "hito": [
+      "jmdict-1580640"
+    ],
+    "hoteru": [
+      "jmdict-1122650"
+    ]
+  }
+}

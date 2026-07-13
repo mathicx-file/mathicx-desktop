@@ -2,20 +2,22 @@ import path from 'node:path';
 
 import { PIPELINE_SCHEMA_VERSION } from './pipeline-schema.mjs';
 import { readJsonFile, readSourceSnapshot } from './source-io.mjs';
-import { selectKanjiBootstrap, selectLexicalBootstrap } from './bootstrap-selection.mjs';
+import { selectKanjiTier, selectLexicalTier } from './bootstrap-selection.mjs';
 import { parseJmdictXml, parseKanjidic2Xml } from './xml-sources.mjs';
 
 export async function importJmdictSnapshot(options) {
   const context = await loadImportContext(options, 'jmdict');
   const parsed = parseJmdictXml(context.snapshot.text, context.source);
-  const selected = selectLexicalBootstrap(parsed, context.baseline);
+  const selected = selectLexicalTier(parsed, context.selectionMode, context.baseline);
   return createArtifact(context, parsed.length, selected);
 }
 
 export async function importKanjidic2Snapshot(options) {
   const context = await loadImportContext(options, 'kanjidic2');
   const parsed = parseKanjidic2Xml(context.snapshot.text, context.source);
-  const selected = selectKanjiBootstrap(parsed, context.baseline);
+  const selected = selectKanjiTier(parsed, context.selectionMode, context.baseline, {
+    kanjiGrades: context.kanjiGrades,
+  });
   return createArtifact(context, parsed.length, selected);
 }
 
@@ -53,10 +55,14 @@ async function loadImportContext(options, sourceId) {
   if (selection.schemaVersion !== 1 || selection.packageId !== 'bootstrap-n5') {
     throw new TypeError('Unsupported bootstrap selection configuration.');
   }
-  const baselinePath = sourceId === 'jmdict'
-    ? selection.lexicalBaselinePath
-    : selection.kanjiBaselinePath;
-  const baseline = options.baseline || await readJsonFile(path.resolve(options.rootDir, baselinePath));
+  const selectionMode = String(options.selectionMode || 'baseline');
+  if (!['baseline', 'common', 'full'].includes(selectionMode)) {
+    throw new TypeError(`Unsupported dictionary selection mode: ${selectionMode}.`);
+  }
+  const baselinePath = sourceId === 'jmdict' ? selection.lexicalBaselinePath : selection.kanjiBaselinePath;
+  const baseline = selectionMode === 'baseline'
+    ? options.baseline || await readJsonFile(path.resolve(options.rootDir, baselinePath))
+    : null;
   const snapshot = options.snapshot || await readSourceSnapshot(options.inputPath, {
     expectedSha256: options.expectedSha256,
   });
@@ -64,6 +70,8 @@ async function loadImportContext(options, sourceId) {
     sourceId,
     source: { id: sourceId, version, sha256: snapshot.sha256 },
     selection,
+    selectionMode,
+    kanjiGrades: options.kanjiGrades,
     baseline,
     snapshot,
   };

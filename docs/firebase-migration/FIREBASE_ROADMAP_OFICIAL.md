@@ -4,7 +4,7 @@
 >
 > Status: fonte oficial de planejamento e execucao
 >
-> Fase atual: Fase 13 concluida; proxima Fase 14
+> Fase atual: Fase 15 concluida; Fase 16 e o proximo marco planejado
 
 ## 1. Autoridade Deste Documento
 
@@ -67,8 +67,8 @@ Fase 10.3 Metricas de equivalencia com o JSON legado
 | 11 | Pipeline e pacote essencial | Concluida | Antiga Fase 8 revisada |
 | 12 | Indices, shards e cache | Concluida | Antiga Fase 9 revisada |
 | 13 | Pipeline do dicionario no GitHub Pages | Concluida | Antiga Fase 10 revisada |
-| 14 | Manifesto remoto, atualizacao e rollback | Planejada | Antiga Fase 11 revisada |
-| 15 | Pacotes offline e PWA | Planejada | Antiga Fase 12 revisada |
+| 14 | Manifesto remoto, atualizacao e rollback | Concluida | Antiga Fase 11 revisada |
+| 15 | Dicionario ampliado, pacotes offline e PWA | Concluida | Antiga Fase 12 revisada |
 | 16 | Confiabilidade, backup e recuperacao | Planejada | Melhoria incorporada |
 | 17 | Seguranca, rollout e remocao do legado | Parcial | Planos anteriores 12/13 |
 | 18 | Evolucoes opcionais | Opcional | Antiga Fase 13 revisada |
@@ -397,7 +397,7 @@ Intervencao do proprietario: validar Pages, dominio autorizado e release publica
 
 ### Fase 14: Manifesto Remoto, Atualizacao e Rollback
 
-Status: **Planejada**.
+Status: **Concluida**.
 
 Origem: antiga Fase 11 revisada.
 
@@ -413,6 +413,18 @@ Implementacao recomendada:
 - manter a versao anterior para rollback;
 - limpar versoes antigas somente apos ativacao confirmada.
 
+Subfases registradas:
+
+- `14.1`: contrato remoto e compatibilidade - concluida;
+- `14.2`: deteccao sem promocao automatica - concluida;
+- `14.3`: download candidato retomavel - concluida;
+- `14.4`: ativacao transacional e selecao no runtime - concluida;
+- `14.5`: rollback, limpeza gradual e testes - concluida.
+
+Validacao do proprietario concluida em 2026-07-13 no servidor local. A primeira
+promocao entre releases reais sera exercitada pela Fase 15, sem criar uma versao
+artificial apenas para teste.
+
 Criterios de aceite:
 
 - manifesto invalido nao substitui dados validos;
@@ -420,15 +432,17 @@ Criterios de aceite:
 - rollback nao depende de apagar dados pessoais;
 - Firestore guarda apenas metadados pequenos, nao o catalogo inteiro.
 
-Intervencao do proprietario: aprovar a primeira promocao de versao publica.
+Intervencao do proprietario: painel validado; a primeira promocao entre
+releases reais foi incorporada ao criterio da Fase 15.6.
 
-### Fase 15: Pacotes Offline e PWA
+### Fase 15: Dicionario Ampliado, Pacotes Offline e PWA
 
-Status: **Planejada**.
+Status: **Concluida**.
 
 Origem: antiga Fase 12 revisada.
 
-Objetivo: permitir controle explicito sobre conteudo offline sem tornar Service Worker requisito da aplicacao.
+Objetivo: ampliar o catalogo linguistico e permitir controle explicito sobre
+conteudo offline sem tornar Service Worker requisito da aplicacao.
 
 Implementacao recomendada:
 
@@ -441,11 +455,12 @@ Implementacao recomendada:
 
 Subfases previstas:
 
-- `15.1`: gerenciador de pacotes;
-- `15.2`: quota, tamanho e persistencia;
-- `15.3`: UX offline e recuperacao;
-- `15.4`: Service Worker opcional;
-- `15.5`: testes offline.
+- `15.1`: escopo e geracao do dicionario ampliado - **concluida**;
+- `15.2`: gerenciador de pacotes - **concluida**;
+- `15.3`: quota, tamanho e persistencia - **concluida**;
+- `15.4`: experiencia offline e recuperacao - **concluida**;
+- `15.5`: Service Worker opcional - **concluida**;
+- `15.6`: validacao e primeira promocao real - **concluida**.
 
 Criterios de aceite:
 
@@ -454,7 +469,9 @@ Criterios de aceite:
 - pacote essencial continua funcional offline;
 - PWA nao bloqueia o runtime zero-build.
 
-Intervencao do proprietario: decidir se instalacao como PWA e desejada.
+Intervencao do proprietario: controles offline e promocao de `core/full`
+aprovados. Um manifest para instalacao standalone permanece opcional e fora
+deste recorte.
 
 ### Fase 16: Confiabilidade, Backup e Recuperacao
 
@@ -550,22 +567,35 @@ Cada item aprovado deve virar subfase `18.x`, com motivacao, custo, risco e crit
 
 ## 7. Direcao Atual
 
-O projeto concluiu a **Fase 13: Pipeline do Dicionario no GitHub Pages**. O
-artefato minimo e versionado foi gerado, validado e publicado pelo novo
-workflow. A release publica `2026.07.13-2` foi confirmada com manifesto, routes,
-shards e indices acessiveis no subdiretorio do Pages.
+O projeto concluiu a **Fase 15: Dicionario Ampliado, Pacotes Offline e PWA**.
+A `15.1` definiu e mediu as camadas `essential/core/full`. A `15.2` implementou
+o catalogo e o ciclo seguro de instalacao/remocao. A `15.3` acrescentou medicao
+de uso, preflight de quota e solicitacao de persistencia, com interface aprovada
+pelo proprietario inclusive no fluxo de recusa do navegador. A `15.4` tornou o
+estado offline explicito, adicionou preparacao e retomada do pacote essencial,
+cacheou o catalogo e foi aprovada pelo proprietario. A `15.5` acrescentou um
+Service Worker opt-in e reversivel para o shell, sem interceptar o
+catalogo do dicionario, e validou recarga integral sem rede em desktop e celular.
+A release comprimida da `15.6` foi promovida com 885 artefatos reproduziveis:
+3.248.999 bytes para `core` e 22.121.202 bytes para `full`. A instalacao real,
+busca online/offline, remocao isolada, hashes e mojibake passaram. O Pages final
+possui 1.319 arquivos e 27.108.873 bytes; `core/full` estao disponiveis e a base
+essencial ativa e `2026.07.13-3`.
 
-Proximo recorte recomendado:
+Validacao final:
 
 ```text
-Fase 14
-  -> revisar o contrato do manifesto remoto ja publicado
-  -> definir deteccao e oferta de atualizacao no cliente
-  -> separar atualizacao automatica de ativacao da nova versao
-  -> ampliar rollback entre versoes instaladas
+Fase 15.6 concluida
+  -> core + full publicados e validados
+  -> release essencial 2026.07.13-3 promovida
+  -> busca offline e remocao isolada validadas
+  -> rollback real para 2026.07.13-2 concluido
 ```
 
-Nenhuma intervencao no Console Firebase e necessaria para iniciar a Fase 14.
+Nenhuma intervencao no Console Firebase e necessaria. A promocao modifica apenas
+os artefatos estaticos, o catalogo publico e a release do GitHub Pages.
+
+Proximo marco oficial: **Fase 16 - Confiabilidade, Backup e Recuperacao**.
 
 ## 8. Protocolo de Atualizacao do Roteiro
 

@@ -33,7 +33,7 @@ const indexArtifacts = [];
 for (const indexKind of SEARCH_INDEX_KINDS) {
   indexArtifacts.push(...await readPayloadArtifacts(
     path.join(paths.indexes, indexKind),
-    /^(?:[a-z0-9_]|u-[a-f0-9]{2,6})\.json$/u,
+    /^(?:[a-z0-9]{1,2}|_|u-[a-f0-9]{2,6})\.json$/u,
   ));
 }
 const routes = createDistributionRoutes({

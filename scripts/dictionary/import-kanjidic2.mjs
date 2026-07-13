@@ -5,7 +5,7 @@ import { parseCliArgs, writeDeterministicJson } from './lib/source-io.mjs';
 
 const args = parseCliArgs(process.argv.slice(2), {
   required: ['input', 'output', 'version'],
-  optional: ['expected-sha256', 'selection'],
+  optional: ['expected-sha256', 'selection', 'mode', 'grades'],
 });
 const rootDir = process.cwd();
 const artifact = await importKanjidic2Snapshot({
@@ -14,6 +14,8 @@ const artifact = await importKanjidic2Snapshot({
   version: args.version,
   expectedSha256: args['expected-sha256'],
   selectionPath: path.resolve(args.selection || 'scripts/dictionary/config/bootstrap-selection.json'),
+  selectionMode: args.mode || 'baseline',
+  kanjiGrades: args.grades ? args.grades.split(',').map(Number) : undefined,
 });
 await writeDeterministicJson(args.output, artifact);
 

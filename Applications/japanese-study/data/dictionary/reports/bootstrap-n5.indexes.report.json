@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "dictionary-search-indexes-report",
   "packageId": "bootstrap-n5",
-  "dictionaryVersion": "2026.07.13-2",
+  "dictionaryVersion": "2026.07.13-3",
   "romanization": {
     "library": "wanakana",
     "version": "5.3.1",
@@ -20,7 +20,7 @@
       "references": 42,
       "entriesCovered": 30,
       "rawBytes": 8066,
-      "compressedBytes": 5766,
+      "compressedBytes": 5765,
       "maxCompressedBytes": 268
     },
     "reading": {
@@ -29,7 +29,7 @@
       "references": 59,
       "entriesCovered": 44,
       "rawBytes": 10975,
-      "compressedBytes": 7691,
+      "compressedBytes": 7697,
       "maxCompressedBytes": 278
     },
     "romaji": {
@@ -38,7 +38,7 @@
       "references": 59,
       "entriesCovered": 44,
       "rawBytes": 6461,
-      "compressedBytes": 3677,
+      "compressedBytes": 3676,
       "maxCompressedBytes": 311
     },
     "pt": {
@@ -48,13 +48,13 @@
       "entriesCovered": 44,
       "rawBytes": 6818,
       "compressedBytes": 4259,
-      "maxCompressedBytes": 294
+      "maxCompressedBytes": 293
     }
   },
   "distribution": {
     "totalShards": 90,
     "totalRawBytes": 32320,
-    "totalCompressedBytes": 21393,
+    "totalCompressedBytes": 21397,
     "minCompressedBytes": 214,
     "maxCompressedBytes": 311,
     "belowIdealShards": 90,
@@ -98,7 +98,7 @@
       "terms": 2,
       "references": 2,
       "rawBytes": 340,
-      "compressedBytes": 238
+      "compressedBytes": 237
     },
     {
       "indexKind": "written",
@@ -106,7 +106,7 @@
       "terms": 1,
       "references": 1,
       "rawBytes": 294,
-      "compressedBytes": 226
+      "compressedBytes": 227
     },
     {
       "indexKind": "written",
@@ -138,7 +138,7 @@
       "terms": 1,
       "references": 1,
       "rawBytes": 288,
-      "compressedBytes": 218
+      "compressedBytes": 219
     },
     {
       "indexKind": "written",
@@ -186,7 +186,7 @@
       "terms": 2,
       "references": 2,
       "rawBytes": 334,
-      "compressedBytes": 239
+      "compressedBytes": 238
     },
     {
       "indexKind": "written",
@@ -218,7 +218,7 @@
       "terms": 1,
       "references": 1,
       "rawBytes": 288,
-      "compressedBytes": 219
+      "compressedBytes": 218
     },
     {
       "indexKind": "written",
@@ -274,7 +274,7 @@
       "terms": 2,
       "references": 2,
       "rawBytes": 349,
-      "compressedBytes": 244
+      "compressedBytes": 245
     },
     {
       "indexKind": "reading",
@@ -354,7 +354,7 @@
       "terms": 1,
       "references": 1,
       "rawBytes": 297,
-      "compressedBytes": 226
+      "compressedBytes": 225
     },
     {
       "indexKind": "reading",
@@ -362,7 +362,7 @@
       "terms": 6,
       "references": 6,
       "rawBytes": 557,
-      "compressedBytes": 271
+      "compressedBytes": 272
     },
     {
       "indexKind": "reading",
@@ -378,7 +378,7 @@
       "terms": 2,
       "references": 2,
       "rawBytes": 355,
-      "compressedBytes": 253
+      "compressedBytes": 254
     },
     {
       "indexKind": "reading",
@@ -426,7 +426,7 @@
       "terms": 1,
       "references": 1,
       "rawBytes": 303,
-      "compressedBytes": 230
+      "compressedBytes": 231
     },
     {
       "indexKind": "reading",
@@ -434,7 +434,7 @@
       "terms": 1,
       "references": 2,
       "rawBytes": 321,
-      "compressedBytes": 234
+      "compressedBytes": 235
     },
     {
       "indexKind": "reading",
@@ -450,7 +450,7 @@
       "terms": 2,
       "references": 2,
       "rawBytes": 352,
-      "compressedBytes": 250
+      "compressedBytes": 251
     },
     {
       "indexKind": "reading",
@@ -474,7 +474,7 @@
       "terms": 1,
       "references": 1,
       "rawBytes": 300,
-      "compressedBytes": 229
+      "compressedBytes": 230
     },
     {
       "indexKind": "reading",
@@ -570,7 +570,7 @@
       "terms": 3,
       "references": 4,
       "rawBytes": 409,
-      "compressedBytes": 250
+      "compressedBytes": 249
     },
     {
       "indexKind": "romaji",
@@ -666,7 +666,7 @@
       "terms": 9,
       "references": 9,
       "rawBytes": 659,
-      "compressedBytes": 294
+      "compressedBytes": 293
     },
     {
       "indexKind": "pt",
@@ -698,7 +698,7 @@
       "terms": 1,
       "references": 1,
       "rawBytes": 293,
-      "compressedBytes": 214
+      "compressedBytes": 215
     },
     {
       "indexKind": "pt",
@@ -706,7 +706,7 @@
       "terms": 2,
       "references": 2,
       "rawBytes": 344,
-      "compressedBytes": 230
+      "compressedBytes": 231
     },
     {
       "indexKind": "pt",
@@ -770,7 +770,7 @@
       "terms": 3,
       "references": 3,
       "rawBytes": 386,
-      "compressedBytes": 240
+      "compressedBytes": 239
     },
     {
       "indexKind": "pt",

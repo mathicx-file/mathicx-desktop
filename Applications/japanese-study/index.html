@@ -311,6 +311,72 @@
           <div id="firebase-sync-details" class="sync-details">Os detalhes aparecerao depois da primeira sincronizacao.</div>
         </section>
 
+        <section class="data-panel dictionary-update-panel">
+          <h3>Atualizacoes do dicionario</h3>
+          <p>Verifique e prepare novas versoes sem substituir o dicionario ativo.</p>
+          <div id="dictionary-release-status" class="sync-status" data-state="checking">
+            <span class="sync-dot" aria-hidden="true"></span>
+            <div>
+              <strong>Verificando versao</strong>
+              <span>Consultando a release publica...</span>
+            </div>
+          </div>
+          <div class="dictionary-update-actions">
+            <button id="dictionary-check-update-btn" class="data-action" type="button">Verificar</button>
+            <button id="dictionary-download-update-btn" class="data-action primary" type="button" disabled>Baixar</button>
+            <button id="dictionary-activate-update-btn" class="data-action primary" type="button" disabled>Ativar</button>
+            <button id="dictionary-rollback-btn" class="data-action" type="button" disabled>Restaurar anterior</button>
+          </div>
+          <div id="dictionary-release-details" class="sync-details">A versao ativa aparecera depois da verificacao.</div>
+        </section>
+
+        <section class="data-panel dictionary-package-panel">
+          <h3>Conteudo offline</h3>
+          <p>Escolha a cobertura do dicionario armazenada neste navegador.</p>
+          <div id="dictionary-package-status" class="package-summary" aria-live="polite">Carregando pacotes...</div>
+          <div id="dictionary-offline-readiness" class="offline-readiness" data-state="checking">
+            <span class="sync-dot" aria-hidden="true"></span>
+            <span>Verificando disponibilidade offline...</span>
+          </div>
+          <div class="dictionary-storage-overview">
+            <div class="storage-metrics">
+              <div>
+                <span>Cache do dicionario</span>
+                <strong id="dictionary-cache-usage">Calculando...</strong>
+              </div>
+              <div>
+                <span>Armazenamento do site</span>
+                <strong id="dictionary-origin-usage">Calculando...</strong>
+              </div>
+              <div>
+                <span>Espaco livre estimado</span>
+                <strong id="dictionary-available-storage">Calculando...</strong>
+              </div>
+            </div>
+            <meter id="dictionary-storage-meter" class="storage-meter" min="0" max="1" value="0">0%</meter>
+            <div class="storage-controls">
+              <button id="dictionary-persist-storage-btn" class="data-action primary" type="button">Manter offline</button>
+              <button id="dictionary-refresh-storage-btn" class="data-action" type="button">Atualizar uso</button>
+              <span id="dictionary-persistence-status" class="storage-persistence-status">Verificando persistencia...</span>
+            </div>
+          </div>
+          <div class="app-shell-offline">
+            <div class="app-shell-heading">
+              <div>
+                <strong>Aplicativo offline</strong>
+                <span id="app-shell-offline-status" data-state="checking" aria-live="polite">Verificando suporte...</span>
+              </div>
+              <label class="setting-switch" title="Ativar aplicativo offline">
+                <input id="app-shell-offline-toggle" type="checkbox" disabled>
+                <span class="setting-switch-track" aria-hidden="true"></span>
+                <span class="sr-only">Ativar aplicativo offline</span>
+              </label>
+            </div>
+            <button id="app-shell-repair-btn" class="data-action" type="button" disabled>Reparar cache</button>
+          </div>
+          <div id="dictionary-package-list" class="package-list"></div>
+        </section>
+
         <section class="data-panel">
           <h3>Exportar backup</h3>
           <p>Gera um arquivo JSON com versão de esquema e todos os dados importantes do estudo.</p>

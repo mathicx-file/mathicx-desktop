@@ -96,6 +96,16 @@ test('validates package IDs, hashes and cross references', () => {
   assert.equal(normalized.kanji.length, 1);
   assert.equal(normalized.translations.length, 1);
   assert.equal(normalized.strokeAssets.length, 1);
+
+  assert.equal(normalizeBootstrapPackage({ ...payload, id: 'core-common' }).id, 'core-common');
+  assert.equal(
+    normalizeBootstrapPackage({ ...payload, id: 'full-jmdict-kanjidic2' }).id,
+    'full-jmdict-kanjidic2',
+  );
+  assert.throws(
+    () => normalizeBootstrapPackage({ ...payload, id: 'unknown-tier' }),
+    /Unsupported dictionary package id/,
+  );
 });
 
 test('rejects duplicate IDs, missing references and draft publication', () => {

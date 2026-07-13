@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-search-index-shard",
+  "indexKind": "reading",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-3",
+  "bucket": "u-3044",
+  "normalization": "wanakana-hiragana-nfkc-v1",
+  "terms": {
+    "いえ": [
+      "jmdict-1191730"
+    ],
+    "いぬ": [
+      "jmdict-1258330"
+    ],
+    "いんたあねっつ": [
+      "jmdict-1022880"
+    ],
+    "いんたあねっと": [
+      "jmdict-1022880"
+    ],
+    "いんたねっと": [
+      "jmdict-1022880"
+    ]
+  }
+}

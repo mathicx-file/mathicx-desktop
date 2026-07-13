@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "sourceVersion": "2026-07-13",
+  "tiers": {
+    "essential": {
+      "packageId": "bootstrap-n5",
+      "selectionMode": "baseline",
+      "installedByDefault": true
+    },
+    "core": {
+      "packageId": "core-common",
+      "selectionMode": "common",
+      "installedByDefault": false,
+      "lexicalRule": "JMdict entry with at least one priority tag",
+      "kanjiGrades": [1, 2, 3, 4, 5, 6, 8]
+    },
+    "full": {
+      "packageId": "full-jmdict-kanjidic2",
+      "selectionMode": "full",
+      "installedByDefault": false
+    }
+  }
+}

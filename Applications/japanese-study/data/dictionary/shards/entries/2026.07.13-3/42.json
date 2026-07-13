@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-entry-shard",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-3",
+  "shardId": "42",
+  "entries": [
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1101510",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1101510"
+      },
+      "writtenForms": [],
+      "readings": [
+        "パスポート"
+      ],
+      "common": true,
+      "priorityTags": [],
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1101510:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "passport"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "translations": [
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1101510:jmdict-1101510:sense:1",
+      "entryId": "jmdict-1101510",
+      "senseId": "jmdict-1101510:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "passaporte"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kata_pasupooto"
+      },
+      "reviewedAt": "2026-07-13"
+    }
+  ]
+}
