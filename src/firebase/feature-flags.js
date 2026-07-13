@@ -21,7 +21,7 @@ export const featureFlags = Object.freeze({
   firestoreFinancesReadEnabled: true,
   firestoreFinancesWriteEnabled: true,
 
-  dictionaryProviderV2Enabled: false,
+  dictionaryProviderV2Enabled: true,
   dictionaryRemoteManifestEnabled: false,
   dictionaryChunkLoadingEnabled: false,
   dictionaryOfflinePacksEnabled: false,

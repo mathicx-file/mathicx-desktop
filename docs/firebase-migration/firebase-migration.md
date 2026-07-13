@@ -1,5 +1,9 @@
 # Proposta Revisada de Migracao para Firebase
 
+> Status documental: referencia historica e tecnica.
+>
+> A numeracao oficial atual esta em [FIREBASE_ROADMAP_OFICIAL.md](FIREBASE_ROADMAP_OFICIAL.md).
+
 Este documento registra uma leitura critica do plano original arquivado em `docs/archive/firebase-migration-original.md` e propoe uma rota de implementacao mais alinhada ao estado atual do `mathicx-file`.
 
 O objetivo aqui nao e substituir o plano original. Ele e bom como documento amplo. A ideia e transformar aquela especificacao em uma estrategia mais pratica para este projeto: um desktop virtual estatico, sem build, com apps internos em ES Modules e apps externos em `Applications/` via iframe.

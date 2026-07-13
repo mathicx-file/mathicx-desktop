@@ -1,5 +1,9 @@
 # Plano Revisado: Migração Firebase e Dicionário Japonês Escalável
 
+> Status documental: referencia historica e tecnica.
+>
+> A numeracao oficial atual esta em [FIREBASE_ROADMAP_OFICIAL.md](FIREBASE_ROADMAP_OFICIAL.md).
+
 > Documento técnico para orientar a implementação pelo Codex.
 >
 > Projeto principal: `mathicx-file`

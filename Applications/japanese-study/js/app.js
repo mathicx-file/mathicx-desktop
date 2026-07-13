@@ -12,13 +12,13 @@ import { JapaneseTypingContentProvider } from './typing-content-provider.js';
 import { JapaneseTypingEvaluator } from './typing-evaluator.js';
 import { createTypingSession } from './typing-session.js';
 import { JapaneseKanaPrintExport } from './kana-print-export.js';
+import { createDictionaryRuntime } from './dictionary/dictionary-runtime.js';
 
 const JapaneseApp = (() => {
   let allData = [];
   let hiraganaData = [];
   let katakanaData = [];
   let kanjiData = [];
-  let dictionaryData = [];
   let initialized = false;
   let sessionStartedAt = Date.now();
   let lastSavedMinute = 0;
@@ -29,6 +29,7 @@ const JapaneseApp = (() => {
   let currentTypingValue = '';
   let currentTypingResult = null;
   let firebaseSyncModule = null;
+  let dictionaryRuntime = null;
 
   async function init() {
     if (initialized) return;
@@ -38,6 +39,7 @@ const JapaneseApp = (() => {
     setupHostListener();
     setupFirebaseSyncStatusListener();
     const firebaseSyncReady = setupFirebaseSync();
+    const dictionaryRuntimeReady = setupDictionaryRuntime();
 
     const loadingEl = document.getElementById('loading-state');
     const gridEl = document.getElementById('character-grid');
@@ -46,23 +48,20 @@ const JapaneseApp = (() => {
       loadJSON('data/hiragana.json'),
       loadJSON('data/katakana.json'),
       loadJSON('data/kanji.json'),
-      loadJSON('data/dictionary.json'),
+      dictionaryRuntimeReady,
       loadJSON('data/typing-exercises.json')
-    ]).then(async ([hira, kata, kanji, dictionary, typingExercises]) => {
+    ]).then(async ([hira, kata, kanji, _dictionaryState, typingExercises]) => {
       await firebaseSyncReady;
 
       hiraganaData = (hira.characters || hira).map(c => ({ ...c, script: 'hiragana' }));
       katakanaData = (kata.characters || kata).map(c => ({ ...c, script: 'katakana' }));
       kanjiData = (kanji.kanji || kanji.characters || kanji).map(c => ({ ...c, script: 'kanji', category: c.level || 'N5' }));
-      dictionaryData = dictionary.words || dictionary;
-
       allData = [...hiraganaData, ...katakanaData, ...kanjiData];
 
       if (loadingEl) loadingEl.style.display = 'none';
       gridEl.style.display = '';
 
       JapaneseSearch.setData(allData);
-      JapaneseDictionary.setData(dictionaryData);
       JapaneseQuiz.setData(allData);
       JapaneseTypingContentProvider.setData(typingExercises);
       JapaneseUI.setCharacters(allData);
@@ -216,6 +215,36 @@ const JapaneseApp = (() => {
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json();
     });
+  }
+
+  async function setupDictionaryRuntime() {
+    const providerEnabled = await isDictionaryProviderEnabled();
+    dictionaryRuntime = createDictionaryRuntime({
+      providerEnabled,
+      loadLegacyEntries: async () => {
+        const payload = await loadJSON('data/dictionary.json');
+        return payload.words || payload;
+      },
+    });
+    const state = await dictionaryRuntime.init();
+    if (state.fallback) {
+      console.warn('[dictionary-runtime] provider unavailable; using legacy source', state.error);
+    } else {
+      console.info(`[dictionary-runtime] mode=${state.mode}`);
+    }
+    return state;
+  }
+
+  async function isDictionaryProviderEnabled() {
+    const override = new URLSearchParams(location.search).get('dictionaryProviderV2');
+    if (override === '1') return true;
+    if (override === '0') return false;
+    try {
+      const module = await import('../../../src/firebase/feature-flags.js');
+      return module.featureFlags?.dictionaryProviderV2Enabled === true;
+    } catch {
+      return false;
+    }
   }
 
   function applyFilters() {
@@ -550,14 +579,14 @@ const JapaneseApp = (() => {
     if (filters.tab === 'history') {
       const history = await JapaneseStorage.getDictionaryHistory(50);
       const ids = history.map(item => item.charId);
-      results = JapaneseDictionary.filterByIds(ids, filters);
+      results = await dictionaryRuntime.filterByIds(ids, filters);
       results = filterDictionaryWords(results, query);
     } else if (filters.tab === 'favorites') {
       const ids = JapaneseStorage.getDictionaryFavorites();
-      results = JapaneseDictionary.filterByIds(ids, filters);
+      results = await dictionaryRuntime.filterByIds(ids, filters);
       results = filterDictionaryWords(results, query);
     } else {
-      results = JapaneseDictionary.search(query, filters);
+      results = await dictionaryRuntime.search(query, filters);
     }
 
     JapaneseUI.renderDictionary(results);

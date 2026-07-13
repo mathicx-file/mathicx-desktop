@@ -6,6 +6,8 @@
 import { appRegistry, CATEGORIES } from '../apps/registry.js';
 import { explorerProvider as fs } from '../explorer/fs-store.js';
 import { norm } from '../core/utils.js';
+import { featureFlags } from '../firebase/feature-flags.js';
+import { createLauncherDictionarySearch } from './japanese-dictionary-search.js';
 
 export const SEARCH_TYPES = {
   app: { label: 'App', icon: 'APP' },
@@ -17,10 +19,11 @@ export const SEARCH_TYPES = {
   dictionary: { label: 'Dicionario', icon: 'JP' },
 };
 
-const JAPANESE_DICTIONARY_URL = new URL('../../Applications/japanese-study/data/dictionary.json', import.meta.url);
 const JAPANESE_DICTIONARY_LIMIT = 6;
-let japaneseDictionaryPromise = null;
-let japaneseDictionaryCache = [];
+const japaneseDictionarySearch = createLauncherDictionarySearch({
+  providerEnabled: isDictionaryProviderEnabled(),
+});
+let dictionaryFallbackLogged = false;
 
 const JAPANESE_ACTIONS = [
   {
@@ -137,8 +140,7 @@ export function resolveAction(id) {
     };
   }
 
-  const dictionaryWord = japaneseDictionaryCache
-    .find((word) => `japanese-study:dictionary:${word.id}` === id);
+  const dictionaryWord = japaneseDictionarySearch.getByResultId(id);
   if (!dictionaryWord) return null;
 
   return {
@@ -156,63 +158,26 @@ async function searchJapaneseDictionary(query) {
   if (query.length < 2) return [];
 
   try {
-    const words = await loadJapaneseDictionary();
-    return words
-      .map((word) => ({ word, score: scoreDictionaryWord(word, query) }))
-      .filter((item) => item.score > 0)
-      .sort((a, b) => b.score - a.score || String(a.word.romaji || '').localeCompare(String(b.word.romaji || '')))
-      .slice(0, JAPANESE_DICTIONARY_LIMIT)
-      .map((item) => item.word);
+    const matches = await japaneseDictionarySearch.search(query, { limit: JAPANESE_DICTIONARY_LIMIT });
+    const state = japaneseDictionarySearch.getState();
+    if (state.fallback && !dictionaryFallbackLogged) {
+      dictionaryFallbackLogged = true;
+      console.warn('[launcher-search] dictionary provider failed; using legacy search', state.error);
+    }
+    return matches;
   } catch (error) {
     console.info('[launcher-search] Japanese dictionary unavailable', error?.message || error);
     return [];
   }
 }
 
-async function loadJapaneseDictionary() {
-  if (!japaneseDictionaryPromise) {
-    japaneseDictionaryPromise = fetch(JAPANESE_DICTIONARY_URL)
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then((data) => normalizeDictionaryPayload(data))
-      .then((words) => {
-        japaneseDictionaryCache = words;
-        return words;
-      })
-      .catch((error) => {
-        japaneseDictionaryPromise = null;
-        japaneseDictionaryCache = [];
-        throw error;
-      });
-  }
-  return japaneseDictionaryPromise;
-}
-
-function normalizeDictionaryPayload(data) {
-  const words = Array.isArray(data?.words) ? data.words : data;
-  return Array.isArray(words)
-    ? words.filter((word) => word?.id && (word.word || word.romaji || word.definition))
-    : [];
-}
-
-function scoreDictionaryWord(word, query) {
-  const fields = {
-    word: norm(word.word),
-    reading: norm(word.reading),
-    romaji: norm(word.romaji),
-    definition: norm(word.definition),
-    category: norm(word.category),
-    script: norm(word.script),
-  };
-
-  if (fields.word === query || fields.romaji === query || fields.reading === query) return 100;
-  if (fields.word.startsWith(query) || fields.romaji.startsWith(query) || fields.reading.startsWith(query)) return 80;
-  if (fields.definition === query) return 70;
-  if (fields.definition.startsWith(query)) return 55;
-  if (Object.values(fields).some((value) => value.includes(query))) return 35;
-  return 0;
+function isDictionaryProviderEnabled() {
+  try {
+    const override = new URLSearchParams(globalThis.location?.search || '').get('dictionaryProviderV2');
+    if (override === '1') return true;
+    if (override === '0') return false;
+  } catch {}
+  return featureFlags.dictionaryProviderV2Enabled === true;
 }
 
 function formatDictionaryResultName(word) {

@@ -1,5 +1,9 @@
 # Plano de Migração para Firebase
 
+> Status documental: referencia historica e tecnica.
+>
+> A numeracao oficial atual esta em [FIREBASE_ROADMAP_OFICIAL.md](FIREBASE_ROADMAP_OFICIAL.md).
+
 ## Desktop virtual com aplicação de estudos de japonês
 
 **Versão:** 1.0  

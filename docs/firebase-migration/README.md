@@ -2,9 +2,13 @@
 
 Esta pasta concentra os documentos de planejamento, auditoria e setup da migracao Firebase para evitar misturar material de trabalho com a documentacao oficial do projeto.
 
+## Fonte oficial
+
+O arquivo [FIREBASE_ROADMAP_OFICIAL.md](FIREBASE_ROADMAP_OFICIAL.md) controla a numeracao, o status e a ordem das fases. Os demais documentos sao referencias de implementacao ou historico. Em caso de divergencia, o roteiro oficial prevalece.
+
 ## Leitura recomendada
 
-1. [firebase-migration.md](firebase-migration.md)
+1. [FIREBASE_ROADMAP_OFICIAL.md](FIREBASE_ROADMAP_OFICIAL.md)
 2. [FIREBASE_AUDIT.md](FIREBASE_AUDIT.md)
 3. [DICTIONARY_AUDIT.md](DICTIONARY_AUDIT.md)
 4. [FIREBASE_PHASE_1_SETUP.md](FIREBASE_PHASE_1_SETUP.md)
@@ -17,8 +21,10 @@ Esta pasta concentra os documentos de planejamento, auditoria e setup da migraca
 11. [FIREBASE_PHASE_8_JAPANESE_EXPERIENCE.md](FIREBASE_PHASE_8_JAPANESE_EXPERIENCE.md)
 12. [FIREBASE_PHASE_9_APP_INTEGRATION_STANDARD.md](FIREBASE_PHASE_9_APP_INTEGRATION_STANDARD.md)
 13. [FIREBASE_PHASE_9_FINANCES_REVIEW.md](FIREBASE_PHASE_9_FINANCES_REVIEW.md)
-14. [FIREBASE_MIGRATION_DICTIONARY_REVISED.md](FIREBASE_MIGRATION_DICTIONARY_REVISED.md)
-15. [MIGRACAO_FIREBASE_DESKTOP_JAPONES.md](MIGRACAO_FIREBASE_DESKTOP_JAPONES.md)
+14. [FIREBASE_PHASE_10_DICTIONARY_PROVIDER.md](FIREBASE_PHASE_10_DICTIONARY_PROVIDER.md)
+15. [FIREBASE_MIGRATION_DICTIONARY_REVISED.md](FIREBASE_MIGRATION_DICTIONARY_REVISED.md)
+16. [MIGRACAO_FIREBASE_DESKTOP_JAPONES.md](MIGRACAO_FIREBASE_DESKTOP_JAPONES.md)
+17. [firebase-migration.md](firebase-migration.md)
 
 ## Observacao
 

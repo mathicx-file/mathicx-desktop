@@ -2,7 +2,7 @@
 
 > Data: 2026-07-09
 >
-> Status: concluida tecnicamente, aguardando consolidacao em commit
+> Status: concluida no commit `c342463`
 >
 > Objetivo: transformar o aprendizado da integracao do Japanese Study em um padrao reutilizavel para proximos apps.
 
