@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-search-index-shard",
+  "indexKind": "romaji",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-3",
+  "bucket": "k",
+  "normalization": "wanakana-5.3.1-hepburn-ascii-v1",
+  "terms": {
+    "kamera": [
+      "jmdict-1038350"
+    ],
+    "kasa": [
+      "jmdict-1301940"
+    ],
+    "kawa": [
+      "jmdict-1390020",
+      "jmdict-1483800"
+    ],
+    "kayoubi": [
+      "jmdict-1194290"
+    ],
+    "kin'youbi": [
+      "jmdict-1243320"
+    ],
+    "kinyoubi": [
+      "jmdict-1243320"
+    ],
+    "konpyuuta": [
+      "jmdict-1053350"
+    ],
+    "konpyuutaa": [
+      "jmdict-1053350"
+    ],
+    "koohii": [
+      "jmdict-1049180"
+    ],
+    "kuruma": [
+      "jmdict-1323080"
+    ],
+    "kyamera": [
+      "jmdict-1038350"
+    ]
+  }
+}

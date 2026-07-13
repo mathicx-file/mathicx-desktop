@@ -1,0 +1,53 @@
+{
+  "format": "mathicx-japanese-dictionary-package-catalog",
+  "schemaVersion": 1,
+  "dictionaryVersion": "2026.07.13-3",
+  "packages": [
+    {
+      "id": "essential",
+      "packageId": "bootstrap-n5",
+      "name": "Essencial N5",
+      "description": "Base revisada para busca e estudo inicial.",
+      "version": "2026.07.13-3",
+      "availability": "included",
+      "required": true,
+      "estimatedByteLength": 261554,
+      "entryCount": 44,
+      "kanjiCount": 10
+    },
+    {
+      "id": "core",
+      "packageId": "core-common",
+      "name": "Palavras comuns",
+      "description": "Vocabulário prioritário do JMdict e kanji de uso frequente.",
+      "version": "2026.07.13-3",
+      "availability": "available",
+      "required": false,
+      "estimatedByteLength": 3248999,
+      "entryCount": 30142,
+      "kanjiCount": 2136,
+      "manifest": {
+        "path": "packages/2026.07.13-3/core/manifest.json",
+        "byteLength": 54115,
+        "sha256": "1d24b15cfa1fad6b5cd916bb88505890c3ba1ab329d2ae2e1b7bc6c19095abd2"
+      }
+    },
+    {
+      "id": "full",
+      "packageId": "full-jmdict-kanjidic2",
+      "name": "Dicionário completo",
+      "description": "Catálogo integral dos snapshots JMdict e KANJIDIC2.",
+      "version": "2026.07.13-3",
+      "availability": "available",
+      "required": false,
+      "estimatedByteLength": 22121202,
+      "entryCount": 217856,
+      "kanjiCount": 13108,
+      "manifest": {
+        "path": "packages/2026.07.13-3/full/manifest.json",
+        "byteLength": 166789,
+        "sha256": "a17da9a72de3ee76c13abd9832fa9ef20c6163f627efc9befe2f09948d753f02"
+      }
+    }
+  ]
+}

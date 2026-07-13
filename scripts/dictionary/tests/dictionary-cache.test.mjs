@@ -87,6 +87,47 @@ test('rejects tampering without replacing the active version', async () => {
   await repository.close();
 });
 
+test('resumes an interrupted candidate without promoting or downloading valid artifacts again', async () => {
+  const repository = createRepository('resume');
+  const active = await createDistribution('v1');
+  const candidate = await createDistribution('v2');
+  await createInstaller(repository, active.artifacts).installAndPromote(active.manifest);
+
+  const requests = new Map();
+  let interrupted = true;
+  const installer = new DictionaryCacheInstaller({
+    repository,
+    loadArtifact: async (path) => {
+      requests.set(path, (requests.get(path) || 0) + 1);
+      if (interrupted && path === candidate.manifest.routes.indexes.reading.path) {
+        throw new Error('simulated network interruption');
+      }
+      return candidate.artifacts.get(path);
+    },
+  });
+
+  await assert.rejects(installer.downloadCandidate(candidate.manifest), /network interruption/);
+  assert.equal((await repository.getVersionState('v2')).status, 'interrupted');
+  assert.ok((await repository.getVersionArtifacts('v2')).length > 0);
+  assert.equal((await repository.getCacheState()).activeVersion, 'v1');
+
+  interrupted = false;
+  const resumed = await installer.downloadCandidate(candidate.manifest);
+  assert.equal(resumed.status, 'ready');
+  assert.ok(resumed.reusedArtifacts > 0);
+  assert.ok(resumed.downloadedArtifacts > 0);
+  assert.equal(requests.get(candidate.manifest.defaultPack.path), 1);
+  assert.equal((await repository.getCacheState()).activeVersion, 'v1');
+
+  const promoted = await installer.promoteCandidate('v2', resumed);
+  assert.equal(promoted.status, 'promoted');
+  assert.deepEqual(await repository.getCacheState(), {
+    activeVersion: 'v2',
+    previousVersion: 'v1',
+  });
+  await repository.close();
+});
+
 test('records quota failures and keeps the rollback pair intact', async () => {
   const repository = createRepository('quota');
   const first = await createDistribution('v1');
@@ -131,6 +172,26 @@ test('does not overwrite active or rollback-protected versions', async () => {
   assert.deepEqual(await repository.getCacheState(), {
     activeVersion: 'v2',
     previousVersion: 'v1',
+  });
+  await repository.close();
+});
+
+test('cleans only versions outside the active rollback pair after promotion', async () => {
+  const repository = createRepository('version-cleanup');
+  const first = await createDistribution('v1');
+  const second = await createDistribution('v2');
+  const third = await createDistribution('v3');
+  await createInstaller(repository, first.artifacts).installAndPromote(first.manifest);
+  await createInstaller(repository, second.artifacts).installAndPromote(second.manifest);
+  await createInstaller(repository, third.artifacts).installAndPromote(third.manifest);
+
+  const result = await repository.cleanupUnprotectedVersions();
+  assert.deepEqual(result.removedVersions, ['v1']);
+  assert.ok((await repository.getVersionArtifacts('v2')).length > 0);
+  assert.ok((await repository.getVersionArtifacts('v3')).length > 0);
+  assert.deepEqual(await repository.getCacheState(), {
+    activeVersion: 'v3',
+    previousVersion: 'v2',
   });
   await repository.close();
 });

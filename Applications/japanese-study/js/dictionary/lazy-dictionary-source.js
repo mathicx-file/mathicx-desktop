@@ -2,7 +2,7 @@ import { DictionaryCacheRepository } from './dictionary-cache-repository.js';
 import { sha256Hex, verifyArtifact } from './dictionary-cache-installer.js';
 
 const DEFAULT_DATA_URL = new URL('../../data/dictionary/', import.meta.url);
-const DEFAULT_MANIFEST_URL = new URL('manifests/2026.07.13-2.json', DEFAULT_DATA_URL);
+const DEFAULT_MANIFEST_URL = new URL('manifests/2026.07.13-3.json', DEFAULT_DATA_URL);
 const INDEX_KINDS = ['written', 'reading', 'romaji', 'pt'];
 
 export class LazyDictionarySource {
@@ -10,11 +10,13 @@ export class LazyDictionarySource {
     this.id = options.id || 'sharded-local-dictionary';
     this.dataUrl = options.dataUrl || DEFAULT_DATA_URL;
     this.manifestUrl = options.manifestUrl || DEFAULT_MANIFEST_URL;
+    this.providedManifest = options.manifest || null;
     this.fetchImpl = options.fetchImpl || globalThis.fetch?.bind(globalThis);
     this.repository = options.repository || new DictionaryCacheRepository();
     this.crypto = options.crypto || globalThis.crypto;
     this.now = options.now || (() => globalThis.performance?.now?.() || Date.now());
     this.decoder = options.textDecoder || new TextDecoder();
+    this.decodeArtifact = options.decodeArtifact || ((bytes) => bytes);
     this.maxConcurrentDownloads = normalizeConcurrency(options.maxConcurrentDownloads);
     this.networkLimiter = new NetworkLimiter(this.maxConcurrentDownloads);
     this.manifest = null;
@@ -33,7 +35,7 @@ export class LazyDictionarySource {
   }
 
   async initialize() {
-    const manifest = await this.fetchJson(this.manifestUrl, undefined, 'manifest');
+    const manifest = await this.resolveManifest();
     validateManifest(manifest);
     this.manifest = manifest;
 
@@ -59,6 +61,33 @@ export class LazyDictionarySource {
         lazy: true,
       },
     };
+  }
+
+  async resolveManifest() {
+    if (this.providedManifest) return this.providedManifest;
+    const cacheState = await this.repository.getCacheState();
+    if (cacheState.activeVersion) {
+      const versionState = await this.repository.getVersionState(cacheState.activeVersion);
+      const descriptor = versionState?.manifestDescriptor;
+      if (versionState?.status === 'ready' && descriptor) {
+        const cached = await this.repository.getArtifact(cacheState.activeVersion, descriptor.path);
+        if (cached) {
+          try {
+            await verifyArtifact(cached.bytes, descriptor, this.crypto);
+            const manifest = parseJson(cached.bytes, descriptor.path, this.decoder);
+            validateManifest(manifest);
+            if (manifest.dictionaryVersion !== cacheState.activeVersion) {
+              throw new Error('Active dictionary manifest version differs from cache state.');
+            }
+            return manifest;
+          } catch (error) {
+            this.metrics.invalidCacheEntries += 1;
+            console.warn('[dictionary-cache] active manifest is invalid; using embedded release', error);
+          }
+        }
+      }
+    }
+    return this.fetchJson(this.manifestUrl, undefined, 'manifest');
   }
 
   async search(query, options = {}) {
@@ -89,12 +118,13 @@ export class LazyDictionarySource {
       for (const lookup of lookups) {
         throwIfAborted(options.signal);
         const route = this.routes[lookup.kind];
-        const descriptor = route.buckets[lookup.bucket];
+        const bucket = indexBucket(lookup.kind, lookup.term, route.routing);
+        const descriptor = route.buckets[bucket];
         if (!descriptor) continue;
         const bytes = await this.loadArtifact(descriptor, 'index-shard', options.signal);
         this.metrics.indexShardsRead += 1;
         const shard = parseJson(bytes, descriptor.path, this.decoder);
-        validateIndexShard(shard, this.manifest, lookup.kind, lookup.bucket);
+        validateIndexShard(shard, this.manifest, lookup.kind, bucket);
 
         for (const [term, ids] of Object.entries(shard.terms)) {
           const score = scoreTerm(term, lookup.term, lookup.kind);
@@ -144,8 +174,9 @@ export class LazyDictionarySource {
 
   async loadEntries(ids, options = {}) {
     const groups = new Map();
+    const prefixLength = Number(this.routes.entries.routing?.prefixLength || 2);
     for (const id of ids) {
-      const bucket = (await sha256Hex(new TextEncoder().encode(id), this.crypto)).slice(0, 2);
+      const bucket = (await sha256Hex(new TextEncoder().encode(id), this.crypto)).slice(0, prefixLength);
       if (!groups.has(bucket)) groups.set(bucket, new Set());
       groups.get(bucket).add(id);
     }
@@ -173,7 +204,7 @@ export class LazyDictionarySource {
       try {
         await verifyArtifact(cached.bytes, descriptor, this.crypto);
         this.metrics.cacheHits += 1;
-        return new Uint8Array(cached.bytes);
+        return this.decodeArtifact(new Uint8Array(cached.bytes), descriptor);
       } catch {
         this.metrics.invalidCacheEntries += 1;
         await this.repository.deleteArtifact(version, descriptor.path);
@@ -186,7 +217,7 @@ export class LazyDictionarySource {
     await verifyArtifact(bytes, descriptor, this.crypto);
     throwIfAborted(signal);
     await this.repository.putArtifact(version, descriptor, bytes, kind);
-    return bytes;
+    return this.decodeArtifact(bytes, descriptor);
   }
 
   async fetchJson(url, signal, kind) {
@@ -255,19 +286,19 @@ class NetworkLimiter {
 function createLookups(query) {
   if (containsHan(query)) {
     const term = normalizeJapanese(query);
-    return [{ kind: 'written', term, bucket: writtenBucket(term) }];
+    return [{ kind: 'written', term }];
   }
   if (containsKana(query)) {
     const term = katakanaToHiragana(normalizeJapanese(query));
-    return [{ kind: 'reading', term, bucket: readingBucket(term) }];
+    return [{ kind: 'reading', term }];
   }
 
   const latin = normalizeLatin(query);
   const lookups = [];
   if (latin) {
-    lookups.push({ kind: 'romaji', term: latin.replace(/\s+/g, ''), bucket: latinBucket(latin) });
+    lookups.push({ kind: 'romaji', term: latin.replace(/\s+/g, '') });
     for (const term of latin.match(/[a-z0-9]+/g) || []) {
-      lookups.push({ kind: 'pt', term, bucket: latinBucket(term) });
+      lookups.push({ kind: 'pt', term });
     }
   }
   return dedupeLookups(lookups);
@@ -348,6 +379,9 @@ function validateRoute(route, manifest, expectedKind) {
   if (route?.schemaVersion !== 1 || route.dictionaryVersion !== manifest.dictionaryVersion) {
     throw new Error(`Invalid dictionary route: ${expectedKind}.`);
   }
+  if (manifest.packageId && route.packageId !== manifest.packageId) {
+    throw new Error(`Dictionary route targets another package: ${expectedKind}.`);
+  }
   if (expectedKind === 'entries' && route.kind !== 'dictionary-entry-routes') {
     throw new Error('Invalid dictionary entry route.');
   }
@@ -358,11 +392,15 @@ function validateRoute(route, manifest, expectedKind) {
   if (!route.buckets || typeof route.buckets !== 'object') {
     throw new Error(`Dictionary route has no buckets: ${expectedKind}.`);
   }
+  if (expectedKind !== 'entries' && !isSupportedIndexRouting(expectedKind, route.routing)) {
+    throw new Error(`Unsupported dictionary index routing: ${expectedKind}/${route.routing}.`);
+  }
 }
 
 function validateIndexShard(shard, manifest, kind, bucket) {
   if (shard?.schemaVersion !== 1 || shard.kind !== 'dictionary-search-index-shard'
     || shard.dictionaryVersion !== manifest.dictionaryVersion
+    || (manifest.packageId && shard.packageId !== manifest.packageId)
     || shard.indexKind !== kind || shard.bucket !== bucket || !shard.terms) {
     throw new Error(`Invalid dictionary index shard: ${kind}/${bucket}.`);
   }
@@ -371,6 +409,7 @@ function validateIndexShard(shard, manifest, kind, bucket) {
 function validateEntryShard(shard, manifest, bucket) {
   if (shard?.schemaVersion !== 1 || shard.kind !== 'dictionary-entry-shard'
     || shard.dictionaryVersion !== manifest.dictionaryVersion
+    || (manifest.packageId && shard.packageId !== manifest.packageId)
     || shard.shardId !== bucket || !Array.isArray(shard.entries)) {
     throw new Error(`Invalid dictionary entry shard: ${bucket}.`);
   }
@@ -397,6 +436,28 @@ function readingBucket(term) {
 function latinBucket(term) {
   const first = [...term][0];
   return /^[a-z0-9]$/.test(first || '') ? first : '_';
+}
+
+export function createRuntimeIndexBucket(kind, term, routing) {
+  if (kind === 'written' && routing === 'first-code-point-page-256') return writtenBucket(term);
+  if (kind === 'reading' && routing === 'hiragana-first-code-point') return readingBucket(term);
+  if (['romaji', 'pt'].includes(kind) && routing === 'first-ascii-character') return latinBucket(term);
+  if (['romaji', 'pt'].includes(kind) && routing === 'first-ascii-prefix-2') {
+    const prefix = [...term].slice(0, 2).join('');
+    return /^[a-z0-9]{1,2}$/u.test(prefix) ? prefix : '_';
+  }
+  throw new Error(`Unsupported dictionary index routing: ${kind}/${routing}.`);
+}
+
+function indexBucket(kind, term, routing) {
+  return createRuntimeIndexBucket(kind, term, routing);
+}
+
+function isSupportedIndexRouting(kind, routing) {
+  if (kind === 'written') return routing === 'first-code-point-page-256';
+  if (kind === 'reading') return routing === 'hiragana-first-code-point';
+  return ['romaji', 'pt'].includes(kind)
+    && ['first-ascii-character', 'first-ascii-prefix-2'].includes(routing);
 }
 
 function normalizeQuery(value) {
@@ -456,7 +517,7 @@ function normalizeConcurrency(value) {
 }
 
 function dedupeLookups(lookups) {
-  return [...new Map(lookups.map((lookup) => [`${lookup.kind}:${lookup.bucket}:${lookup.term}`, lookup])).values()];
+  return [...new Map(lookups.map((lookup) => [`${lookup.kind}:${lookup.term}`, lookup])).values()];
 }
 
 function groupBy(values, keyFor) {

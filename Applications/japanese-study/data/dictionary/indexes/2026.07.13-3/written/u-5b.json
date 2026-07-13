@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-search-index-shard",
+  "indexKind": "written",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-3",
+  "bucket": "u-5b",
+  "normalization": "unicode-nfkc-lower-v1",
+  "terms": {
+    "家": [
+      "jmdict-1191730"
+    ]
+  }
+}

@@ -24,7 +24,7 @@ for (const indexKind of config.indexKinds) {
     .map((shard) => `${shard.bucket}.json`));
   const existingFiles = await fs.readdir(outputDir, { withFileTypes: true });
   await Promise.all(existingFiles
-    .filter((item) => item.isFile() && /^(?:[a-z0-9_]|u-[a-f0-9]{2,6})\.json$/u.test(item.name))
+    .filter((item) => item.isFile() && /^(?:[a-z0-9]{1,2}|_|u-[a-f0-9]{2,6})\.json$/u.test(item.name))
     .filter((item) => !expectedFiles.has(item.name))
     .map((item) => fs.unlink(path.join(outputDir, item.name))));
 }

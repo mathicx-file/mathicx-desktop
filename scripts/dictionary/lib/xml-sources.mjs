@@ -52,12 +52,18 @@ const parser = new XMLParser({
 
 export function parseJmdictXml(xml, source) {
   const document = parseXml(xml, 'JMdict');
-  const entries = asArray(document.JMdict?.entry).map((entry) => normalizeLexicalEntry({
+  const entries = asArray(document.JMdict?.entry).map((entry) => {
+    const priorityTags = unique([
+      ...asArray(entry.k_ele).flatMap((form) => asArray(form.ke_pri).map(scalar)),
+      ...asArray(entry.r_ele).flatMap((reading) => asArray(reading.re_pri).map(scalar)),
+    ]);
+    return normalizeLexicalEntry({
     sourceEntryId: scalar(entry.ent_seq),
     source: { id: 'jmdict', version: source.version, entryId: scalar(entry.ent_seq) },
     writtenForms: asArray(entry.k_ele).map((form) => scalar(form.keb)).filter(Boolean),
     readings: asArray(entry.r_ele).map((reading) => scalar(reading.reb)).filter(Boolean),
-    common: hasPriority(entry),
+    common: priorityTags.length > 0,
+    priorityTags,
     tags: unique([
       ...asArray(entry.k_ele).flatMap((form) => asArray(form.ke_inf).map(scalar)),
       ...asArray(entry.r_ele).flatMap((reading) => asArray(reading.re_inf).map(scalar)),
@@ -74,7 +80,8 @@ export function parseJmdictXml(xml, source) {
         .filter((gloss) => !attribute(gloss, 'xml:lang') || attribute(gloss, 'xml:lang') === 'eng')
         .map(scalar),
     })),
-  }));
+    });
+  });
   assertUnique(entries, 'JMdict');
   return entries;
 }
@@ -124,11 +131,6 @@ function escapeCustomEntitiesForValidation(xml) {
   return xml.replace(/&([A-Za-z_:][\w:.-]*);/g, (reference, name) => (
     predefined.has(name) ? reference : `&amp;${name};`
   ));
-}
-
-function hasPriority(entry) {
-  return asArray(entry.k_ele).some((form) => asArray(form.ke_pri).length > 0)
-    || asArray(entry.r_ele).some((reading) => asArray(reading.re_pri).length > 0);
 }
 
 function scalar(value) {

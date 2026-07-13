@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { gunzipSync } from 'node:zlib';
 
 import {
   createArtifactDescriptor,
@@ -20,12 +21,14 @@ import {
   readJsonFile,
   writeDeterministicJson,
 } from '../../dictionary/lib/source-io.mjs';
+import { validatePackageCatalog } from '../../../Applications/japanese-study/js/dictionary/dictionary-package-manager.js';
 
 const STATIC_ROOTS = ['src', 'styles', 'Applications'];
 const ROOT_FILES = ['index.html', '.nojekyll'];
 const ALLOWED_EXTENSIONS = new Set([
   '.html', '.css', '.js', '.json', '.svg', '.png', '.jpg', '.jpeg', '.webp',
   '.gif', '.ico', '.woff', '.woff2', '.ttf',
+  '.gz',
 ]);
 const FORBIDDEN_SEGMENTS = new Set([
   '.git', '.github', 'node_modules', 'docs', 'scripts', 'test', 'tests', 'tmp',
@@ -62,7 +65,15 @@ export async function validatePagesArtifact(options = {}) {
   const inventory = await inspectArtifact(outputRoot);
   const relativeFiles = new Set(inventory.files.map((item) => item.path));
 
-  for (const required of ['index.html', '.nojekyll', 'src/main.js', 'src/firebase/firebase-config.prod.js']) {
+  for (const required of [
+    'index.html',
+    '.nojekyll',
+    'src/main.js',
+    'src/firebase/firebase-config.prod.js',
+    'Applications/japanese-study/service-worker.js',
+    'Applications/japanese-study/js/pwa-manager.js',
+    'Applications/japanese-study/js/dictionary/installed-dictionary-packages-source.js',
+  ]) {
     if (!relativeFiles.has(required)) throw new TypeError(`Pages artifact is missing: ${required}.`);
   }
   for (const item of inventory.files) validatePublishedPath(item.path);
@@ -71,6 +82,13 @@ export async function validatePagesArtifact(options = {}) {
   const dictionaryRoot = path.join(outputRoot, ...DICTIONARY_RELATIVE_ROOT.split('/'));
   const currentRelease = await readJsonFile(path.join(dictionaryRoot, 'releases/current.json'));
   validateReleaseHeader(currentRelease);
+  const packageCatalog = validatePackageCatalog(await readJsonFile(path.join(
+    dictionaryRoot,
+    'packages/catalog.json',
+  )));
+  if (packageCatalog.dictionaryVersion !== currentRelease.dictionaryVersion) {
+    throw new TypeError('Dictionary package catalog and stable release versions differ.');
+  }
   const versionedRelease = await readJsonFile(path.join(
     dictionaryRoot, `releases/${currentRelease.dictionaryVersion}.json`,
   ));
@@ -114,6 +132,7 @@ export async function validatePagesArtifact(options = {}) {
   if (currentRelease.artifacts.distribution !== distribution.verifiedArtifacts) {
     throw new TypeError('Pages release artifact count is inconsistent.');
   }
+  const optionalPackages = await validatePublishedPackages(dictionaryRoot, packageCatalog);
 
   return {
     valid: true,
@@ -123,17 +142,52 @@ export async function validatePagesArtifact(options = {}) {
     distributionArtifacts: currentRelease.artifacts.distribution,
     entryShards: distribution.entryShards,
     indexShards: distribution.indexShards,
+    packages: packageCatalog.packages.length,
+    optionalPackageArtifacts: optionalPackages.artifacts,
+    optionalPackageBytes: optionalPackages.byteLength,
   };
+}
+
+async function validatePublishedPackages(dictionaryRoot, packageCatalog) {
+  let artifacts = 0;
+  let byteLength = 0;
+  for (const item of packageCatalog.packages.filter((entry) => entry.availability === 'available')) {
+    const manifestBytes = await readDescribedBytes(dictionaryRoot, item.manifest);
+    const manifest = parsePublishedJson(manifestBytes, item.manifest.path);
+    if (manifest?.format !== 'mathicx-japanese-dictionary-offline-package'
+      || manifest.schemaVersion !== 1 || manifest.id !== item.id
+      || manifest.packageId !== item.packageId || manifest.dictionaryVersion !== item.version
+      || !Array.isArray(manifest.artifacts) || !manifest.artifacts.length) {
+      throw new TypeError(`Published offline package manifest is invalid: ${item.id}.`);
+    }
+    const prefix = `packages/${item.version}/${item.id}/`;
+    const paths = new Set();
+    for (const descriptor of manifest.artifacts) {
+      const safePath = validateRelativeArtifactPath(descriptor.path);
+      if (!safePath.startsWith(prefix) || paths.has(safePath) || descriptor.encoding !== 'gzip') {
+        throw new TypeError(`Published offline package artifact is invalid: ${safePath}.`);
+      }
+      paths.add(safePath);
+      const compressed = await readDescribedBytes(dictionaryRoot, descriptor);
+      parsePublishedJson(gunzipSync(compressed), safePath);
+      artifacts += 1;
+      byteLength += compressed.byteLength;
+    }
+    artifacts += 1;
+    byteLength += manifestBytes.byteLength;
+  }
+  return { artifacts, byteLength };
 }
 
 async function generateVersionedDictionaryRelease(workspaceRoot, outputRoot) {
   const sourceRoot = path.join(workspaceRoot, ...DICTIONARY_RELATIVE_ROOT.split('/'));
   const outputDictionaryRoot = path.join(outputRoot, ...DICTIONARY_RELATIVE_ROOT.split('/'));
-  const [packageData, licenses, entryConfig, indexConfig] = await Promise.all([
+  const [packageData, licenses, entryConfig, indexConfig, appPackage] = await Promise.all([
     readJsonFile(path.join(sourceRoot, 'packs/bootstrap-n5.json')),
     readJsonFile(path.join(sourceRoot, 'licenses.json')),
     readJsonFile(path.join(workspaceRoot, 'scripts/dictionary/config/sharding.json')),
     readJsonFile(path.join(workspaceRoot, 'scripts/dictionary/config/search-indexes.json')),
+    readJsonFile(path.join(workspaceRoot, 'Applications/japanese-study/package.json')),
   ]);
   const version = packageData.version;
   const entryResult = createEntryShards(packageData, entryConfig);
@@ -198,6 +252,8 @@ async function generateVersionedDictionaryRelease(workspaceRoot, outputRoot) {
   const release = {
     format: 'mathicx-japanese-dictionary-pages-release',
     schemaVersion: 1,
+    channel: 'stable',
+    minimumAppVersion: appPackage.version,
     releaseStatus: manifest.releaseStatus,
     packageId: packageData.id,
     dictionaryVersion: version,
@@ -277,6 +333,19 @@ async function readDescribedJson(dictionaryRoot, descriptor, artifacts) {
   return JSON.parse(text);
 }
 
+async function readDescribedBytes(dictionaryRoot, descriptor) {
+  const safePath = validateRelativeArtifactPath(descriptor.path);
+  const bytes = await fs.readFile(path.join(dictionaryRoot, ...safePath.split('/')));
+  verifyArtifactDescriptor(descriptor, bytes);
+  return bytes;
+}
+
+function parsePublishedJson(bytes, source) {
+  const text = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+  assertNoMojibake(text, source);
+  return JSON.parse(text);
+}
+
 async function inspectArtifact(outputRoot) {
   const files = [];
   await walk(outputRoot, '', files);
@@ -325,6 +394,9 @@ function validateReleaseHeader(release) {
   }
   if (!release.dictionaryVersion || !release.manifest || !release.artifacts) {
     throw new TypeError('Pages dictionary release descriptor is incomplete.');
+  }
+  if (release.channel !== 'stable' || !/^\d+\.\d+\.\d+$/u.test(release.minimumAppVersion || '')) {
+    throw new TypeError('Pages dictionary release compatibility contract is invalid.');
   }
 }
 

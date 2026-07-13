@@ -6,12 +6,22 @@ import { fileURLToPath } from 'node:url';
 import { indexedDB } from 'fake-indexeddb';
 
 import { DictionaryCacheRepository } from '../js/dictionary/dictionary-cache-repository.js';
-import { LazyDictionarySource } from '../js/dictionary/lazy-dictionary-source.js';
+import { DictionaryCacheInstaller } from '../js/dictionary/dictionary-cache-installer.js';
+import { DictionaryUpdateManager } from '../js/dictionary/dictionary-update-manager.js';
+import {
+  LazyDictionarySource,
+  createRuntimeIndexBucket,
+} from '../js/dictionary/lazy-dictionary-source.js';
 
 const appRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dictionaryRoot = path.join(appRoot, 'data', 'dictionary');
 const dataUrl = new URL('https://dictionary.test/data/dictionary/');
-const manifestUrl = new URL('manifests/2026.07.13-2.json', dataUrl);
+const manifestUrl = new URL('manifests/2026.07.13-3.json', dataUrl);
+
+test('routes expanded Latin indexes by two-character prefixes', () => {
+  assert.equal(createRuntimeIndexBucket('romaji', 'mizu', 'first-ascii-prefix-2'), 'mi');
+  assert.equal(createRuntimeIndexBucket('pt', 'agua', 'first-ascii-prefix-2'), 'ag');
+});
 
 test('initializes with manifest and routes without downloading packs or shards', async () => {
   const requests = [];
@@ -19,12 +29,74 @@ test('initializes with manifest and routes without downloading packs or shards',
   const result = await source.load();
 
   assert.equal(result.metadata.lazy, true);
-  assert.equal(result.metadata.version, '2026.07.13-2');
+  assert.equal(result.metadata.version, '2026.07.13-3');
   assert.equal(result.metadata.count, 44);
   assert.equal(requests.length, 6);
   assert.ok(requests.every((item) => item.includes('/manifests/') || item.includes('/routes/')));
   assert.ok(source.getMetrics().maxConcurrentNetworkRequests <= 3);
   await source.repository.close();
+});
+
+test('opens the promoted cache version while offline instead of the embedded manifest', async () => {
+  const repository = new DictionaryCacheRepository({
+    indexedDB,
+    dbName: `MathicxLazyDictionary-active-${Date.now()}-${Math.random()}`,
+  });
+  const manifest = JSON.parse(await fs.readFile(
+    path.join(dictionaryRoot, 'manifests', '2026.07.13-3.json'),
+    'utf8',
+  ));
+  const installer = new DictionaryCacheInstaller({
+    repository,
+    loadArtifact: (artifactPath) => fs.readFile(path.join(dictionaryRoot, ...artifactPath.split('/'))),
+  });
+  await installer.installAndPromote(manifest);
+
+  const source = new LazyDictionarySource({
+    repository,
+    dataUrl,
+    manifestUrl,
+    fetchImpl: async () => { throw new Error('offline'); },
+  });
+  const result = await source.load();
+  assert.equal(result.metadata.version, '2026.07.13-3');
+  assert.equal((await source.search('mizu'))[0].id, 'jmdict-1371260');
+  assert.equal(source.getMetrics().networkRequests, 0);
+  await repository.close();
+});
+
+test('prepares the current release online and reopens the complete essential dictionary offline', async () => {
+  const repository = new DictionaryCacheRepository({
+    indexedDB,
+    dbName: `MathicxLazyDictionary-prepared-${Date.now()}-${Math.random()}`,
+  });
+  const manifest = JSON.parse(await fs.readFile(
+    path.join(dictionaryRoot, 'manifests', '2026.07.13-3.json'),
+    'utf8',
+  ));
+  const manager = new DictionaryUpdateManager({
+    repository,
+    dataUrl,
+    fetchImpl: createFileFetch([]),
+  });
+  const prepared = await manager.prepareOffline({
+    status: 'current',
+    remoteVersion: manifest.dictionaryVersion,
+    manifest,
+    release: { artifacts: { byteLength: 300000 } },
+  });
+  assert.equal(prepared.status, 'promoted');
+
+  const offline = new LazyDictionarySource({
+    repository,
+    dataUrl,
+    manifestUrl,
+    fetchImpl: async () => { throw new Error('offline'); },
+  });
+  assert.equal((await offline.load()).metadata.version, manifest.dictionaryVersion);
+  assert.equal((await offline.search('mizu'))[0].id, 'jmdict-1371260');
+  assert.equal(offline.getMetrics().networkRequests, 0);
+  await repository.close();
 });
 
 test('routes romaji and Portuguese searches through only required shards', async () => {
@@ -37,8 +109,8 @@ test('routes romaji and Portuguese searches through only required shards', async
   assert.equal(mizu.id, 'jmdict-1371260');
   assert.equal(mizu.romaji[0], 'mizu');
   assert.ok(mizu.meanings.some((meaning) => normalizeLatin(meaning.text) === 'agua'));
-  assert.ok(requests.slice(afterInit).some((item) => item.includes('/indexes/2026.07.13-2/romaji/m.json')));
-  assert.ok(requests.slice(afterInit).some((item) => item.includes('/shards/entries/2026.07.13-2/35.json')));
+  assert.ok(requests.slice(afterInit).some((item) => item.includes('/indexes/2026.07.13-3/romaji/m.json')));
+  assert.ok(requests.slice(afterInit).some((item) => item.includes('/shards/entries/2026.07.13-3/35.json')));
   assert.ok(!requests.slice(afterInit).some((item) => item.includes('/packs/')));
 
   const afterFirstSearch = requests.length;
@@ -80,7 +152,7 @@ test('aborts an obsolete shard request without caching partial data', async () =
   const requests = [];
   const baseFetch = createFileFetch(requests);
   const fetchImpl = async (url, options = {}) => {
-    if (String(url).includes('/indexes/2026.07.13-2/romaji/m.json')) {
+    if (String(url).includes('/indexes/2026.07.13-3/romaji/m.json')) {
       await waitForAbort(options.signal);
     }
     return baseFetch(url, options);
@@ -93,7 +165,7 @@ test('aborts an obsolete shard request without caching partial data', async () =
 
   await assert.rejects(pending, { name: 'AbortError' });
   assert.equal(source.getMetrics().abortedSearches, 1);
-  const cached = await source.repository.getVersionArtifacts('2026.07.13-2');
+  const cached = await source.repository.getVersionArtifacts('2026.07.13-3');
   assert.ok(!cached.some((item) => item.path.includes('/romaji/m.json')));
   await source.repository.close();
 });
@@ -125,18 +197,18 @@ test('serves a warm search while offline and repairs a corrupted cached shard', 
 
   const descriptor = source.routes.romaji.buckets.m;
   await source.repository.putArtifact(
-    '2026.07.13-2', descriptor, new TextEncoder().encode('corrupted'), 'index-shard',
+    '2026.07.13-3', descriptor, new TextEncoder().encode('corrupted'), 'index-shard',
   );
   source.fetchImpl = createFileFetch(requests);
   assert.equal((await source.search('mizu'))[0].id, 'jmdict-1371260');
   assert.equal(source.getMetrics().invalidCacheEntries, 1);
-  assert.equal((await source.repository.getArtifact('2026.07.13-2', descriptor.path)).byteLength, descriptor.byteLength);
+  assert.equal((await source.repository.getArtifact('2026.07.13-3', descriptor.path)).byteLength, descriptor.byteLength);
   await source.repository.close();
 });
 
 test('reports 404, invalid manifest and IndexedDB quota failures without partial promotion', async () => {
   const notFoundSource = createSource('404', async (url, options) => {
-    if (String(url).endsWith('/indexes/2026.07.13-2/romaji/m.json')) {
+    if (String(url).endsWith('/indexes/2026.07.13-3/romaji/m.json')) {
       return new Response('missing', { status: 404 });
     }
     return createFileFetch([])(url, options);
@@ -174,7 +246,7 @@ test('reports 404, invalid manifest and IndexedDB quota failures without partial
 test('allows the newest concurrent search to finish after aborting the obsolete one', async () => {
   const baseFetch = createFileFetch([]);
   const source = createSource('concurrent', async (url, options = {}) => {
-    if (String(url).includes('/indexes/2026.07.13-2/romaji/m.json')) {
+    if (String(url).includes('/indexes/2026.07.13-3/romaji/m.json')) {
       await waitForAbort(options.signal);
     }
     return baseFetch(url, options);

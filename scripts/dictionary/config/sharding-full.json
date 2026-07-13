@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "strategy": "sha256-id-prefix",
+  "prefixLength": 2,
+  "emitEmptyShards": false,
+  "idealCompressedBytes": {
+    "min": 51200,
+    "max": 256000
+  },
+  "maxCompressedBytes": 512000
+}

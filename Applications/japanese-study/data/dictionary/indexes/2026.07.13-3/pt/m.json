@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-search-index-shard",
+  "indexKind": "pt",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-3",
+  "bucket": "m",
+  "normalization": "ptbr-nfkd-alphanumeric-tokens-v1",
+  "terms": {
+    "manha": [
+      "jmdict-1428280"
+    ],
+    "menu": [
+      "jmdict-1133790"
+    ],
+    "montanha": [
+      "jmdict-1302680"
+    ]
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-search-routes",
+  "indexKind": "reading",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-3",
+  "routing": "hiragana-first-code-point",
+  "normalization": "wanakana-hiragana-nfkc-v1",
+  "coverage": {
+    "shards": 32,
+    "terms": 57,
+    "references": 59
+  },
+  "buckets": {
+    "u-3042": {
+      "path": "indexes/2026.07.13-3/reading/u-3042.json",
+      "byteLength": 349,
+      "sha256": "1095197c26a502c5511ae609e9ebf1685a54d833ca730ea839c73dcf4ce1dda0"
+    },
+    "u-3044": {
+      "path": "indexes/2026.07.13-3/reading/u-3044.json",
+      "byteLength": 523,
+      "sha256": "ccb22f8bdad077376601810c4486f6083b1ce4d0a7b86e6c15e0f05ccc3413d7"
+    },
+    "u-304b": {
+      "path": "indexes/2026.07.13-3/reading/u-304b.json",
+      "byteLength": 468,
+      "sha256": "3393ec979e24e1a9424db36e91b43a9e0d033ec1a95179ededd86f12e766e868"
+    },
+    "u-304c": {
+      "path": "indexes/2026.07.13-3/reading/u-304c.json",
+      "byteLength": 297,
+      "sha256": "cf98bfffc2451c5783db6e553b2e62fa6264e5013e6679104ed69b40a47ccf02"
+    },
+    "u-304d": {
+      "path": "indexes/2026.07.13-3/reading/u-304d.json",
+      "byteLength": 358,
+      "sha256": "d09da65e46534e930370c39dc60e3a46d6b880156080e19aa9b8dbfba828805e"
+    },
+    "u-304f": {
+      "path": "indexes/2026.07.13-3/reading/u-304f.json",
+      "byteLength": 300,
+      "sha256": "ef2694c9e588c15ccce9984b5264b9989ae7464d7cb1f5967ff638e80c7634b5"
+    },
+    "u-3052": {
+      "path": "indexes/2026.07.13-3/reading/u-3052.json",
+      "byteLength": 306,
+      "sha256": "977c7d4a60ecc3e58144e079373391677fb8aed6779e3d56217fa6d6b223f8ea"
+    },
+    "u-3053": {
+      "path": "indexes/2026.07.13-3/reading/u-3053.json",
+      "byteLength": 422,
+      "sha256": "a522c70a09fe1f3d73a5ac15c775aad6f67227ebc2a693c7cb98f52a34d7e039"
+    },
+    "u-3059": {
+      "path": "indexes/2026.07.13-3/reading/u-3059.json",
+      "byteLength": 358,
+      "sha256": "550e507dbd96e4b1871cf91f540cf977ed33541bf2dc9b1062ef2b8f3659e37c"
+    },
+    "u-305b": {
+      "path": "indexes/2026.07.13-3/reading/u-305b.json",
+      "byteLength": 303,
+      "sha256": "bfa10d0415a91e5e67c8e5c7da21364ad6841dccecd34d166ee4d4f24cc47891"
+    },
+    "u-305d": {
+      "path": "indexes/2026.07.13-3/reading/u-305d.json",
+      "byteLength": 297,
+      "sha256": "b20468b529480e08fa8e54cf026644bbd06f689a444c4121402070db795a0cf3"
+    },
+    "u-305f": {
+      "path": "indexes/2026.07.13-3/reading/u-305f.json",
+      "byteLength": 557,
+      "sha256": "bd6e263109926d0b1587525a5f2d557968e3d9d9412ba7ef21edc9d42c86f861"
+    },
+    "u-3060": {
+      "path": "indexes/2026.07.13-3/reading/u-3060.json",
+      "byteLength": 303,
+      "sha256": "eab8f27a52fed950045f58223abf41fb1d550bf4b1835069a31772e3edb4bac8"
+    },
+    "u-3061": {
+      "path": "indexes/2026.07.13-3/reading/u-3061.json",
+      "byteLength": 355,
+      "sha256": "b050575593fa8de9d01107d92538a505b14d770d8d09748b34d3af83e2561f8d"
+    },
+    "u-3066": {
+      "path": "indexes/2026.07.13-3/reading/u-3066.json",
+      "byteLength": 404,
+      "sha256": "34ca2d6c088020cd04af726ff59ee1b6e1a8386386b4e6c3b250354d0bd5034f"
+    },
+    "u-3068": {
+      "path": "indexes/2026.07.13-3/reading/u-3068.json",
+      "byteLength": 303,
+      "sha256": "27a04365c97ba42c22465c31f1c7426c80fff6830025a9c517196d3bd0f203e2"
+    },
+    "u-3069": {
+      "path": "indexes/2026.07.13-3/reading/u-3069.json",
+      "byteLength": 303,
+      "sha256": "d3cc132807fd1073c6e46fd325c517b44fab8a3c67ec41c4fbbb001fb93f4e41"
+    },
+    "u-306b": {
+      "path": "indexes/2026.07.13-3/reading/u-306b.json",
+      "byteLength": 352,
+      "sha256": "f5b2bee74f3da0c1c046fc28dd26d380557927b90dc24df59cb95cc0778126c2"
+    },
+    "u-306d": {
+      "path": "indexes/2026.07.13-3/reading/u-306d.json",
+      "byteLength": 297,
+      "sha256": "6e8c73b8394e289c109d84c66ad6d99031e50c92112dc13a3eba9dd9a8945928"
+    },
+    "u-306e": {
+      "path": "indexes/2026.07.13-3/reading/u-306e.json",
+      "byteLength": 303,
+      "sha256": "0811878782c4278f53609440eef520690e84d08d62f5f3dfadc0486176910888"
+    },
+    "u-306f": {
+      "path": "indexes/2026.07.13-3/reading/u-306f.json",
+      "byteLength": 321,
+      "sha256": "f6d77a6e8b3a6e8013b58b467797f86deb80f7d5f4698f06e5521cb6819a4ddb"
+    },
+    "u-3070": {
+      "path": "indexes/2026.07.13-3/reading/u-3070.json",
+      "byteLength": 297,
+      "sha256": "18211dde68b0ac65fb387392b0d9f2ffbdfed0f1ddcedafd1c2e671adbcf8348"
+    },
+    "u-3071": {
+      "path": "indexes/2026.07.13-3/reading/u-3071.json",
+      "byteLength": 352,
+      "sha256": "095fc4624a2d13662721536f4032d1c614f2f1e423a0b5599249fdc0de717f55"
+    },
+    "u-3072": {
+      "path": "indexes/2026.07.13-3/reading/u-3072.json",
+      "byteLength": 297,
+      "sha256": "aa5aa6751116f99816683e526d2730231813efaf57f60f1f1bc529cead48e89e"
+    },
+    "u-3074": {
+      "path": "indexes/2026.07.13-3/reading/u-3074.json",
+      "byteLength": 401,
+      "sha256": "dad852fcba142c0d956b0950eac0aaf723e6c6136f3b92da3a909ba206bed5d6"
+    },
+    "u-307b": {
+      "path": "indexes/2026.07.13-3/reading/u-307b.json",
+      "byteLength": 300,
+      "sha256": "5f4454af2abdea4dae0e572333c0c2fe1d0c1c551d80878913fab1d7559ce8a4"
+    },
+    "u-307f": {
+      "path": "indexes/2026.07.13-3/reading/u-307f.json",
+      "byteLength": 297,
+      "sha256": "1dd5501dae65163d8f36863d34abcf34df5576d7cefbb0bb9394b7d33b4cefb4"
+    },
+    "u-3081": {
+      "path": "indexes/2026.07.13-3/reading/u-3081.json",
+      "byteLength": 303,
+      "sha256": "a719a9320ee05ebc3fb8cbdb58759acfab7f509a0c01b6c50d025a4b1da94316"
+    },
+    "u-3082": {
+      "path": "indexes/2026.07.13-3/reading/u-3082.json",
+      "byteLength": 306,
+      "sha256": "9e00b461fc3c2affedea318d8b0d13445521213f9e012ca23b6fae6dbc496721"
+    },
+    "u-3084": {
+      "path": "indexes/2026.07.13-3/reading/u-3084.json",
+      "byteLength": 297,
+      "sha256": "46fffaeb4ebbde893fc7c1577ca81b18dc23a6d147e9a343c6ebce5cb984f567"
+    },
+    "u-3088": {
+      "path": "indexes/2026.07.13-3/reading/u-3088.json",
+      "byteLength": 340,
+      "sha256": "cb6a2354820c6ddedb7e71f7d7869837e1312401b759752874b202a16ca1d7d9"
+    },
+    "u-308c": {
+      "path": "indexes/2026.07.13-3/reading/u-308c.json",
+      "byteLength": 306,
+      "sha256": "fa11f1be037a694a6abb4c36d75350d2a31af0878c4d0bf74a417a4b2b64d88f"
+    }
+  }
+}

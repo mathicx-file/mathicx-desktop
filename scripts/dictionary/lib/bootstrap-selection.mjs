@@ -42,6 +42,43 @@ export function selectKanjiBootstrap(entries, legacyPayload) {
   };
 }
 
+export function selectLexicalTier(entries, mode, legacyEntries = []) {
+  if (mode === 'baseline') return selectLexicalBootstrap(entries, legacyEntries);
+  const selected = mode === 'common' ? entries.filter((entry) => entry.common) : mode === 'full' ? entries : null;
+  if (!selected) throw new TypeError(`Unsupported lexical selection mode: ${mode}.`);
+  return {
+    entries: [...selected].sort(byId),
+    aliases: [],
+    report: {
+      mode,
+      requested: entries.length,
+      selected: selected.length,
+      unmatched: [],
+      ambiguous: [],
+    },
+  };
+}
+
+export function selectKanjiTier(entries, mode, legacyPayload = null, options = {}) {
+  if (mode === 'baseline') return selectKanjiBootstrap(entries, legacyPayload);
+  const grades = new Set(options.kanjiGrades || [1, 2, 3, 4, 5, 6, 8]);
+  const selected = mode === 'common'
+    ? entries.filter((entry) => grades.has(entry.grade))
+    : mode === 'full' ? entries : null;
+  if (!selected) throw new TypeError(`Unsupported kanji selection mode: ${mode}.`);
+  return {
+    entries: [...selected].sort(byId),
+    aliases: [],
+    report: {
+      mode,
+      requested: entries.length,
+      selected: selected.length,
+      unmatched: [],
+      grades: mode === 'common' ? [...grades].sort((a, b) => a - b) : [],
+    },
+  };
+}
+
 function matchesLexical(entry, word, reading) {
   if (word && (entry.writtenForms.includes(word) || entry.readings.includes(word))) return true;
   return Boolean(reading && entry.readings.includes(reading));

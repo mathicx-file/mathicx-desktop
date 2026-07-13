@@ -11,6 +11,7 @@ import {
   importKanjidic2Snapshot,
   validateImportArtifacts,
 } from '../lib/import-pipeline.mjs';
+import { selectKanjiTier, selectLexicalTier } from '../lib/bootstrap-selection.mjs';
 import { readSourceSnapshot } from '../lib/source-io.mjs';
 import { parseJmdictXml, parseKanjidic2Xml } from '../lib/xml-sources.mjs';
 
@@ -55,6 +56,26 @@ test('parses only Japanese readings and English KANJIDIC2 meanings', () => {
   assert.deepEqual(water.readings.on, ['スイ']);
   assert.deepEqual(water.readings.kun, ['みず']);
   assert.deepEqual(water.meanings.en, ['water']);
+});
+
+test('selects common and full package tiers deterministically', () => {
+  const lexical = [
+    { id: 'jmdict-2', common: false },
+    { id: 'jmdict-1', common: true },
+  ];
+  const kanji = [
+    { id: 'kanjidic2-4e00', grade: 1 },
+    { id: 'kanjidic2-4e01', grade: 9 },
+    { id: 'kanjidic2-4e02', grade: 8 },
+  ];
+  assert.deepEqual(selectLexicalTier(lexical, 'common').entries.map((entry) => entry.id), ['jmdict-1']);
+  assert.deepEqual(selectLexicalTier(lexical, 'full').entries.map((entry) => entry.id), [
+    'jmdict-1', 'jmdict-2',
+  ]);
+  assert.deepEqual(selectKanjiTier(kanji, 'common').entries.map((entry) => entry.id), [
+    'kanjidic2-4e00', 'kanjidic2-4e02',
+  ]);
+  assert.equal(selectKanjiTier(kanji, 'full').entries.length, 3);
 });
 
 test('selects bootstrap aliases and reports controlled lexical ambiguity', async () => {

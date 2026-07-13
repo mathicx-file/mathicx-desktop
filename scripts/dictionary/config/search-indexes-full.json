@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "indexKinds": [
+    "written",
+    "reading",
+    "romaji",
+    "pt"
+  ],
+  "romanization": {
+    "library": "wanakana",
+    "version": "5.3.1",
+    "style": "hepburn",
+    "upcaseKatakana": false,
+    "variants": [
+      "canonical",
+      "compact-apostrophe"
+    ]
+  },
+  "routing": {
+    "written": "first-code-point-page-256",
+    "reading": "hiragana-first-code-point",
+    "romaji": "first-ascii-prefix-2",
+    "pt": "first-ascii-prefix-2"
+  },
+  "idealCompressedBytes": {
+    "min": 10240,
+    "max": 102400
+  },
+  "maxCompressedBytes": 256000
+}

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "dictionary-entry-shards-report",
   "packageId": "bootstrap-n5",
-  "dictionaryVersion": "2026.07.13-2",
+  "dictionaryVersion": "2026.07.13-3",
   "routing": {
     "strategy": "sha256-id-prefix",
     "prefixLength": 2,
@@ -16,12 +16,12 @@
   "distribution": {
     "minEntries": 1,
     "maxEntries": 3,
-    "totalRawBytes": 92900,
-    "minRawBytes": 1334,
-    "maxRawBytes": 6849,
-    "totalCompressedBytes": 23177,
-    "minCompressedBytes": 480,
-    "maxCompressedBytes": 940,
+    "totalRawBytes": 94044,
+    "minRawBytes": 1360,
+    "maxRawBytes": 6875,
+    "totalCompressedBytes": 23549,
+    "minCompressedBytes": 489,
+    "maxCompressedBytes": 952,
     "belowIdealShards": 39,
     "aboveIdealShards": 0
   },
@@ -36,236 +36,236 @@
     {
       "shardId": "01",
       "entries": 2,
-      "rawBytes": 3693,
-      "compressedBytes": 838
+      "rawBytes": 3745,
+      "compressedBytes": 847
     },
     {
       "shardId": "03",
       "entries": 1,
-      "rawBytes": 1461,
-      "compressedBytes": 532
+      "rawBytes": 1487,
+      "compressedBytes": 541
     },
     {
       "shardId": "0e",
       "entries": 1,
-      "rawBytes": 1834,
-      "compressedBytes": 544
+      "rawBytes": 1860,
+      "compressedBytes": 552
     },
     {
       "shardId": "10",
       "entries": 1,
-      "rawBytes": 3577,
-      "compressedBytes": 685
+      "rawBytes": 3603,
+      "compressedBytes": 694
     },
     {
       "shardId": "18",
       "entries": 1,
-      "rawBytes": 1859,
-      "compressedBytes": 552
+      "rawBytes": 1885,
+      "compressedBytes": 560
     },
     {
       "shardId": "26",
       "entries": 1,
-      "rawBytes": 1476,
-      "compressedBytes": 549
+      "rawBytes": 1502,
+      "compressedBytes": 560
     },
     {
       "shardId": "32",
       "entries": 3,
-      "rawBytes": 5232,
-      "compressedBytes": 850
+      "rawBytes": 5310,
+      "compressedBytes": 863
     },
     {
       "shardId": "35",
       "entries": 1,
-      "rawBytes": 3137,
-      "compressedBytes": 640
+      "rawBytes": 3163,
+      "compressedBytes": 650
     },
     {
       "shardId": "39",
       "entries": 1,
-      "rawBytes": 2731,
-      "compressedBytes": 590
+      "rawBytes": 2757,
+      "compressedBytes": 599
     },
     {
       "shardId": "42",
       "entries": 1,
-      "rawBytes": 1351,
-      "compressedBytes": 495
+      "rawBytes": 1377,
+      "compressedBytes": 504
     },
     {
       "shardId": "48",
       "entries": 1,
-      "rawBytes": 1838,
-      "compressedBytes": 546
+      "rawBytes": 1864,
+      "compressedBytes": 555
     },
     {
       "shardId": "5c",
       "entries": 1,
-      "rawBytes": 1399,
-      "compressedBytes": 508
+      "rawBytes": 1425,
+      "compressedBytes": 517
     },
     {
       "shardId": "6e",
       "entries": 1,
-      "rawBytes": 4317,
-      "compressedBytes": 700
+      "rawBytes": 4343,
+      "compressedBytes": 712
     },
     {
       "shardId": "71",
       "entries": 1,
-      "rawBytes": 2915,
-      "compressedBytes": 695
+      "rawBytes": 2941,
+      "compressedBytes": 704
     },
     {
       "shardId": "76",
       "entries": 1,
-      "rawBytes": 2935,
-      "compressedBytes": 680
+      "rawBytes": 2961,
+      "compressedBytes": 688
     },
     {
       "shardId": "77",
       "entries": 1,
-      "rawBytes": 1407,
-      "compressedBytes": 529
+      "rawBytes": 1433,
+      "compressedBytes": 540
     },
     {
       "shardId": "7f",
       "entries": 1,
-      "rawBytes": 1409,
-      "compressedBytes": 531
+      "rawBytes": 1435,
+      "compressedBytes": 541
     },
     {
       "shardId": "86",
       "entries": 1,
-      "rawBytes": 1413,
-      "compressedBytes": 532
+      "rawBytes": 1439,
+      "compressedBytes": 542
     },
     {
       "shardId": "8a",
       "entries": 1,
-      "rawBytes": 1493,
-      "compressedBytes": 535
+      "rawBytes": 1519,
+      "compressedBytes": 545
     },
     {
       "shardId": "8e",
       "entries": 2,
-      "rawBytes": 2623,
-      "compressedBytes": 617
+      "rawBytes": 2675,
+      "compressedBytes": 629
     },
     {
       "shardId": "92",
       "entries": 1,
-      "rawBytes": 1746,
-      "compressedBytes": 505
+      "rawBytes": 1772,
+      "compressedBytes": 514
     },
     {
       "shardId": "94",
       "entries": 1,
-      "rawBytes": 1387,
-      "compressedBytes": 505
+      "rawBytes": 1413,
+      "compressedBytes": 514
     },
     {
       "shardId": "95",
       "entries": 1,
-      "rawBytes": 1772,
-      "compressedBytes": 525
+      "rawBytes": 1798,
+      "compressedBytes": 534
     },
     {
       "shardId": "96",
       "entries": 1,
-      "rawBytes": 1430,
-      "compressedBytes": 520
+      "rawBytes": 1456,
+      "compressedBytes": 532
     },
     {
       "shardId": "a5",
       "entries": 1,
-      "rawBytes": 4548,
-      "compressedBytes": 717
+      "rawBytes": 4574,
+      "compressedBytes": 726
     },
     {
       "shardId": "af",
       "entries": 1,
-      "rawBytes": 2253,
-      "compressedBytes": 689
+      "rawBytes": 2279,
+      "compressedBytes": 700
     },
     {
       "shardId": "b2",
       "entries": 1,
-      "rawBytes": 1349,
-      "compressedBytes": 482
+      "rawBytes": 1375,
+      "compressedBytes": 491
     },
     {
       "shardId": "b6",
       "entries": 1,
-      "rawBytes": 3202,
-      "compressedBytes": 653
+      "rawBytes": 3228,
+      "compressedBytes": 662
     },
     {
       "shardId": "b9",
       "entries": 1,
-      "rawBytes": 1375,
-      "compressedBytes": 507
+      "rawBytes": 1401,
+      "compressedBytes": 516
     },
     {
       "shardId": "c0",
       "entries": 1,
-      "rawBytes": 1780,
-      "compressedBytes": 525
+      "rawBytes": 1806,
+      "compressedBytes": 533
     },
     {
       "shardId": "d6",
       "entries": 1,
-      "rawBytes": 1383,
-      "compressedBytes": 515
+      "rawBytes": 1409,
+      "compressedBytes": 524
     },
     {
       "shardId": "e1",
       "entries": 1,
-      "rawBytes": 1514,
-      "compressedBytes": 525
+      "rawBytes": 1540,
+      "compressedBytes": 535
     },
     {
       "shardId": "e3",
       "entries": 1,
-      "rawBytes": 1843,
-      "compressedBytes": 541
+      "rawBytes": 1869,
+      "compressedBytes": 550
     },
     {
       "shardId": "e4",
       "entries": 1,
-      "rawBytes": 1366,
-      "compressedBytes": 493
+      "rawBytes": 1392,
+      "compressedBytes": 500
     },
     {
       "shardId": "e7",
       "entries": 1,
-      "rawBytes": 1334,
-      "compressedBytes": 480
+      "rawBytes": 1360,
+      "compressedBytes": 489
     },
     {
       "shardId": "e8",
       "entries": 1,
-      "rawBytes": 4296,
-      "compressedBytes": 689
+      "rawBytes": 4322,
+      "compressedBytes": 698
     },
     {
       "shardId": "f2",
       "entries": 1,
-      "rawBytes": 6849,
-      "compressedBytes": 940
+      "rawBytes": 6875,
+      "compressedBytes": 952
     },
     {
       "shardId": "f6",
       "entries": 1,
-      "rawBytes": 1475,
-      "compressedBytes": 537
+      "rawBytes": 1501,
+      "compressedBytes": 549
     },
     {
       "shardId": "fe",
       "entries": 2,
-      "rawBytes": 3898,
-      "compressedBytes": 681
+      "rawBytes": 3950,
+      "compressedBytes": 687
     }
   ]
 }

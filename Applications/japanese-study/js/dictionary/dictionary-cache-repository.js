@@ -12,6 +12,8 @@ export const DICTIONARY_CACHE_STORES = Object.freeze({
 const ACTIVE_VERSION_KEY = 'active-cache-version';
 const PREVIOUS_VERSION_KEY = 'previous-cache-version';
 const VERSION_KEY_PREFIX = 'version:';
+const PACKAGE_KEY_PREFIX = 'package:';
+const PACKAGE_CATALOG_KEY = 'package-catalog';
 
 export class DictionaryCacheRepository {
   constructor(options = {}) {
@@ -63,7 +65,7 @@ export class DictionaryCacheRepository {
     });
   }
 
-  async putArtifact(version, descriptor, bytes, kind = 'chunk') {
+  async putArtifact(version, descriptor, bytes, kind = 'chunk', packageId = null) {
     assertVersion(version);
     assertDescriptor(descriptor);
     const payload = toArrayBuffer(bytes);
@@ -76,6 +78,7 @@ export class DictionaryCacheRepository {
       kind,
       byteLength: descriptor.byteLength,
       sha256: descriptor.sha256,
+      packageId: packageId || null,
       bytes: payload,
       storedAt: this.now(),
       lastAccessedAt: this.now(),
@@ -115,24 +118,29 @@ export class DictionaryCacheRepository {
     return records;
   }
 
+  async getAllArtifacts() {
+    const db = await this.open();
+    const tx = db.transaction(DICTIONARY_CACHE_STORES.chunks, 'readonly');
+    const records = await requestResult(tx.objectStore(DICTIONARY_CACHE_STORES.chunks).getAll());
+    await transactionDone(tx);
+    return records;
+  }
+
   async getCacheUsage(version) {
     const records = await this.getVersionArtifacts(version);
-    const byKind = {};
-    for (const record of records) {
-      const current = byKind[record.kind] || { artifacts: 0, byteLength: 0 };
-      current.artifacts += 1;
-      current.byteLength += Number(record.byteLength || record.bytes?.byteLength || 0);
-      byKind[record.kind] = current;
-    }
-    return {
-      version,
-      artifacts: records.length,
-      byteLength: records.reduce(
-        (total, record) => total + Number(record.byteLength || record.bytes?.byteLength || 0),
-        0,
-      ),
-      byKind,
-    };
+    return { version, ...summarizeArtifacts(records) };
+  }
+
+  async getTotalCacheUsage() {
+    return summarizeArtifacts(await this.getAllArtifacts());
+  }
+
+  async getPackageUsage(version, packageId) {
+    assertVersion(version);
+    assertPackageId(packageId);
+    const records = (await this.getVersionArtifacts(version))
+      .filter((record) => record.packageId === packageId);
+    return { version, packageId, ...summarizeArtifacts(records) };
   }
 
   async clearOptionalArtifacts(version, options = {}) {
@@ -160,6 +168,29 @@ export class DictionaryCacheRepository {
     return result;
   }
 
+  async deletePackageArtifacts(version, packageId) {
+    assertVersion(version);
+    assertPackageId(packageId);
+    const db = await this.open();
+    const tx = db.transaction(DICTIONARY_CACHE_STORES.chunks, 'readwrite');
+    const request = tx.objectStore(DICTIONARY_CACHE_STORES.chunks).index('version').openCursor(version);
+    const result = { version, packageId, removedArtifacts: 0, removedBytes: 0 };
+
+    request.onsuccess = () => {
+      const cursor = request.result;
+      if (!cursor) return;
+      const record = cursor.value;
+      if (record.packageId === packageId) {
+        result.removedArtifacts += 1;
+        result.removedBytes += Number(record.byteLength || record.bytes?.byteLength || 0);
+        cursor.delete();
+      }
+      cursor.continue();
+    };
+    await transactionDone(tx);
+    return result;
+  }
+
   async deleteVersion(version) {
     assertVersion(version);
     const db = await this.open();
@@ -173,7 +204,16 @@ export class DictionaryCacheRepository {
       cursor.delete();
       cursor.continue();
     };
-    tx.objectStore(DICTIONARY_CACHE_STORES.meta).delete(versionStateKey(version));
+    const meta = tx.objectStore(DICTIONARY_CACHE_STORES.meta);
+    meta.delete(versionStateKey(version));
+    const metaCursor = meta.openCursor();
+    const packagePrefix = `${PACKAGE_KEY_PREFIX}${version}:`;
+    metaCursor.onsuccess = () => {
+      const cursor = metaCursor.result;
+      if (!cursor) return;
+      if (String(cursor.key).startsWith(packagePrefix)) cursor.delete();
+      cursor.continue();
+    };
     await transactionDone(tx);
   }
 
@@ -190,6 +230,62 @@ export class DictionaryCacheRepository {
 
   async getVersionState(version) {
     return this.getMeta(versionStateKey(version));
+  }
+
+  async getVersionStates() {
+    const db = await this.open();
+    const tx = db.transaction(DICTIONARY_CACHE_STORES.meta, 'readonly');
+    const records = await requestResult(tx.objectStore(DICTIONARY_CACHE_STORES.meta).getAll());
+    await transactionDone(tx);
+    return records
+      .filter((record) => record.name.startsWith(VERSION_KEY_PREFIX))
+      .map((record) => record.value)
+      .filter(Boolean);
+  }
+
+  async setPackageState(version, packageId, state) {
+    assertVersion(version);
+    assertPackageId(packageId);
+    const current = await this.getPackageState(version, packageId);
+    await this.setMeta(packageStateKey(version, packageId), {
+      ...(current || {}),
+      ...state,
+      version,
+      packageId,
+      updatedAt: this.now(),
+    });
+  }
+
+  async getPackageState(version, packageId) {
+    assertVersion(version);
+    assertPackageId(packageId);
+    return this.getMeta(packageStateKey(version, packageId));
+  }
+
+  async getPackageStates(packageId = '') {
+    if (packageId) assertPackageId(packageId);
+    const db = await this.open();
+    const tx = db.transaction(DICTIONARY_CACHE_STORES.meta, 'readonly');
+    const records = await requestResult(tx.objectStore(DICTIONARY_CACHE_STORES.meta).getAll());
+    await transactionDone(tx);
+    return records
+      .filter((record) => record.name.startsWith(PACKAGE_KEY_PREFIX))
+      .map((record) => record.value)
+      .filter((state) => state && (!packageId || state.packageId === packageId));
+  }
+
+  async setPackageCatalog(catalog) {
+    await this.setMeta(PACKAGE_CATALOG_KEY, catalog);
+  }
+
+  async getPackageCatalog() {
+    return this.getMeta(PACKAGE_CATALOG_KEY);
+  }
+
+  async deletePackageState(version, packageId) {
+    assertVersion(version);
+    assertPackageId(packageId);
+    await this.deleteMeta(packageStateKey(version, packageId));
   }
 
   async getCacheState() {
@@ -254,6 +350,25 @@ export class DictionaryCacheRepository {
     return this.getCacheState();
   }
 
+  async cleanupUnprotectedVersions(options = {}) {
+    const [cacheState, versions] = await Promise.all([
+      this.getCacheState(),
+      this.getVersionStates(),
+    ]);
+    const protectedVersions = new Set([
+      cacheState.activeVersion,
+      cacheState.previousVersion,
+      ...(options.keepVersions || []),
+    ].filter(Boolean));
+    const result = { removedVersions: [], preservedVersions: [...protectedVersions] };
+    for (const versionState of versions) {
+      if (protectedVersions.has(versionState.version) || versionState.status === 'installing') continue;
+      await this.deleteVersion(versionState.version);
+      result.removedVersions.push(versionState.version);
+    }
+    return result;
+  }
+
   async recordFailure(failure) {
     const db = await this.open();
     const tx = db.transaction(DICTIONARY_CACHE_STORES.failures, 'readwrite');
@@ -290,6 +405,13 @@ export class DictionaryCacheRepository {
     const db = await this.open();
     const tx = db.transaction(DICTIONARY_CACHE_STORES.meta, 'readwrite');
     tx.objectStore(DICTIONARY_CACHE_STORES.meta).put({ name, value });
+    await transactionDone(tx);
+  }
+
+  async deleteMeta(name) {
+    const db = await this.open();
+    const tx = db.transaction(DICTIONARY_CACHE_STORES.meta, 'readwrite');
+    tx.objectStore(DICTIONARY_CACHE_STORES.meta).delete(name);
     await transactionDone(tx);
   }
 }
@@ -347,6 +469,10 @@ function versionStateKey(version) {
   return `${VERSION_KEY_PREFIX}${version}`;
 }
 
+function packageStateKey(version, packageId) {
+  return `${PACKAGE_KEY_PREFIX}${version}:${packageId}`;
+}
+
 function toArrayBuffer(bytes) {
   const view = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
   return view.buffer.slice(view.byteOffset, view.byteOffset + view.byteLength);
@@ -356,8 +482,36 @@ function assertVersion(version) {
   if (!String(version || '').trim()) throw new Error('Dictionary cache version is required.');
 }
 
+function assertPackageId(packageId) {
+  if (!/^[a-z0-9][a-z0-9-]*$/u.test(String(packageId || ''))) {
+    throw new Error(`Invalid dictionary package id: ${packageId}`);
+  }
+}
+
 function assertDescriptor(descriptor) {
   if (!descriptor?.path || !Number.isInteger(descriptor.byteLength) || !descriptor.sha256) {
     throw new Error('Invalid dictionary artifact descriptor.');
   }
+}
+
+function summarizeArtifacts(records) {
+  const byKind = {};
+  const byVersion = {};
+  const byPackage = {};
+  let byteLength = 0;
+  for (const record of records) {
+    const bytes = Number(record.byteLength || record.bytes?.byteLength || 0);
+    byteLength += bytes;
+    addUsage(byKind, record.kind || 'chunk', bytes);
+    addUsage(byVersion, record.version || 'unknown', bytes);
+    if (record.packageId) addUsage(byPackage, record.packageId, bytes);
+  }
+  return { artifacts: records.length, byteLength, byKind, byVersion, byPackage };
+}
+
+function addUsage(target, key, byteLength) {
+  const current = target[key] || { artifacts: 0, byteLength: 0 };
+  current.artifacts += 1;
+  current.byteLength += byteLength;
+  target[key] = current;
 }

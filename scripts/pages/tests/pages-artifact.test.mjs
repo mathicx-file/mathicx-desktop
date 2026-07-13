@@ -30,14 +30,39 @@ test('builds a minimal, versioned and valid Pages artifact', async () => {
   const result = await validatePagesArtifact({ outputRoot });
   assert.equal(result.valid, true);
   assert.ok(result.distributionArtifacts > 0);
+  assert.equal(result.optionalPackageArtifacts, 885);
+  assert.ok(result.optionalPackageBytes > 25_000_000);
 
   await assert.rejects(fs.access(path.join(outputRoot, 'package.json')));
   await assert.rejects(fs.access(path.join(outputRoot, 'node_modules')));
   await assert.rejects(fs.access(path.join(outputRoot, 'src', 'firebase', 'firebase-config.local.js')));
 
   const release = JSON.parse(await fs.readFile(path.join(dictionaryRoot, 'releases', 'current.json'), 'utf8'));
+  assert.equal(release.channel, 'stable');
+  assert.equal(release.minimumAppVersion, '2.0.0');
   assert.match(release.manifest.path, new RegExp(release.dictionaryVersion.replaceAll('.', '\\.')));
   await fs.access(path.join(dictionaryRoot, 'releases', `${release.dictionaryVersion}.json`));
+  const catalog = JSON.parse(await fs.readFile(path.join(dictionaryRoot, 'packages', 'catalog.json'), 'utf8'));
+  assert.equal(catalog.dictionaryVersion, release.dictionaryVersion);
+  assert.deepEqual(catalog.packages.map((item) => item.id), ['essential', 'core', 'full']);
+});
+
+test('rejects a compressed offline package artifact whose hash no longer matches', async () => {
+  const catalog = JSON.parse(await fs.readFile(path.join(dictionaryRoot, 'packages', 'catalog.json'), 'utf8'));
+  const manifestDescriptor = catalog.packages.find((item) => item.id === 'core').manifest;
+  const manifest = JSON.parse(await fs.readFile(
+    path.join(dictionaryRoot, ...manifestDescriptor.path.split('/')),
+    'utf8',
+  ));
+  const artifactPath = path.join(dictionaryRoot, ...manifest.artifacts[0].path.split('/'));
+  const original = await fs.readFile(artifactPath);
+
+  try {
+    await fs.appendFile(artifactPath, '\n');
+    await assert.rejects(validatePagesArtifact({ outputRoot }), /hash|byte length|descriptor/i);
+  } finally {
+    await fs.writeFile(artifactPath, original);
+  }
 });
 
 test('rejects a dictionary artifact whose content no longer matches its hash', async () => {

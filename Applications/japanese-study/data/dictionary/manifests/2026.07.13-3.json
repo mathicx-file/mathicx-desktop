@@ -1,0 +1,77 @@
+{
+  "format": "mathicx-japanese-dictionary",
+  "schemaVersion": 1,
+  "releaseStatus": "staged",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-3",
+  "sources": [
+    {
+      "id": "jmdict",
+      "version": "2026-07-13",
+      "sha256": "5a6356a36532d30613a3469af7098224d010c7d039d0d00e3b063632a2912c31"
+    },
+    {
+      "id": "kanjidic2",
+      "version": "2026-07-13",
+      "sha256": "b08df64dd6828463ea31529d9ea93db32a527d87fa25a1606b2e5775d3967bf3"
+    },
+    {
+      "id": "kanjivg",
+      "version": "r20250816",
+      "sha256": "69a2944ec1183086fdee5ba9c1f48bc306b867480a95b2f337f3203bf50689a3"
+    },
+    {
+      "id": "mathicx-ptbr",
+      "version": "ea879a4",
+      "sha256": "445ea3c5206fe9b7a48272591ce6b713ad3a10bbee43c8e030d06c6607149a7e"
+    }
+  ],
+  "defaultPack": {
+    "path": "packs/bootstrap-n5.json",
+    "byteLength": 106673,
+    "sha256": "cdac0b28dfd9b1a2768602e53ebbce291195aa9208c09081720cf8cf715c8107"
+  },
+  "licenses": {
+    "path": "licenses.json",
+    "byteLength": 1019,
+    "sha256": "ea2b7faf227e23a4d375348f3359774c0a78a2a6794c0021fe9da8c9165db282"
+  },
+  "routes": {
+    "entries": {
+      "path": "routes/2026.07.13-3/entries.json",
+      "byteLength": 7345,
+      "sha256": "3eadb4a91eb37a1696a4a4f6331dec3e028d4670680dd8a6cfcba73dfe2c20c8"
+    },
+    "indexes": {
+      "written": {
+        "path": "routes/2026.07.13-3/written.json",
+        "byteLength": 4966,
+        "sha256": "38de81b2cadcb9e4c256e3ba8e6157e83059af87f991c39a108522bb53537b74"
+      },
+      "reading": {
+        "path": "routes/2026.07.13-3/reading.json",
+        "byteLength": 6393,
+        "sha256": "8ffc61e2ab6b7e331fcd1084e1c7dab5d49a7075f4d0708dba216b34318359b2"
+      },
+      "romaji": {
+        "path": "routes/2026.07.13-3/romaji.json",
+        "byteLength": 3016,
+        "sha256": "89b74cafdc47ff291a909d317e5be47d7190950246ae80cb7378c0de436786f2"
+      },
+      "pt": {
+        "path": "routes/2026.07.13-3/pt.json",
+        "byteLength": 3475,
+        "sha256": "64e3ba9191e7e6bbe89a34b732e8bef3226c2c73fc3d3c0f3100c29834bda07c"
+      }
+    }
+  },
+  "runtime": {
+    "active": false,
+    "activeSource": "legacy-json",
+    "requiredBeforeActivation": [
+      "indexeddb-cache",
+      "lazy-loading",
+      "rollback"
+    ]
+  }
+}

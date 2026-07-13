@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-search-index-shard",
+  "indexKind": "written",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-3",
+  "bucket": "u-98",
+  "normalization": "unicode-nfkc-lower-v1",
+  "terms": {
+    "食べもの": [
+      "jmdict-1358340"
+    ],
+    "食べ物": [
+      "jmdict-1358340"
+    ],
+    "飲みもの": [
+      "jmdict-1600430"
+    ],
+    "飲み物": [
+      "jmdict-1600430"
+    ],
+    "飲物": [
+      "jmdict-1600430"
+    ]
+  }
+}

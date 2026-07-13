@@ -15,8 +15,8 @@ export function createSearchIndexes(packageData, config) {
 
   for (const indexKind of normalizedConfig.indexKinds) {
     const buckets = new Map();
-    for (const [term, ids] of [...termMaps[indexKind]].sort(byKey)) {
-      const bucket = createIndexBucket(indexKind, term);
+    for (const [term, ids] of [...termMaps[indexKind]].sort(byObjectKey)) {
+      const bucket = createIndexBucket(indexKind, term, normalizedConfig.routing[indexKind]);
       if (!buckets.has(bucket)) buckets.set(bucket, []);
       buckets.get(bucket).push([term, [...ids].sort()]);
     }
@@ -56,11 +56,11 @@ export function validateSearchIndexes(packageData, shards, config) {
 
     const terms = Object.entries(shard.terms || {});
     if (!terms.length) throw new TypeError(`Search index shard ${key} cannot be empty.`);
-    if (!sameJson(terms, [...terms].sort(byKey))) {
+    if (!sameJson(terms, [...terms].sort(byObjectKey))) {
       throw new TypeError(`Search index shard ${key} is not sorted.`);
     }
     for (const [term, ids] of terms) {
-      if (createIndexBucket(shard.indexKind, term) !== shard.bucket) {
+      if (createIndexBucket(shard.indexKind, term, normalizedConfig.routing[shard.indexKind]) !== shard.bucket) {
         throw new TypeError(`Search term ${term} is stored in the wrong bucket.`);
       }
       if (!Array.isArray(ids) || !ids.length || !sameJson(ids, [...new Set(ids)].sort())) {
@@ -93,16 +93,23 @@ export function validateSearchIndexes(packageData, shards, config) {
   return { shards, report: createReport(normalizedPackage, normalizedConfig, metrics, expected) };
 }
 
-export function createIndexBucket(indexKind, term) {
+export function createIndexBucket(indexKind, term, routing = defaultRouting(indexKind)) {
   if (!SEARCH_INDEX_KINDS.includes(indexKind)) throw new TypeError(`Unknown search index kind: ${indexKind}.`);
   const first = [...String(term || '')][0];
   if (!first) throw new TypeError('Search index terms cannot be empty.');
   if (indexKind === 'romaji' || indexKind === 'pt') {
+    if (routing === 'first-ascii-prefix-2') {
+      const prefix = [...String(term)].slice(0, 2).join('');
+      return /^[a-z0-9]{1,2}$/u.test(prefix) ? prefix : '_';
+    }
+    if (routing !== 'first-ascii-character') throw new TypeError(`Unsupported ${indexKind} routing: ${routing}.`);
     return /^[a-z0-9]$/u.test(first) ? first : '_';
   }
   if (indexKind === 'written') {
+    if (routing !== 'first-code-point-page-256') throw new TypeError(`Unsupported written routing: ${routing}.`);
     return `u-${Math.floor(first.codePointAt(0) / 256).toString(16).toLowerCase().padStart(2, '0')}`;
   }
+  if (routing !== 'hiragana-first-code-point') throw new TypeError(`Unsupported reading routing: ${routing}.`);
   return `u-${first.codePointAt(0).toString(16).toLowerCase().padStart(4, '0')}`;
 }
 
@@ -146,10 +153,12 @@ export function validateSearchIndexConfig(config) {
   const expectedRouting = {
     written: 'first-code-point-page-256',
     reading: 'hiragana-first-code-point',
-    romaji: 'first-ascii-character',
-    pt: 'first-ascii-character',
+    romaji: validateLatinRouting(config.routing?.romaji, 'romaji'),
+    pt: validateLatinRouting(config.routing?.pt, 'pt'),
   };
-  if (!sameJson(config.routing, expectedRouting)) throw new TypeError('Unsupported search index routing contract.');
+  if (config.routing?.written !== expectedRouting.written || config.routing?.reading !== expectedRouting.reading) {
+    throw new TypeError('Unsupported search index routing contract.');
+  }
   const idealMin = positiveInteger(config.idealCompressedBytes?.min, 'ideal compressed minimum');
   const idealMax = positiveInteger(config.idealCompressedBytes?.max, 'ideal compressed maximum');
   const maxCompressedBytes = positiveInteger(config.maxCompressedBytes, 'compressed maximum');
@@ -190,7 +199,7 @@ function buildExpectedShards(packageData, config) {
   for (const indexKind of config.indexKinds) {
     const buckets = new Map();
     for (const [term, ids] of [...termMaps[indexKind]].sort(byKey)) {
-      const bucket = createIndexBucket(indexKind, term);
+      const bucket = createIndexBucket(indexKind, term, config.routing[indexKind]);
       if (!buckets.has(bucket)) buckets.set(bucket, []);
       buckets.get(bucket).push([term, [...ids].sort()]);
     }
@@ -225,7 +234,7 @@ function validateIndexHeader(shard, packageData, config) {
   if (shard.packageId !== packageData.id || shard.dictionaryVersion !== packageData.version) {
     throw new TypeError('Search index shard targets the wrong package.');
   }
-  if (!/^(?:[a-z0-9_]|u-[a-f0-9]{2,6})$/u.test(String(shard.bucket || ''))) {
+  if (!/^(?:[a-z0-9]{1,2}|_|u-[a-f0-9]{2,6})$/u.test(String(shard.bucket || ''))) {
     throw new TypeError('Search index shard has an invalid bucket.');
   }
   if (!shard.terms || typeof shard.terms !== 'object' || Array.isArray(shard.terms)) {
@@ -315,8 +324,45 @@ function sameJson(left, right) {
   return JSON.stringify(left) === JSON.stringify(right);
 }
 
+function defaultRouting(indexKind) {
+  return {
+    written: 'first-code-point-page-256',
+    reading: 'hiragana-first-code-point',
+    romaji: 'first-ascii-character',
+    pt: 'first-ascii-character',
+  }[indexKind];
+}
+
+function validateLatinRouting(value, kind) {
+  if (!['first-ascii-character', 'first-ascii-prefix-2'].includes(value)) {
+    throw new TypeError(`Unsupported ${kind} routing: ${value}.`);
+  }
+  return value;
+}
+
 function byKey(left, right) {
-  return left[0].localeCompare(right[0]);
+  return compareText(left[0], right[0]);
+}
+
+function byObjectKey(left, right) {
+  const leftIndex = arrayIndex(left[0]);
+  const rightIndex = arrayIndex(right[0]);
+  if (leftIndex !== null && rightIndex !== null) return leftIndex - rightIndex;
+  if (leftIndex !== null) return -1;
+  if (rightIndex !== null) return 1;
+  return compareText(left[0], right[0]);
+}
+
+function arrayIndex(value) {
+  const text = String(value);
+  if (!/^(?:0|[1-9]\d*)$/u.test(text)) return null;
+  const number = Number(text);
+  return Number.isSafeInteger(number) && number >= 0 && number < 2 ** 32 - 1
+    && String(number) === text ? number : null;
+}
+
+function compareText(left, right) {
+  return left < right ? -1 : left > right ? 1 : 0;
 }
 
 function sum(values) {

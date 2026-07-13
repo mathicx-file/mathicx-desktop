@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-entry-shard",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-3",
+  "shardId": "48",
+  "entries": [
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1106620",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1106620"
+      },
+      "writtenForms": [],
+      "readings": [
+        "ピザ",
+        "ピッツァ",
+        "ピッツア"
+      ],
+      "common": true,
+      "priorityTags": [],
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1106620:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "pizza"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1106620:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [
+            "derogatory",
+            "Internet slang"
+          ],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "fat, ugly person"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "translations": [
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1106620:jmdict-1106620:sense:1",
+      "entryId": "jmdict-1106620",
+      "senseId": "jmdict-1106620:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "pizza"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kata_piza"
+      },
+      "reviewedAt": "2026-07-13"
+    }
+  ]
+}

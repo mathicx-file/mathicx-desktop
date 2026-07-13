@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-search-routes",
+  "indexKind": "pt",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-3",
+  "routing": "first-ascii-character",
+  "normalization": "ptbr-nfkd-alphanumeric-tokens-v1",
+  "coverage": {
+    "shards": 18,
+    "terms": 49,
+    "references": 53
+  },
+  "buckets": {
+    "a": {
+      "path": "indexes/2026.07.13-3/pt/a.json",
+      "byteLength": 384,
+      "sha256": "e9e71b37bd17858e9c960a8fd82bb15e4c9fe962822da6139303bd5feb7e3086"
+    },
+    "b": {
+      "path": "indexes/2026.07.13-3/pt/b.json",
+      "byteLength": 294,
+      "sha256": "d162ec1998a403f3c37a8c564de426b04b7e7b0f0c438a96a0ef8bcaf5249888"
+    },
+    "c": {
+      "path": "indexes/2026.07.13-3/pt/c.json",
+      "byteLength": 659,
+      "sha256": "07c17e5db84c0489f13c090013230713916ab136cea1690cfbc51b0721fe641f"
+    },
+    "e": {
+      "path": "indexes/2026.07.13-3/pt/e.json",
+      "byteLength": 343,
+      "sha256": "9eb7f44b8ae48dd8be713e39af5ad4a05e2cde0a3cdacc705c49e7a81c131a35"
+    },
+    "f": {
+      "path": "indexes/2026.07.13-3/pt/f.json",
+      "byteLength": 433,
+      "sha256": "5a09ac6c7644a599ae55ebfb2aa7a97ba04056d1aafb96caecebfbcd2627ea46"
+    },
+    "g": {
+      "path": "indexes/2026.07.13-3/pt/g.json",
+      "byteLength": 338,
+      "sha256": "70f12defdaac0a975bbb54aca5a26af97e579cbef540a0e8ffe11328c9fabefb"
+    },
+    "h": {
+      "path": "indexes/2026.07.13-3/pt/h.json",
+      "byteLength": 293,
+      "sha256": "866f2997b14461003c49093cffcf504396a6db7c670e9069ae033c62b026eea7"
+    },
+    "i": {
+      "path": "indexes/2026.07.13-3/pt/i.json",
+      "byteLength": 344,
+      "sha256": "070b862b91d29326e7f173587eb70c63a17b89301bdaf65a85c7371b1eda5398"
+    },
+    "j": {
+      "path": "indexes/2026.07.13-3/pt/j.json",
+      "byteLength": 293,
+      "sha256": "29160afbc6014c93b03feb4da3c25e6a09de926a5b502e918f96b270118946ea"
+    },
+    "m": {
+      "path": "indexes/2026.07.13-3/pt/m.json",
+      "byteLength": 385,
+      "sha256": "e124b56294faaa041a8dc38b200b4c54627b098914acab62ae0eb00b20b9d475"
+    },
+    "n": {
+      "path": "indexes/2026.07.13-3/pt/n.json",
+      "byteLength": 338,
+      "sha256": "dfb2d8e81e76f6355945e2998355824483320a7be602b420b8b1b2eddc485edf"
+    },
+    "o": {
+      "path": "indexes/2026.07.13-3/pt/o.json",
+      "byteLength": 294,
+      "sha256": "170dc2902ed164a62556aaf5b01ba0b4b69d80b1fa5f7480afe15f5e677ff5e0"
+    },
+    "p": {
+      "path": "indexes/2026.07.13-3/pt/p.json",
+      "byteLength": 620,
+      "sha256": "461677671728dbb5a15e60b02121f4b975ece1a232956830f3f5d3c174dddf44"
+    },
+    "q": {
+      "path": "indexes/2026.07.13-3/pt/q.json",
+      "byteLength": 340,
+      "sha256": "5d6331ccb243790b9deebec1f6083f126fa5138008b4e3f5ca80904541ca3c05"
+    },
+    "r": {
+      "path": "indexes/2026.07.13-3/pt/r.json",
+      "byteLength": 342,
+      "sha256": "724dd7a1c46d378f2abd3f6d31feb46edc416ddda8159804cae67306ff934282"
+    },
+    "s": {
+      "path": "indexes/2026.07.13-3/pt/s.json",
+      "byteLength": 386,
+      "sha256": "261f033c28d0870ef09f35b8d93f42d4d9273414557704b86ca903c397806bbe"
+    },
+    "t": {
+      "path": "indexes/2026.07.13-3/pt/t.json",
+      "byteLength": 386,
+      "sha256": "f0cfd536ea183510c19f16cf686a37a8772bdd055a9148c3213ee93ffdc5107f"
+    },
+    "u": {
+      "path": "indexes/2026.07.13-3/pt/u.json",
+      "byteLength": 346,
+      "sha256": "e4bfdfcdf0f5cf4963908c914ae9dc8b4b066f398300cf09a65bd38783a4a338"
+    }
+  }
+}

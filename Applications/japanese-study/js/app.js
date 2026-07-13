@@ -15,6 +15,15 @@ import { JapaneseKanaPrintExport } from './kana-print-export.js';
 import { createDictionaryRuntime } from './dictionary/dictionary-runtime.js';
 import { DictionaryCacheRepository } from './dictionary/dictionary-cache-repository.js';
 import { LazyDictionarySource } from './dictionary/lazy-dictionary-source.js';
+import { DictionaryReleaseClient } from './dictionary/dictionary-release-client.js';
+import { DictionaryUpdateManager } from './dictionary/dictionary-update-manager.js';
+import { DictionaryPackageManager } from './dictionary/dictionary-package-manager.js';
+import { DictionaryStorageManager } from './dictionary/dictionary-storage-manager.js';
+import { JapaneseAppShellManager } from './pwa-manager.js';
+import {
+  InstalledDictionaryPackagesSource,
+  LayeredDictionarySource,
+} from './dictionary/installed-dictionary-packages-source.js';
 
 const JapaneseApp = (() => {
   let allData = [];
@@ -34,6 +43,14 @@ const JapaneseApp = (() => {
   let dictionaryRuntime = null;
   let dictionarySearchController = null;
   let dictionaryRenderSequence = 0;
+  let dictionaryUpdateManager = null;
+  let dictionaryPackageManager = null;
+  let dictionaryStorageManager = null;
+  let dictionaryReleaseCheck = null;
+  let dictionaryCandidateVersion = '';
+  let dictionaryPackages = [];
+  let appShellManager = null;
+  let appShellState = null;
 
   async function init() {
     if (initialized) return;
@@ -42,6 +59,10 @@ const JapaneseApp = (() => {
     JapaneseUI.init();
     setupHostListener();
     setupFirebaseSyncStatusListener();
+    setupDictionaryUpdateControls();
+    setupDictionaryPackageControls();
+    setupAppShellControls();
+    void initializeAppShell();
     const firebaseSyncReady = setupFirebaseSync();
     const dictionaryRuntimeReady = setupDictionaryRuntime();
 
@@ -223,9 +244,32 @@ const JapaneseApp = (() => {
   async function setupDictionaryRuntime() {
     const providerEnabled = await isDictionaryProviderEnabled();
     const chunkLoadingEnabled = providerEnabled && await isDictionaryChunkLoadingEnabled();
-    const source = chunkLoadingEnabled
-      ? new LazyDictionarySource({ repository: new DictionaryCacheRepository() })
+    const offlinePacksEnabled = chunkLoadingEnabled && await isDictionaryOfflinePacksEnabled();
+    const dictionaryRepository = chunkLoadingEnabled ? new DictionaryCacheRepository() : null;
+    const baseSource = chunkLoadingEnabled
+      ? new LazyDictionarySource({ repository: dictionaryRepository })
       : undefined;
+    const source = baseSource && offlinePacksEnabled
+      ? new LayeredDictionarySource({
+        baseSource,
+        installedSource: new InstalledDictionaryPackagesSource({ repository: dictionaryRepository }),
+      })
+      : baseSource;
+    dictionaryStorageManager = dictionaryRepository
+      ? new DictionaryStorageManager({ repository: dictionaryRepository })
+      : null;
+    dictionaryUpdateManager = dictionaryRepository
+      ? new DictionaryUpdateManager({
+        repository: dictionaryRepository,
+        storageManager: dictionaryStorageManager,
+      })
+      : null;
+    dictionaryPackageManager = dictionaryRepository && offlinePacksEnabled
+      ? new DictionaryPackageManager({
+        repository: dictionaryRepository,
+        storageManager: dictionaryStorageManager,
+      })
+      : null;
     dictionaryRuntime = createDictionaryRuntime({
       providerEnabled,
       source,
@@ -240,7 +284,536 @@ const JapaneseApp = (() => {
     } else {
       console.info(`[dictionary-runtime] mode=${state.mode} lazy=${state.lazy}`);
     }
+    await refreshDictionaryPackages();
+    void checkDictionaryRelease(state.sourceVersion);
     return state;
+  }
+
+  async function checkDictionaryRelease(activeVersion) {
+    try {
+      const checked = dictionaryUpdateManager
+        ? await dictionaryUpdateManager.check(activeVersion)
+        : await new DictionaryReleaseClient().check({ activeVersion });
+      const status = checked.status === 'update-available' && checked.candidateState?.status === 'ready'
+        ? { ...checked, status: 'ready' }
+        : checked;
+      if (status.status === 'ready') dictionaryCandidateVersion = status.remoteVersion;
+      dictionaryReleaseCheck = status;
+      console.info(`[dictionary-release] status=${status.status} remote=${status.remoteVersion}`);
+      renderDictionaryReleaseStatus(status);
+      window.dispatchEvent(new CustomEvent('japanese-study:dictionary-release-status', {
+        detail: status,
+      }));
+      return status;
+    } catch (error) {
+      const status = {
+        status: 'unavailable',
+        activeVersion: String(activeVersion || ''),
+        error: error?.message || String(error),
+        checkedAt: Date.now(),
+      };
+      console.warn('[dictionary-release] check unavailable', error);
+      renderDictionaryReleaseStatus(status);
+      window.dispatchEvent(new CustomEvent('japanese-study:dictionary-release-status', {
+        detail: status,
+      }));
+      return status;
+    }
+  }
+
+  function setupDictionaryUpdateControls() {
+    document.getElementById('dictionary-check-update-btn')?.addEventListener('click', () => {
+      void checkDictionaryRelease(dictionaryRuntime?.getState().sourceVersion || '');
+    });
+    document.getElementById('dictionary-download-update-btn')?.addEventListener('click', () => {
+      void downloadDictionaryCandidate();
+    });
+    document.getElementById('dictionary-activate-update-btn')?.addEventListener('click', () => {
+      void activateDictionaryCandidate();
+    });
+    document.getElementById('dictionary-rollback-btn')?.addEventListener('click', () => {
+      void rollbackDictionaryVersion();
+    });
+  }
+
+  function setupDictionaryPackageControls() {
+    document.getElementById('dictionary-package-list')?.addEventListener('click', (event) => {
+      const button = event.target.closest('button[data-package-action]');
+      if (!button || button.disabled) return;
+      const packageId = button.dataset.packageId;
+      if (button.dataset.packageAction === 'install') void installDictionaryPackage(packageId);
+      if (button.dataset.packageAction === 'remove') void removeDictionaryPackage(packageId);
+      if (button.dataset.packageAction === 'prepare') void prepareEssentialDictionaryOffline(packageId);
+    });
+    document.getElementById('dictionary-refresh-storage-btn')?.addEventListener('click', () => {
+      void refreshDictionaryStorage();
+    });
+    document.getElementById('dictionary-persist-storage-btn')?.addEventListener('click', () => {
+      void requestDictionaryStoragePersistence();
+    });
+    window.addEventListener('online', () => renderDictionaryOfflineReadiness(dictionaryPackages));
+    window.addEventListener('offline', () => renderDictionaryOfflineReadiness(dictionaryPackages));
+  }
+
+  function setupAppShellControls() {
+    document.getElementById('app-shell-offline-toggle')?.addEventListener('change', (event) => {
+      void setAppShellEnabled(event.target.checked);
+    });
+    document.getElementById('app-shell-repair-btn')?.addEventListener('click', () => {
+      void repairAppShell();
+    });
+    window.addEventListener('online', renderAppShellState);
+    window.addEventListener('offline', renderAppShellState);
+  }
+
+  async function initializeAppShell() {
+    appShellManager = new JapaneseAppShellManager();
+    renderAppShellState({ state: 'checking' });
+    try {
+      appShellState = await appShellManager.initialize();
+      renderAppShellState();
+    } catch (error) {
+      appShellState = { supported: appShellManager.isSupported(), enabled: false, state: 'error' };
+      renderAppShellState({ message: error?.message || String(error), state: 'error' });
+    }
+  }
+
+  async function setAppShellEnabled(enabled) {
+    if (!appShellManager) return;
+    if (enabled && !isEssentialDictionaryOfflineReady()) {
+      renderAppShellState({
+        message: 'Prepare o pacote essencial antes de ativar o aplicativo offline.',
+        state: 'error',
+      });
+      return;
+    }
+    setAppShellBusy(enabled ? 'Preparando aplicativo...' : 'Removendo cache...');
+    try {
+      appShellState = enabled
+        ? await appShellManager.enable()
+        : await appShellManager.disable();
+      renderAppShellState();
+    } catch (error) {
+      appShellState = await appShellManager.snapshot('error');
+      renderAppShellState({ message: error?.message || String(error), state: 'error' });
+    }
+  }
+
+  async function repairAppShell() {
+    if (!appShellManager || navigator.onLine === false) {
+      renderAppShellState({ message: 'Reconecte-se para reparar o cache do aplicativo.', state: 'error' });
+      return;
+    }
+    if (!isEssentialDictionaryOfflineReady()) {
+      renderAppShellState({ message: 'Prepare o pacote essencial antes de reparar o aplicativo.', state: 'error' });
+      return;
+    }
+    setAppShellBusy('Reconstruindo cache...');
+    try {
+      appShellState = await appShellManager.repair();
+      renderAppShellState({ message: 'Cache do aplicativo reconstruido.', state: 'ready' });
+    } catch (error) {
+      appShellState = await appShellManager.snapshot('error');
+      renderAppShellState({ message: error?.message || String(error), state: 'error' });
+    }
+  }
+
+  function setAppShellBusy(message) {
+    const toggle = document.getElementById('app-shell-offline-toggle');
+    const repair = document.getElementById('app-shell-repair-btn');
+    const status = document.getElementById('app-shell-offline-status');
+    if (toggle) toggle.disabled = true;
+    if (repair) repair.disabled = true;
+    if (status) {
+      status.dataset.state = 'checking';
+      status.textContent = message;
+    }
+  }
+
+  function renderAppShellState(options = {}) {
+    const toggle = document.getElementById('app-shell-offline-toggle');
+    const repair = document.getElementById('app-shell-repair-btn');
+    const status = document.getElementById('app-shell-offline-status');
+    if (!toggle || !repair || !status) return;
+
+    const supported = appShellState?.supported !== false && appShellManager?.isSupported() !== false;
+    const enabled = appShellState?.enabled === true;
+    const essentialReady = isEssentialDictionaryOfflineReady();
+    const online = navigator.onLine !== false;
+    const state = options.state || (enabled ? 'ready' : 'pending');
+    const defaultMessage = !supported
+      ? 'Service Worker indisponivel neste navegador.'
+      : enabled
+        ? online ? 'Shell pronto para abrir sem conexao.' : 'Aplicativo carregado pelo cache offline.'
+        : essentialReady ? 'Desativado neste navegador.' : 'Prepare primeiro o pacote essencial.';
+
+    toggle.checked = enabled;
+    toggle.disabled = !supported || (!enabled && !essentialReady);
+    repair.disabled = !enabled || !online;
+    status.dataset.state = options.state || (!supported ? 'error' : state);
+    status.textContent = options.message || defaultMessage;
+  }
+
+  function isEssentialDictionaryOfflineReady() {
+    return dictionaryPackages.some((item) => item.id === 'essential' && item.status === 'offline-ready');
+  }
+
+  async function refreshDictionaryPackages() {
+    if (!dictionaryPackageManager) {
+      renderDictionaryPackageError('Pacotes offline exigem o carregamento segmentado do dicionario.');
+      return;
+    }
+    try {
+      const packages = await dictionaryPackageManager.loadCatalog();
+      renderDictionaryPackages(packages);
+      await refreshDictionaryStorage();
+    } catch (error) {
+      console.warn('[dictionary-packages] catalog unavailable', error);
+      renderDictionaryPackageError(error?.message || String(error));
+    }
+  }
+
+  async function installDictionaryPackage(packageId) {
+    if (!dictionaryPackageManager) return;
+    setDictionaryPackageBusy(packageId, 'Instalando...');
+    try {
+      await dictionaryPackageManager.install(packageId, {
+        onProgress: ({ path }) => setDictionaryPackageBusy(
+          packageId,
+          `Validando ${path.split('/').at(-1)}...`,
+        ),
+      });
+      renderDictionaryPackages(await dictionaryPackageManager.listPackages());
+      await refreshDictionaryStorage();
+    } catch (error) {
+      renderDictionaryPackageError(error?.message || String(error));
+      renderDictionaryPackages(await dictionaryPackageManager.listPackages(), { preserveSummary: true });
+      await refreshDictionaryStorage();
+    }
+  }
+
+  async function removeDictionaryPackage(packageId) {
+    if (!dictionaryPackageManager) return;
+    setDictionaryPackageBusy(packageId, 'Removendo...');
+    try {
+      await dictionaryPackageManager.remove(packageId);
+      renderDictionaryPackages(await dictionaryPackageManager.listPackages());
+      await refreshDictionaryStorage();
+    } catch (error) {
+      renderDictionaryPackageError(error?.message || String(error));
+      renderDictionaryPackages(await dictionaryPackageManager.listPackages(), { preserveSummary: true });
+      await refreshDictionaryStorage();
+    }
+  }
+
+  async function prepareEssentialDictionaryOffline(packageId) {
+    if (!dictionaryUpdateManager || packageId !== 'essential') return;
+    setDictionaryPackageBusy(packageId, 'Preparando pacote essencial...');
+    try {
+      const release = dictionaryReleaseCheck?.manifest
+        ? dictionaryReleaseCheck
+        : await checkDictionaryRelease(dictionaryRuntime?.getState().sourceVersion || '');
+      if (!release?.manifest || !['current', 'update-available', 'ready'].includes(release.status)) {
+        throw new Error('Conecte-se a internet para preparar ou recuperar o pacote essencial.');
+      }
+      await dictionaryUpdateManager.prepareOffline(release, {
+        onProgress: ({ path, state }) => setDictionaryPackageBusy(
+          packageId,
+          `${state === 'reused' ? 'Verificando' : 'Baixando'} ${path.split('/').at(-1)}...`,
+        ),
+      });
+      renderDictionaryPackages(await dictionaryPackageManager.listPackages());
+      await refreshDictionaryStorage('Pacote essencial pronto para uso offline.', 'active');
+    } catch (error) {
+      renderDictionaryPackageError(error?.message || String(error));
+      renderDictionaryPackages(await dictionaryPackageManager.listPackages(), { preserveSummary: true });
+      await refreshDictionaryStorage();
+    }
+  }
+
+  async function refreshDictionaryStorage(message = '', messageState = '') {
+    if (!dictionaryStorageManager) {
+      renderDictionaryStorage(null, 'Metrica de armazenamento indisponivel.');
+      return;
+    }
+    try {
+      renderDictionaryStorage(await dictionaryStorageManager.snapshot(), message, messageState);
+    } catch (error) {
+      renderDictionaryStorage(null, error?.message || String(error), 'error');
+    }
+  }
+
+  async function requestDictionaryStoragePersistence() {
+    if (!dictionaryStorageManager) return;
+    const button = document.getElementById('dictionary-persist-storage-btn');
+    if (button) {
+      button.disabled = true;
+      button.textContent = 'Solicitando...';
+    }
+    try {
+      const result = await dictionaryStorageManager.requestPersistence();
+      const message = !result.supported
+        ? 'Persistencia nao suportada por este navegador.'
+        : result.granted
+          ? 'Armazenamento persistente concedido.'
+          : 'O navegador nao concedeu persistencia; o cache continua disponivel normalmente.';
+      renderDictionaryStorage(result.state, message, result.granted ? 'active' : 'pending');
+    } catch (error) {
+      await refreshDictionaryStorage(error?.message || String(error), 'error');
+    }
+  }
+
+  function renderDictionaryStorage(state, message = '', messageState = '') {
+    const cache = document.getElementById('dictionary-cache-usage');
+    const origin = document.getElementById('dictionary-origin-usage');
+    const available = document.getElementById('dictionary-available-storage');
+    const meter = document.getElementById('dictionary-storage-meter');
+    const persistence = document.getElementById('dictionary-persistence-status');
+    const persistButton = document.getElementById('dictionary-persist-storage-btn');
+    if (!cache || !origin || !available || !meter || !persistence || !persistButton) return;
+
+    cache.textContent = state
+      ? `${formatBytes(state.dictionary.byteLength)} em ${formatNumber(state.dictionary.artifacts)} arquivos`
+      : 'Indisponivel';
+    origin.textContent = state?.estimate
+      ? `${formatBytes(state.estimate.usage)} de ${formatBytes(state.estimate.quota)}`
+      : 'Estimativa indisponivel';
+    available.textContent = state?.estimate ? formatBytes(state.estimate.available) : 'Indisponivel';
+    meter.max = state?.estimate?.quota || 1;
+    meter.value = state?.estimate?.usage || 0;
+
+    const defaultMessage = state?.persisted === true
+      ? 'Armazenamento persistente ativo.'
+      : state?.persistenceSupported
+        ? 'Persistencia ainda nao concedida.'
+        : 'Persistencia nao suportada neste navegador.';
+    persistence.textContent = message || defaultMessage;
+    persistence.dataset.state = messageState || (state?.persisted ? 'active' : 'pending');
+    persistButton.disabled = !state?.persistenceSupported || state?.persisted === true;
+    persistButton.textContent = state?.persisted ? 'Protegido' : 'Manter offline';
+  }
+
+  function renderDictionaryPackages(packages, options = {}) {
+    const list = document.getElementById('dictionary-package-list');
+    const summary = document.getElementById('dictionary-package-status');
+    if (!list || !summary) return;
+    dictionaryPackages = packages;
+    list.replaceChildren(...packages.map(createDictionaryPackageRow));
+    renderDictionaryOfflineReadiness(packages);
+    renderAppShellState();
+    if (!options.preserveSummary) {
+      const installed = packages.filter((item) => item.installed).length;
+      summary.dataset.state = 'ready';
+      summary.textContent = `${installed} de ${packages.length} pacotes ${installed === 1 ? 'instalado' : 'instalados'} neste navegador.`;
+    }
+  }
+
+  function createDictionaryPackageRow(item) {
+    const row = document.createElement('div');
+    row.className = 'package-row';
+    row.dataset.packageId = item.id;
+
+    const copy = document.createElement('div');
+    copy.className = 'package-copy';
+    const heading = document.createElement('div');
+    heading.className = 'package-heading';
+    const name = document.createElement('strong');
+    name.textContent = item.name;
+    const version = document.createElement('span');
+    version.textContent = item.version;
+    heading.append(name, version);
+    const description = document.createElement('p');
+    description.className = 'package-description';
+    description.textContent = item.description;
+    const meta = document.createElement('div');
+    meta.className = 'package-meta';
+    meta.textContent = `${formatNumber(item.entryCount)} palavras | ${formatNumber(item.kanjiCount)} kanji | estimado: ${formatBytes(item.estimatedByteLength)}`;
+    const state = document.createElement('div');
+    state.className = 'package-state';
+    state.textContent = packageStateLabel(item);
+    copy.append(heading, description, meta, state);
+
+    const action = document.createElement('button');
+    action.className = `data-action${item.status === 'available' || item.status === 'interrupted' ? ' primary' : ''}`;
+    action.type = 'button';
+    action.dataset.packageId = item.id;
+    if (item.required && item.status === 'offline-ready') {
+      action.disabled = true;
+      action.textContent = 'Pronto offline';
+    } else if (item.required && item.status === 'installing') {
+      action.disabled = true;
+      action.textContent = 'Preparando';
+    } else if (item.required) {
+      action.classList.add('primary');
+      action.dataset.packageAction = 'prepare';
+      action.textContent = item.status === 'interrupted' ? 'Retomar' : item.status === 'outdated'
+        ? 'Atualizar offline' : item.status === 'downloaded' ? 'Ativar offline' : 'Preparar offline';
+    } else if (item.status === 'ready') {
+      action.dataset.packageAction = 'remove';
+      action.textContent = 'Remover';
+    } else if (item.status === 'available' || item.status === 'interrupted') {
+      action.dataset.packageAction = 'install';
+      action.textContent = item.status === 'interrupted' ? 'Retomar' : 'Instalar';
+    } else {
+      action.disabled = true;
+      action.textContent = 'Em breve';
+    }
+    row.append(copy, action);
+    return row;
+  }
+
+  function packageStateLabel(item) {
+    return {
+      included: 'Incluido com o aplicativo',
+      'online-only': 'Disponivel online; preparacao offline pendente',
+      'offline-ready': 'Pacote essencial completo e validado no navegador',
+      downloaded: 'Pacote baixado; ativacao offline pendente',
+      outdated: 'Versao offline desatualizada',
+      ready: 'Instalado neste navegador',
+      available: 'Disponivel para instalar',
+      planned: 'Aguardando publicacao da release',
+      installing: 'Instalacao em andamento',
+      interrupted: 'Download interrompido; pode ser retomado',
+    }[item.status] || 'Estado indisponivel';
+  }
+
+  function renderDictionaryOfflineReadiness(packages) {
+    const container = document.getElementById('dictionary-offline-readiness');
+    if (!container) return;
+    const essential = packages.find((item) => item.id === 'essential');
+    const online = navigator.onLine !== false;
+    let state = 'pending';
+    let message = 'Pacote essencial ainda nao avaliado.';
+    if (essential?.status === 'offline-ready') {
+      state = 'ready';
+      message = online
+        ? 'Pronto para reabrir o dicionario sem rede.'
+        : 'Sem conexao: pacote essencial carregado do cache.';
+    } else if (essential?.status === 'interrupted') {
+      state = 'error';
+      message = 'Preparacao interrompida; use Retomar quando houver conexao.';
+    } else if (essential?.status === 'outdated') {
+      message = 'Pacote offline desatualizado; atualizacao recomendada.';
+    } else if (!online) {
+      state = 'error';
+      message = 'Sem conexao e sem pacote essencial completo no cache.';
+    } else if (essential) {
+      message = 'Conectado; prepare o pacote essencial para reabrir sem rede.';
+    }
+    container.dataset.state = state;
+    container.querySelector('span:not(.sync-dot)').textContent = message;
+  }
+
+  function setDictionaryPackageBusy(packageId, message) {
+    const row = document.querySelector(`.package-row[data-package-id="${packageId}"]`);
+    if (!row) return;
+    const action = row.querySelector('button');
+    const state = row.querySelector('.package-state');
+    if (action) action.disabled = true;
+    if (state) state.textContent = message;
+  }
+
+  function renderDictionaryPackageError(message) {
+    const summary = document.getElementById('dictionary-package-status');
+    if (!summary) return;
+    summary.dataset.state = 'error';
+    summary.textContent = message;
+  }
+
+  async function downloadDictionaryCandidate() {
+    if (!dictionaryUpdateManager || !dictionaryReleaseCheck) return;
+    setDictionaryReleaseBusy('Baixando e validando a nova versao...');
+    try {
+      const result = await dictionaryUpdateManager.downloadCandidate(dictionaryReleaseCheck, {
+        onProgress: ({ path }) => setDictionaryReleaseBusy(`Validando ${path}...`),
+      });
+      dictionaryCandidateVersion = result.version;
+      renderDictionaryReleaseStatus({
+        ...dictionaryReleaseCheck,
+        status: 'ready',
+        candidateState: result,
+      });
+    } catch (error) {
+      renderDictionaryReleaseStatus({
+        ...dictionaryReleaseCheck,
+        status: 'download-failed',
+        error: error?.message || String(error),
+      });
+    }
+  }
+
+  async function activateDictionaryCandidate() {
+    if (!dictionaryUpdateManager || !dictionaryCandidateVersion) return;
+    setDictionaryReleaseBusy('Ativando versao validada...');
+    try {
+      await dictionaryUpdateManager.activateCandidate(dictionaryCandidateVersion);
+      location.reload();
+    } catch (error) {
+      renderDictionaryReleaseStatus({ status: 'activation-failed', error: error?.message || String(error) });
+    }
+  }
+
+  async function rollbackDictionaryVersion() {
+    if (!dictionaryUpdateManager) return;
+    setDictionaryReleaseBusy('Restaurando a versao anterior...');
+    try {
+      await dictionaryUpdateManager.rollback();
+      location.reload();
+    } catch (error) {
+      renderDictionaryReleaseStatus({ status: 'rollback-failed', error: error?.message || String(error) });
+    }
+  }
+
+  function setDictionaryReleaseBusy(message) {
+    renderDictionaryReleaseStatus({ status: 'checking', message });
+  }
+
+  function renderDictionaryReleaseStatus(status = {}) {
+    const container = document.getElementById('dictionary-release-status');
+    const details = document.getElementById('dictionary-release-details');
+    const download = document.getElementById('dictionary-download-update-btn');
+    const activate = document.getElementById('dictionary-activate-update-btn');
+    const rollback = document.getElementById('dictionary-rollback-btn');
+    if (!container || !details) return;
+
+    const labels = {
+      checking: ['Verificando versao', status.message || 'Consultando a release publica...'],
+      current: ['Dicionario atualizado', `Versao ${status.remoteVersion} em uso.`],
+      'update-available': ['Atualizacao disponivel', `Versao ${status.remoteVersion} pronta para download.`],
+      ready: ['Download concluido', `Versao ${status.remoteVersion} validada e aguardando ativacao.`],
+      incompatible: ['Atualizacao incompativel', `Requer Japanese Study ${status.minimumAppVersion} ou superior.`],
+      'remote-older': ['Release remota mais antiga', 'A versao ativa foi preservada.'],
+      unavailable: ['Verificacao indisponivel', status.error || 'Nao foi possivel consultar a release.'],
+      'download-failed': ['Download interrompido', `${status.error || 'Tente novamente.'} Os arquivos validos foram preservados.`],
+      'activation-failed': ['Falha na ativacao', status.error || 'A versao atual foi preservada.'],
+      'rollback-failed': ['Rollback indisponivel', status.error || 'Nao ha versao anterior pronta.'],
+    };
+    const [title, message] = labels[status.status] || labels.unavailable;
+    container.dataset.state = ['current', 'ready'].includes(status.status) ? 'synced'
+      : status.status === 'update-available' ? 'pending'
+        : status.status === 'checking' ? 'checking' : 'error';
+    container.querySelector('strong').textContent = title;
+    container.querySelector('span:not(.sync-dot)').textContent = message;
+    details.textContent = [
+      status.activeVersion && `Ativa: ${status.activeVersion}`,
+      status.remoteVersion && `Publicada: ${status.remoteVersion}`,
+      status.candidateState?.byteLength && `Download: ${formatBytes(status.candidateState.byteLength)}`,
+    ].filter(Boolean).join(' | ') || 'Nenhuma informacao de versao disponivel.';
+    if (download) download.disabled = !['update-available', 'download-failed'].includes(status.status);
+    if (activate) activate.disabled = status.status !== 'ready';
+    if (rollback) rollback.disabled = !status.cacheState?.previousVersion;
+  }
+
+  function formatBytes(value) {
+    const bytes = Number(value || 0);
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 ** 2) return `${(bytes / 1024).toFixed(1)} KB`;
+    if (bytes < 1024 ** 3) return `${(bytes / (1024 ** 2)).toFixed(1)} MB`;
+    return `${(bytes / (1024 ** 3)).toFixed(1)} GB`;
+  }
+
+  function formatNumber(value) {
+    return Number(value || 0).toLocaleString('pt-BR');
   }
 
   async function isDictionaryProviderEnabled() {
@@ -262,6 +835,18 @@ const JapaneseApp = (() => {
     try {
       const module = await import('../../../src/firebase/feature-flags.js');
       return module.featureFlags?.dictionaryChunkLoadingEnabled === true;
+    } catch {
+      return false;
+    }
+  }
+
+  async function isDictionaryOfflinePacksEnabled() {
+    const override = getRuntimeOverride('dictionaryOfflinePacks');
+    if (override === '1') return true;
+    if (override === '0') return false;
+    try {
+      const module = await import('../../../src/firebase/feature-flags.js');
+      return module.featureFlags?.dictionaryOfflinePacksEnabled === true;
     } catch {
       return false;
     }

@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-entry-shard",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-3",
+  "shardId": "0e",
+  "entries": [
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1390020",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1390020"
+      },
+      "writtenForms": [
+        "川",
+        "河"
+      ],
+      "readings": [
+        "かわ",
+        "がわ"
+      ],
+      "common": true,
+      "priorityTags": [],
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1390020:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": [
+              "かわ"
+            ]
+          },
+          "glosses": {
+            "en": [
+              "river",
+              "stream"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1390020:sense:2",
+          "partOfSpeech": [
+            "suffix"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "River",
+              "the ... river"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "translations": [
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1390020:jmdict-1390020:sense:1",
+      "entryId": "jmdict-1390020",
+      "senseId": "jmdict-1390020:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "rio"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_kawa"
+      },
+      "reviewedAt": "2026-07-13"
+    }
+  ]
+}
