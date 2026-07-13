@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-entry-shard",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-2",
+  "shardId": "39",
+  "entries": [
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1483800",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1483800"
+      },
+      "writtenForms": [
+        "皮"
+      ],
+      "readings": [
+        "かわ"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1483800:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "skin",
+              "hide",
+              "pelt",
+              "fur"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1483800:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "rind",
+              "peel",
+              "husk",
+              "bark"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1483800:sense:3",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "shell",
+              "sheath",
+              "wrapping"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1483800:sense:4",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "mask (hiding one's true nature)",
+              "seeming"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "translations": [
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1483800:jmdict-1483800:sense:1",
+      "entryId": "jmdict-1483800",
+      "senseId": "jmdict-1483800:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "pele"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_kawa"
+      },
+      "reviewedAt": "2026-07-13"
+    }
+  ]
+}

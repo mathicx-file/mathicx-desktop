@@ -5,34 +5,74 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      ref:
+        description: Commit or tag to publish (use an older ref for rollback)
+        required: false
+        type: string
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout selected release
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install validation dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Validate dictionary pipeline
+        run: npm run test:dictionary-pipeline
+
+      - name: Validate Japanese Study
+        run: npm test --prefix Applications/japanese-study
+
+      - name: Validate dictionary integration
+        run: |
+          npm run test:dictionary-equivalence
+          npm run test:launcher-dictionary
+          npm run test:pages-artifact
+
+      - name: Build Pages artifact
+        run: npm run pages:build
+
+      - name: Validate Pages artifact
+        run: npm run pages:validate
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
       - name: Upload static site
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
-          path: .
+          path: _site
+          retention-days: 1
 
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

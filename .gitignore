@@ -22,6 +22,7 @@ ui-debug.log
 _nul
 tmp/
 tmp-*/
+_site/
 *.tmp
 *.bak
 *.local

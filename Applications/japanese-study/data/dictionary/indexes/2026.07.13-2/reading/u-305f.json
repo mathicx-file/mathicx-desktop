@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-search-index-shard",
+  "indexKind": "reading",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-2",
+  "bucket": "u-305f",
+  "normalization": "wanakana-hiragana-nfkc-v1",
+  "terms": {
+    "たきし": [
+      "jmdict-1076190"
+    ],
+    "たきしい": [
+      "jmdict-1076190"
+    ],
+    "たくし": [
+      "jmdict-1076190"
+    ],
+    "たくしぃ": [
+      "jmdict-1076190"
+    ],
+    "たくしい": [
+      "jmdict-1076190"
+    ],
+    "たべもの": [
+      "jmdict-1358340"
+    ]
+  }
+}

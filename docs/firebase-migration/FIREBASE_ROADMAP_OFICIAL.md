@@ -4,7 +4,7 @@
 >
 > Status: fonte oficial de planejamento e execucao
 >
-> Proxima fase: Fase 11 - Pipeline e pacote essencial
+> Fase atual: Fase 13 em andamento; publicacao e smoke test pendentes
 
 ## 1. Autoridade Deste Documento
 
@@ -43,6 +43,7 @@ Fase 10.3 Metricas de equivalencia com o JSON legado
 | Status | Significado |
 | --- | --- |
 | Concluida | Implementada, testada e documentada. |
+| Em andamento | Fase iniciada, com proxima subfase definida. |
 | Parcial | Parte do resultado existe, mas faltam criterios essenciais. |
 | Planejada | Escopo definido e ainda nao iniciado. |
 | Opcional | Executar somente quando houver necessidade comprovada. |
@@ -63,9 +64,9 @@ Fase 10.3 Metricas de equivalencia com o JSON legado
 | 8 | Experiencia integrada do Japanese Study | Concluida | Desvio incorporado |
 | 9 | Padrao multi-app e integracao do Finances | Concluida | Desvio incorporado |
 | 10 | Abstracao do dicionario | Concluida | Antiga Fase 7 revisada |
-| 11 | Pipeline e pacote essencial | Planejada | Antiga Fase 8 revisada |
-| 12 | Indices, shards e cache | Planejada | Antiga Fase 9 revisada |
-| 13 | Pipeline do dicionario no GitHub Pages | Parcial | Antiga Fase 10 revisada |
+| 11 | Pipeline e pacote essencial | Concluida | Antiga Fase 8 revisada |
+| 12 | Indices, shards e cache | Concluida | Antiga Fase 9 revisada |
+| 13 | Pipeline do dicionario no GitHub Pages | Em andamento | Antiga Fase 10 revisada |
 | 14 | Manifesto remoto, atualizacao e rollback | Planejada | Antiga Fase 11 revisada |
 | 15 | Pacotes offline e PWA | Planejada | Antiga Fase 12 revisada |
 | 16 | Confiabilidade, backup e recuperacao | Planejada | Melhoria incorporada |
@@ -256,7 +257,7 @@ Intervencao do proprietario: apenas validacao visual e funcional.
 
 ### Fase 11: Pipeline e Pacote Essencial
 
-Status: **Planejada**.
+Status: **Concluida**.
 
 Origem: antiga Fase 8 revisada.
 
@@ -274,11 +275,34 @@ Implementacao recomendada:
 
 Subfases previstas:
 
-- `11.1`: decisao de fontes e matriz de licencas;
-- `11.2`: schema normalizado;
-- `11.3`: scripts de importacao e validacao;
-- `11.4`: geracao do `bootstrap-n5`;
-- `11.5`: revisao de conteudo e atribuicoes.
+- `11.1`: decisao de fontes e matriz de licencas - **Concluida**;
+- `11.2`: schema normalizado - **Concluida**;
+- `11.3`: scripts de importacao e validacao - **Concluida**;
+- `11.4`: geracao do `bootstrap-n5` - **Concluida**;
+- `11.5`: revisao de conteudo e atribuicoes - **Concluida**.
+
+Decisoes registradas em 2026-07-13:
+
+- JMdict_e, KANJIDIC2, KanjiVG e camada propria pt-BR aprovados;
+- dados gerados e traducoes pt-BR sob CC BY-SA 4.0;
+- ativos KanjiVG permanecem sob CC BY-SA 3.0;
+- bootstrap inicial limitado as 42 palavras, 10 kanji e quizzes atuais;
+- glosses pt-BR exigem revisao humana antes da publicacao;
+- schema do pipeline separado do schema de runtime da Fase 10.
+- snapshots locais aceitam XML/gzip, versao fixada e SHA-256;
+- importadores preservam IDs das fontes e geram aliases para o legado;
+- fontes ausentes, UTF-8 invalido, mojibake e hashes incorretos bloqueiam o fluxo.
+- pacote `2026.07.13-1` gerado com 94 palavras, 10 kanji e 10 SVGs;
+- pacote possui 156.020 bytes e permanece bloqueado para revisao editorial;
+- 16 ambiguidades e 36 traducoes em rascunho foram registradas explicitamente.
+- modelo hibrido aprovado: pt-BR opcional, ingles como fallback;
+- 26 palavras unicas e 10 kanji aceitos como baseline;
+- revisao das 16 ambiguidades sera feita em blocos e registrada em arquivo editorial.
+- pacote `2026.07.13-2` promovido com 54 traducoes revisadas e zero rascunhos;
+- atribuicoes exibidas no Japanese Study e publicacao marcada como pronta;
+- testes do pipeline, Japanese Study, equivalencia e launcher aprovados.
+
+Evidencia: `FIREBASE_PHASE_11_DICTIONARY_PIPELINE.md`.
 
 Criterios de aceite:
 
@@ -292,7 +316,7 @@ Intervencao do proprietario: escolher/revisar fontes, traducoes, categorias e at
 
 ### Fase 12: Indices, Shards e Cache
 
-Status: **Planejada**.
+Status: **Concluida**.
 
 Origem: antiga Fase 9 revisada.
 
@@ -311,12 +335,12 @@ Implementacao recomendada:
 
 Subfases previstas:
 
-- `12.1`: shards e IDs estaveis;
-- `12.2`: indices de busca;
-- `12.3`: manifesto, routes e hashes;
-- `12.4`: cache IndexedDB versionado;
-- `12.5`: lazy loading, cancelamento e metricas;
-- `12.6`: testes de falha, cache e desempenho.
+- `12.1`: shards e IDs estaveis - **Concluida**;
+- `12.2`: indices de busca - **Concluida**;
+- `12.3`: manifesto, routes e hashes - **Concluida**;
+- `12.4`: cache IndexedDB versionado - **Concluida**;
+- `12.5`: lazy loading, cancelamento e metricas - **Concluida**;
+- `12.6`: testes de falha, cache e desempenho - **Concluida**.
 
 Criterios de aceite:
 
@@ -330,7 +354,7 @@ Intervencao do proprietario: validar experiencia e tamanho dos downloads.
 
 ### Fase 13: Pipeline do Dicionario no GitHub Pages
 
-Status: **Parcial**.
+Status: **Em andamento**.
 
 Origem: antiga Fase 10 revisada.
 
@@ -341,22 +365,28 @@ Ja existe:
 - Firebase de producao carregado no frontend;
 - login e apps integrados validados na URL publica.
 
+Entregue localmente:
+
+- workflow separado em jobs de build e deploy;
+- Node.js 22 e dependencias instaladas de forma reproduzivel;
+- schemas, hashes, licencas, mojibake e configuracao Firebase validados;
+- `_site` criado por lista positiva, sem dependencias ou fontes internas;
+- pacote, licencas, manifesto, rotas, indices e shards versionados;
+- testes de adulteracao de hash e inclusao de arquivo sensivel;
+- rollback por commit ou tag no acionamento manual do workflow.
+
 Ainda falta:
 
-- instalar dependencias de geracao no workflow;
-- gerar o pacote do dicionario durante CI;
-- validar schemas, hashes, licencas e mojibake;
-- publicar somente o artefato aprovado;
-- testar caminhos dos chunks no subdiretorio do Pages;
-- manter rollback para artefato anterior.
+- executar o novo workflow depois do push;
+- testar os caminhos dos chunks e o login na URL publica.
 
 Subfases previstas:
 
-- `13.1`: job de geracao e validacao;
-- `13.2`: configuracao Firebase de producao validada;
-- `13.3`: artifact estatico versionado;
-- `13.4`: smoke test da URL publica;
-- `13.5`: rollback documentado.
+- `13.1`: job de geracao e validacao - concluida localmente;
+- `13.2`: configuracao Firebase de producao validada - concluida localmente;
+- `13.3`: artifact estatico versionado - concluida localmente;
+- `13.4`: smoke test da URL publica - pendente de deploy;
+- `13.5`: rollback documentado - concluida.
 
 Criterio de conclusao: o app e o pacote versionado do dicionario sao gerados, validados e publicados pelo mesmo fluxo controlado.
 
@@ -517,19 +547,23 @@ Cada item aprovado deve virar subfase `18.x`, com motivacao, custo, risco e crit
 
 ## 7. Direcao Atual
 
-O projeto concluiu a **Fase 10: Abstracao do Dicionario**. O provider V2 e o caminho padrao, com JSON legado como fonte e rollback preservado.
+O projeto esta na **Fase 13: Pipeline do Dicionario no GitHub Pages**. O
+artefato minimo e versionado, sua validacao e o novo workflow foram
+implementados localmente. A conclusao depende do primeiro deploy desse fluxo e
+da validacao da URL publica pelo proprietario.
 
 Proximo recorte recomendado:
 
 ```text
-Fase 11.1
-  -> decidir fontes publicas e matriz de licencas
-  -> confirmar o recorte inicial do pacote bootstrap-n5
-  -> definir campos de traducao pt-BR que exigem revisao
-  -> manter a base atual ate aprovacao do novo pacote
+Fase 13.4
+  -> enviar as alteracoes para main
+  -> acompanhar os jobs build e deploy
+  -> validar login, Japanese Study e chunks na URL publica
+  -> confirmar releases/current.json na versao esperada
 ```
 
-Nenhuma intervencao no Console Firebase e necessaria para iniciar a Fase 10.
+Nenhuma intervencao no Console Firebase e necessaria. A proxima intervencao do
+proprietario e o push e o smoke test publico descrito no documento da Fase 13.
 
 ## 8. Protocolo de Atualizacao do Roteiro
 

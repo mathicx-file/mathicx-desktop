@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-search-routes",
+  "indexKind": "romaji",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-2",
+  "routing": "first-ascii-character",
+  "normalization": "wanakana-5.3.1-hepburn-ascii-v1",
+  "coverage": {
+    "shards": 15,
+    "terms": 57,
+    "references": 59
+  },
+  "buckets": {
+    "a": {
+      "path": "indexes/2026.07.13-2/romaji/a.json",
+      "byteLength": 341,
+      "sha256": "912e03bea6bae17c0e7149534f4930cc0e22f55b57935585349520d0de0faab0"
+    },
+    "b": {
+      "path": "indexes/2026.07.13-2/romaji/b.json",
+      "byteLength": 295,
+      "sha256": "3f000febba19f944b8baec624498d0ebf9c1c2478fe7c43b25ac214801e0a27b"
+    },
+    "c": {
+      "path": "indexes/2026.07.13-2/romaji/c.json",
+      "byteLength": 346,
+      "sha256": "76875ee74e8ddb612b53f455f78b1740f8a76f3c44c9a3984e6b2b9092330039"
+    },
+    "d": {
+      "path": "indexes/2026.07.13-2/romaji/d.json",
+      "byteLength": 345,
+      "sha256": "5924a3de61321ee4e2dc254dcf809e3dd2496d5309d9058157e1a2392e470476"
+    },
+    "g": {
+      "path": "indexes/2026.07.13-2/romaji/g.json",
+      "byteLength": 345,
+      "sha256": "effe99d07ec8f3671dcf75faf00c54fe2f0b8e7001114b4ec7521164fd4590f6"
+    },
+    "h": {
+      "path": "indexes/2026.07.13-2/romaji/h.json",
+      "byteLength": 409,
+      "sha256": "f9d27b474e759f95a16ce94a091e4ccf23ee146dc1f4f7102d930c8899f2807e"
+    },
+    "i": {
+      "path": "indexes/2026.07.13-2/romaji/i.json",
+      "byteLength": 486,
+      "sha256": "f113239305545710bc0718eb9f9270dce0de7242c9639d986899a0cf30555770"
+    },
+    "k": {
+      "path": "indexes/2026.07.13-2/romaji/k.json",
+      "byteLength": 791,
+      "sha256": "6348cf156e26e453d3f3822f6a21055651ac48901bba847251840c610560a8c7"
+    },
+    "m": {
+      "path": "indexes/2026.07.13-2/romaji/m.json",
+      "byteLength": 390,
+      "sha256": "93163096d91d119f62c0a1faf636d80eface1e7f272d3d1078d769306147bc8b"
+    },
+    "n": {
+      "path": "indexes/2026.07.13-2/romaji/n.json",
+      "byteLength": 434,
+      "sha256": "351be57c2c34ced82a38fcc5b60fdbbfa1f333ce6247446fa1ff121a608db9a3"
+    },
+    "p": {
+      "path": "indexes/2026.07.13-2/romaji/p.json",
+      "byteLength": 434,
+      "sha256": "1b256f450a617ff941942983a8dd6e30f16b8c1aef9359187e679d1b45755db1"
+    },
+    "r": {
+      "path": "indexes/2026.07.13-2/romaji/r.json",
+      "byteLength": 300,
+      "sha256": "44c0ecd4b6eeccae74ac4a788db7640030c6ef0603de95065592a3a2ae12b61c"
+    },
+    "s": {
+      "path": "indexes/2026.07.13-2/romaji/s.json",
+      "byteLength": 437,
+      "sha256": "4d265cd7e1dfc9bf1446bd60f33b7446bb719b868f23341383f76e41e6a5d1a5"
+    },
+    "t": {
+      "path": "indexes/2026.07.13-2/romaji/t.json",
+      "byteLength": 727,
+      "sha256": "511e2148b174fe05cbf96334259c4899bd9ba0ea64d584bb5155f2992517b95a"
+    },
+    "y": {
+      "path": "indexes/2026.07.13-2/romaji/y.json",
+      "byteLength": 381,
+      "sha256": "5ae85cff72711a6a31bc6f40483e8cb9fab7df975649c4f05b5adfa8d82eea41"
+    }
+  }
+}

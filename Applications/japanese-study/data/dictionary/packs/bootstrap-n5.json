@@ -1,0 +1,4790 @@
+{
+  "schemaVersion": 1,
+  "id": "bootstrap-n5",
+  "version": "2026.07.13-2",
+  "sources": [
+    {
+      "id": "jmdict",
+      "version": "2026-07-13",
+      "sha256": "5a6356a36532d30613a3469af7098224d010c7d039d0d00e3b063632a2912c31"
+    },
+    {
+      "id": "kanjidic2",
+      "version": "2026-07-13",
+      "sha256": "b08df64dd6828463ea31529d9ea93db32a527d87fa25a1606b2e5775d3967bf3"
+    },
+    {
+      "id": "kanjivg",
+      "version": "r20250816",
+      "sha256": "69a2944ec1183086fdee5ba9c1f48bc306b867480a95b2f337f3203bf50689a3"
+    },
+    {
+      "id": "mathicx-ptbr",
+      "version": "ea879a4",
+      "sha256": "445ea3c5206fe9b7a48272591ce6b713ad3a10bbee43c8e030d06c6607149a7e"
+    }
+  ],
+  "entries": [
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1022880",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1022880"
+      },
+      "writtenForms": [],
+      "readings": [
+        "インターネット",
+        "インタネット",
+        "インターネッツ"
+      ],
+      "common": true,
+      "tags": [
+        "search-only kana form"
+      ],
+      "senses": [
+        {
+          "id": "jmdict-1022880:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [
+            "computing"
+          ],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "Internet"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1038350",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1038350"
+      },
+      "writtenForms": [],
+      "readings": [
+        "カメラ",
+        "キャメラ"
+      ],
+      "common": true,
+      "tags": [
+        "search-only kana form"
+      ],
+      "senses": [
+        {
+          "id": "jmdict-1038350:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "camera"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1049180",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1049180"
+      },
+      "writtenForms": [
+        "珈琲"
+      ],
+      "readings": [
+        "コーヒー"
+      ],
+      "common": true,
+      "tags": [
+        "ateji (phonetic) reading"
+      ],
+      "senses": [
+        {
+          "id": "jmdict-1049180:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [
+            "word usually written using kana alone"
+          ],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "coffee"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1053350",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1053350"
+      },
+      "writtenForms": [],
+      "readings": [
+        "コンピュータ",
+        "コンピューター"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1053350:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "computer"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1073210",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1073210"
+      },
+      "writtenForms": [],
+      "readings": [
+        "スポーツ"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1073210:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "sport",
+              "sports"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1076190",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1076190"
+      },
+      "writtenForms": [],
+      "readings": [
+        "タクシー",
+        "タクシ",
+        "タキシ",
+        "タキシー",
+        "タクシィ",
+        "タクシイ",
+        "タキシイ"
+      ],
+      "common": true,
+      "tags": [
+        "search-only kana form"
+      ],
+      "senses": [
+        {
+          "id": "jmdict-1076190:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "taxi"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1077720",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1077720"
+      },
+      "writtenForms": [],
+      "readings": [
+        "チケット",
+        "ティケット",
+        "テケツ"
+      ],
+      "common": true,
+      "tags": [
+        "out-dated or obsolete kana usage"
+      ],
+      "senses": [
+        {
+          "id": "jmdict-1077720:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "ticket"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1080510",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1080510"
+      },
+      "writtenForms": [],
+      "readings": [
+        "テレビ"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1080510:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [
+            "abbreviation"
+          ],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "television",
+              "TV"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1080510:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "TV program",
+              "TV programme",
+              "TV broadcast"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1098390",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1098390"
+      },
+      "writtenForms": [],
+      "readings": [
+        "バス"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1098390:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "bus"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1098390:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [
+            "computing"
+          ],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "bus"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1101510",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1101510"
+      },
+      "writtenForms": [],
+      "readings": [
+        "パスポート"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1101510:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "passport"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1103090",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1103090"
+      },
+      "writtenForms": [],
+      "readings": [
+        "パン"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1103090:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "bread",
+              "(sweet) pastry"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1103090:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "staff of life",
+              "one's bread"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1106620",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1106620"
+      },
+      "writtenForms": [],
+      "readings": [
+        "ピザ",
+        "ピッツァ",
+        "ピッツア"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1106620:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "pizza"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1106620:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [
+            "derogatory",
+            "Internet slang"
+          ],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "fat, ugly person"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1122650",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1122650"
+      },
+      "writtenForms": [],
+      "readings": [
+        "ホテル"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1122650:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "hotel"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1133790",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1133790"
+      },
+      "writtenForms": [],
+      "readings": [
+        "メニュー"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1133790:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "menu"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1133790:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "schedule",
+              "program",
+              "programme",
+              "course",
+              "services"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1133790:sense:3",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [
+            "computing"
+          ],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "menu"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1145310",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1145310"
+      },
+      "writtenForms": [],
+      "readings": [
+        "レストラン"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1145310:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "restaurant (esp. Western-style)"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1149830",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1149830"
+      },
+      "writtenForms": [
+        "亜米利加",
+        "亜墨利加",
+        "阿米利加",
+        "亜美利加"
+      ],
+      "readings": [
+        "アメリカ"
+      ],
+      "common": true,
+      "tags": [
+        "ateji (phonetic) reading",
+        "rarely used kanji form",
+        "search-only kanji form"
+      ],
+      "senses": [
+        {
+          "id": "jmdict-1149830:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [
+            "abbreviation",
+            "word usually written using kana alone"
+          ],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "(United States of) America",
+              "United States",
+              "US",
+              "USA"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1149830:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [
+            "word usually written using kana alone"
+          ],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "America (land mass)",
+              "the Americas"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1191730",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1191730"
+      },
+      "writtenForms": [
+        "家"
+      ],
+      "readings": [
+        "いえ"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1191730:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "house",
+              "residence",
+              "dwelling",
+              "home"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1191730:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "family",
+              "household"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1191730:sense:3",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "lineage",
+              "family name"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1194290",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1194290"
+      },
+      "writtenForms": [
+        "火曜日"
+      ],
+      "readings": [
+        "かようび"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1194290:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)",
+            "adverb (fukushi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "Tuesday"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1194500",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1194500"
+      },
+      "writtenForms": [
+        "花",
+        "華"
+      ],
+      "readings": [
+        "はな"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1194500:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "flower",
+              "blossom",
+              "bloom",
+              "petal"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1194500:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "cherry blossom"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1194500:sense:3",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "beauty"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1194500:sense:4",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "blooming (esp. of cherry blossoms)"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1194500:sense:5",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "ikebana"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1194500:sense:6",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [
+            "hanafuda"
+          ],
+          "misc": [
+            "abbreviation"
+          ],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "hanafuda"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1194500:sense:7",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "(the) best"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1194500:sense:8",
+          "partOfSpeech": [
+            "nouns which may take the genitive case particle 'no'"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "glorious",
+              "lovely"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1243320",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1243320"
+      },
+      "writtenForms": [
+        "金曜日"
+      ],
+      "readings": [
+        "きんようび"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1243320:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)",
+            "adverb (fukushi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "Friday"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1245290",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1245290"
+      },
+      "writtenForms": [
+        "空",
+        "虚"
+      ],
+      "readings": [
+        "そら"
+      ],
+      "common": true,
+      "tags": [
+        "word containing out-dated kanji or kanji usage"
+      ],
+      "senses": [
+        {
+          "id": "jmdict-1245290:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "sky",
+              "the air",
+              "the heavens"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1245290:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "weather"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1245290:sense:3",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "far-off place",
+              "distant place"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1245290:sense:4",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "state of mind",
+              "feeling"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1245290:sense:5",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "(from) memory",
+              "(by) heart"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1245290:sense:6",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "falsehood",
+              "lie"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1245290:sense:7",
+          "partOfSpeech": [
+            "noun, used as a prefix"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "somehow",
+              "vaguely"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1245290:sense:8",
+          "partOfSpeech": [
+            "noun, used as a prefix"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "fake"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1255890",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1255890"
+      },
+      "writtenForms": [
+        "月曜日"
+      ],
+      "readings": [
+        "げつようび"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1255890:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)",
+            "adverb (fukushi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "Monday"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1258330",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1258330"
+      },
+      "writtenForms": [
+        "犬",
+        "狗"
+      ],
+      "readings": [
+        "いぬ",
+        "イヌ"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1258330:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "dog (Canis (lupus) familiaris)",
+              "canine"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1258330:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [
+            "derogatory",
+            "word usually written using kana alone"
+          ],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "squealer",
+              "rat",
+              "snitch",
+              "informer",
+              "informant",
+              "spy"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1258330:sense:3",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [
+            "derogatory"
+          ],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "loser",
+              "asshole"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1258330:sense:4",
+          "partOfSpeech": [
+            "noun, used as a prefix"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "counterfeit",
+              "inferior",
+              "useless",
+              "wasteful"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1301940",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1301940"
+      },
+      "writtenForms": [
+        "傘"
+      ],
+      "readings": [
+        "かさ"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1301940:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "umbrella",
+              "parasol"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1301940:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "something shaped like an umbrella or a conical hat",
+              "shade (of a lamp)",
+              "mushroom cap",
+              "pileus"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1302680",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1302680"
+      },
+      "writtenForms": [
+        "山"
+      ],
+      "readings": [
+        "やま",
+        "ヤマ"
+      ],
+      "common": true,
+      "tags": [
+        "search-only kana form"
+      ],
+      "senses": [
+        {
+          "id": "jmdict-1302680:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)",
+            "counter"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "mountain",
+              "hill"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1302680:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)",
+            "counter"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "mine"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1302680:sense:3",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)",
+            "counter"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "(mountain) forest"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1302680:sense:4",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)",
+            "counter"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "heap",
+              "pile",
+              "stack",
+              "mountain"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1302680:sense:5",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "protruding or high part of an object",
+              "crown (of a hat)",
+              "thread (of a screw)",
+              "tread (of a tire)"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1302680:sense:6",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "climax",
+              "peak",
+              "critical point"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1302680:sense:7",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "guess",
+              "speculation",
+              "gamble"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1302680:sense:8",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [
+            "slang",
+            "word usually written using kana alone"
+          ],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "(criminal) case",
+              "crime"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1302680:sense:9",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "mountain climbing",
+              "mountaineering"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1302680:sense:10",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "festival float (esp. one mounted with a decorative halberd)"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1302680:sense:11",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [
+            "card games"
+          ],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "deck (from which players draw cards)",
+              "draw pile",
+              "stock"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1302680:sense:12",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [
+            "mahjong"
+          ],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "wall",
+              "wall tile"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1302680:sense:13",
+          "partOfSpeech": [
+            "noun, used as a prefix"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "wild"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1323080",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1323080"
+      },
+      "writtenForms": [
+        "車"
+      ],
+      "readings": [
+        "くるま",
+        "クルマ"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1323080:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "car",
+              "automobile",
+              "vehicle"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1323080:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "wheel",
+              "castor",
+              "caster"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1347750",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1347750"
+      },
+      "writtenForms": [
+        "小さい"
+      ],
+      "readings": [
+        "ちいさい"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1347750:sense:1",
+          "partOfSpeech": [
+            "adjective (keiyoushi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "small",
+              "little",
+              "tiny"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1347750:sense:2",
+          "partOfSpeech": [
+            "adjective (keiyoushi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "slight",
+              "below average (in degree, amount, etc.)",
+              "minor",
+              "small"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1347750:sense:3",
+          "partOfSpeech": [
+            "adjective (keiyoushi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "low (e.g. sound)",
+              "soft (e.g. voice)"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1347750:sense:4",
+          "partOfSpeech": [
+            "adjective (keiyoushi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "unimportant",
+              "petty",
+              "insignificant",
+              "trifling",
+              "trivial"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1347750:sense:5",
+          "partOfSpeech": [
+            "adjective (keiyoushi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "young",
+              "juvenile"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1358340",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1358340"
+      },
+      "writtenForms": [
+        "食べ物",
+        "食べもの"
+      ],
+      "readings": [
+        "たべもの"
+      ],
+      "common": true,
+      "tags": [
+        "search-only kanji form"
+      ],
+      "senses": [
+        {
+          "id": "jmdict-1358340:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "food"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1371260",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1371260"
+      },
+      "writtenForms": [
+        "水"
+      ],
+      "readings": [
+        "みず"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1371260:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "water (esp. cool or cold)"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1371260:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "fluid (esp. in an animal tissue)",
+              "liquid"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1371260:sense:3",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "flood",
+              "floodwaters"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1371260:sense:4",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [
+            "sumo"
+          ],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "water offered to wrestlers just prior to a bout"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1371260:sense:5",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [
+            "sumo"
+          ],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "break granted to wrestlers engaged in a prolonged bout"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1372190",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1372190"
+      },
+      "writtenForms": [
+        "水曜日"
+      ],
+      "readings": [
+        "すいようび"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1372190:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)",
+            "adverb (fukushi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "Wednesday"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1387990",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1387990"
+      },
+      "writtenForms": [
+        "先生"
+      ],
+      "readings": [
+        "せんせい"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1387990:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "teacher",
+              "instructor",
+              "master"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1387990:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)",
+            "noun, used as a suffix"
+          ],
+          "fields": [],
+          "misc": [
+            "honorific or respectful (sonkeigo) language"
+          ],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "sensei",
+              "title or form of address for a teacher, master, doctor, lawyer, etc."
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1387990:sense:3",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [
+            "familiar language",
+            "jocular, humorous term"
+          ],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "intimate or teasing form of address"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1387990:sense:4",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [
+            "archaic"
+          ],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "one's elder"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1390020",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1390020"
+      },
+      "writtenForms": [
+        "川",
+        "河"
+      ],
+      "readings": [
+        "かわ",
+        "がわ"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1390020:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": [
+              "かわ"
+            ]
+          },
+          "glosses": {
+            "en": [
+              "river",
+              "stream"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1390020:sense:2",
+          "partOfSpeech": [
+            "suffix"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "River",
+              "the ... river"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1413240",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1413240"
+      },
+      "writtenForms": [
+        "大学",
+        "大學"
+      ],
+      "readings": [
+        "だいがく"
+      ],
+      "common": true,
+      "tags": [
+        "word containing out-dated kanji or kanji usage"
+      ],
+      "senses": [
+        {
+          "id": "jmdict-1413240:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "university",
+              "college"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1413240:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [
+            "historical term",
+            "abbreviation"
+          ],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "former imperial university of Japan (established under the ritsuryō system for the training of government administrators)"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1413240:sense:3",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "the Great Learning (one of the Four Books)"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1428280",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1428280"
+      },
+      "writtenForms": [
+        "朝"
+      ],
+      "readings": [
+        "あさ"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1428280:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)",
+            "adverb (fukushi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "morning"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1428280:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "breakfast"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1445590",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1445590"
+      },
+      "writtenForms": [
+        "土曜日"
+      ],
+      "readings": [
+        "どようび"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1445590:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)",
+            "adverb (fukushi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "Saturday"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1467640",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1467640"
+      },
+      "writtenForms": [
+        "猫"
+      ],
+      "readings": [
+        "ねこ",
+        "ネコ"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1467640:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "cat (esp. the domestic cat, Felis catus)",
+              "feline"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1467640:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "shamisen"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1467640:sense:3",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "geisha"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1467640:sense:4",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [
+            "abbreviation"
+          ],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "wheelbarrow"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1467640:sense:5",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [
+            "abbreviation"
+          ],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "clay bed-warmer"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1467640:sense:6",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [
+            "word usually written using kana alone",
+            "slang"
+          ],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "bottom (submissive partner of a homosexual relationship)"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1483800",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1483800"
+      },
+      "writtenForms": [
+        "皮"
+      ],
+      "readings": [
+        "かわ"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1483800:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "skin",
+              "hide",
+              "pelt",
+              "fur"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1483800:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "rind",
+              "peel",
+              "husk",
+              "bark"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1483800:sense:3",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "shell",
+              "sheath",
+              "wrapping"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1483800:sense:4",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "mask (hiding one's true nature)",
+              "seeming"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1486720",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1486720"
+      },
+      "writtenForms": [
+        "鼻"
+      ],
+      "readings": [
+        "はな"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1486720:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "nose"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1534890",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1534890"
+      },
+      "writtenForms": [
+        "木曜日"
+      ],
+      "readings": [
+        "もくようび"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1534890:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)",
+            "adverb (fukushi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "Thursday"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1536350",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1536350"
+      },
+      "writtenForms": [
+        "夜"
+      ],
+      "readings": [
+        "よる",
+        "よ"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1536350:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)",
+            "adverb (fukushi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "night",
+              "evening"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1536350:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": [
+              "よる"
+            ]
+          },
+          "glosses": {
+            "en": [
+              "dinner"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1540170",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1540170"
+      },
+      "writtenForms": [
+        "友達",
+        "友だち"
+      ],
+      "readings": [
+        "ともだち",
+        "トモダチ"
+      ],
+      "common": true,
+      "tags": [
+        "search-only kana form"
+      ],
+      "senses": [
+        {
+          "id": "jmdict-1540170:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "friend",
+              "companion"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1580640",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1580640"
+      },
+      "writtenForms": [
+        "人"
+      ],
+      "readings": [
+        "ひと",
+        "ヒト"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1580640:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "person",
+              "someone",
+              "somebody"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1580640:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "human beings",
+              "mankind",
+              "man",
+              "people",
+              "humans"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1580640:sense:3",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [
+            "word usually written using kana alone"
+          ],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "human (Homo sapiens)"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1580640:sense:4",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "(other) people",
+              "others"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1580640:sense:5",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "character",
+              "personality",
+              "nature"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1580640:sense:6",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "capable person",
+              "competent person",
+              "suitable person",
+              "right person"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1580640:sense:7",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "adult",
+              "grown-up"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1580640:sense:8",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "I",
+              "me",
+              "one"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1582710",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1582710"
+      },
+      "writtenForms": [
+        "日本"
+      ],
+      "readings": [
+        "にほん",
+        "にっぽん"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1582710:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "Japan"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1600430",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1600430"
+      },
+      "writtenForms": [
+        "飲み物",
+        "飲物",
+        "飲みもの"
+      ],
+      "readings": [
+        "のみもの"
+      ],
+      "common": true,
+      "tags": [
+        "search-only kanji form"
+      ],
+      "senses": [
+        {
+          "id": "jmdict-1600430:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "drink",
+              "beverage"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "kanji": [
+    {
+      "schemaVersion": 1,
+      "id": "kanjidic2-U+4EBA",
+      "literal": "人",
+      "codePoint": "U+4EBA",
+      "source": {
+        "id": "kanjidic2",
+        "version": "2026-07-13",
+        "entryId": "人"
+      },
+      "strokeCount": 2,
+      "grade": 1,
+      "frequency": 5,
+      "readings": {
+        "on": [
+          "ジン",
+          "ニン"
+        ],
+        "kun": [
+          "ひと",
+          "-り",
+          "-と"
+        ],
+        "nanori": [
+          "じ",
+          "と",
+          "ね",
+          "ひこ",
+          "ふみ"
+        ]
+      },
+      "meanings": {
+        "en": [
+          "person"
+        ]
+      },
+      "tags": []
+    },
+    {
+      "schemaVersion": 1,
+      "id": "kanjidic2-U+571F",
+      "literal": "土",
+      "codePoint": "U+571F",
+      "source": {
+        "id": "kanjidic2",
+        "version": "2026-07-13",
+        "entryId": "土"
+      },
+      "strokeCount": 3,
+      "grade": 1,
+      "frequency": 307,
+      "readings": {
+        "on": [
+          "ド",
+          "ト"
+        ],
+        "kun": [
+          "つち"
+        ],
+        "nanori": [
+          "つく",
+          "は",
+          "ひじ"
+        ]
+      },
+      "meanings": {
+        "en": [
+          "soil",
+          "earth",
+          "ground",
+          "Turkey"
+        ]
+      },
+      "tags": []
+    },
+    {
+      "schemaVersion": 1,
+      "id": "kanjidic2-U+5927",
+      "literal": "大",
+      "codePoint": "U+5927",
+      "source": {
+        "id": "kanjidic2",
+        "version": "2026-07-13",
+        "entryId": "大"
+      },
+      "strokeCount": 3,
+      "grade": 1,
+      "frequency": 7,
+      "readings": {
+        "on": [
+          "ダイ",
+          "タイ"
+        ],
+        "kun": [
+          "おお-",
+          "おお.きい",
+          "-おお.いに"
+        ],
+        "nanori": [
+          "うふ",
+          "お",
+          "おう",
+          "た",
+          "たかし",
+          "とも",
+          "はじめ",
+          "ひろ",
+          "ひろし",
+          "まさ",
+          "まさる",
+          "もと",
+          "わ"
+        ]
+      },
+      "meanings": {
+        "en": [
+          "large",
+          "big"
+        ]
+      },
+      "tags": []
+    },
+    {
+      "schemaVersion": 1,
+      "id": "kanjidic2-U+5C0F",
+      "literal": "小",
+      "codePoint": "U+5C0F",
+      "source": {
+        "id": "kanjidic2",
+        "version": "2026-07-13",
+        "entryId": "小"
+      },
+      "strokeCount": 3,
+      "grade": 1,
+      "frequency": 114,
+      "readings": {
+        "on": [
+          "ショウ"
+        ],
+        "kun": [
+          "ちい.さい",
+          "こ-",
+          "お-",
+          "さ-"
+        ],
+        "nanori": [
+          "いさら",
+          "こう",
+          "さざ",
+          "しゃお",
+          "ちいさ"
+        ]
+      },
+      "meanings": {
+        "en": [
+          "little",
+          "small"
+        ]
+      },
+      "tags": []
+    },
+    {
+      "schemaVersion": 1,
+      "id": "kanjidic2-U+65E5",
+      "literal": "日",
+      "codePoint": "U+65E5",
+      "source": {
+        "id": "kanjidic2",
+        "version": "2026-07-13",
+        "entryId": "日"
+      },
+      "strokeCount": 4,
+      "grade": 1,
+      "frequency": 1,
+      "readings": {
+        "on": [
+          "ニチ",
+          "ジツ"
+        ],
+        "kun": [
+          "ひ",
+          "-び",
+          "-か"
+        ],
+        "nanori": [
+          "あ",
+          "あき",
+          "いる",
+          "く",
+          "くさ",
+          "こう",
+          "す",
+          "たち",
+          "に",
+          "にっ",
+          "につ",
+          "へ"
+        ]
+      },
+      "meanings": {
+        "en": [
+          "day",
+          "sun",
+          "Japan",
+          "counter for days"
+        ]
+      },
+      "tags": []
+    },
+    {
+      "schemaVersion": 1,
+      "id": "kanjidic2-U+6708",
+      "literal": "月",
+      "codePoint": "U+6708",
+      "source": {
+        "id": "kanjidic2",
+        "version": "2026-07-13",
+        "entryId": "月"
+      },
+      "strokeCount": 4,
+      "grade": 1,
+      "frequency": 23,
+      "readings": {
+        "on": [
+          "ゲツ",
+          "ガツ"
+        ],
+        "kun": [
+          "つき"
+        ],
+        "nanori": [
+          "おと",
+          "がっ",
+          "す",
+          "ずき",
+          "もり"
+        ]
+      },
+      "meanings": {
+        "en": [
+          "month",
+          "moon"
+        ]
+      },
+      "tags": []
+    },
+    {
+      "schemaVersion": 1,
+      "id": "kanjidic2-U+6728",
+      "literal": "木",
+      "codePoint": "U+6728",
+      "source": {
+        "id": "kanjidic2",
+        "version": "2026-07-13",
+        "entryId": "木"
+      },
+      "strokeCount": 4,
+      "grade": 1,
+      "frequency": 317,
+      "readings": {
+        "on": [
+          "ボク",
+          "モク"
+        ],
+        "kun": [
+          "き",
+          "こ-"
+        ],
+        "nanori": [
+          "ぐ",
+          "も",
+          "もと"
+        ]
+      },
+      "meanings": {
+        "en": [
+          "tree",
+          "wood"
+        ]
+      },
+      "tags": []
+    },
+    {
+      "schemaVersion": 1,
+      "id": "kanjidic2-U+6C34",
+      "literal": "水",
+      "codePoint": "U+6C34",
+      "source": {
+        "id": "kanjidic2",
+        "version": "2026-07-13",
+        "entryId": "水"
+      },
+      "strokeCount": 4,
+      "grade": 1,
+      "frequency": 223,
+      "readings": {
+        "on": [
+          "スイ"
+        ],
+        "kun": [
+          "みず",
+          "みず-"
+        ],
+        "nanori": [
+          "うず",
+          "ずみ",
+          "つ",
+          "ど",
+          "み",
+          "みさ",
+          "みつ",
+          "みな",
+          "みん"
+        ]
+      },
+      "meanings": {
+        "en": [
+          "water"
+        ]
+      },
+      "tags": []
+    },
+    {
+      "schemaVersion": 1,
+      "id": "kanjidic2-U+706B",
+      "literal": "火",
+      "codePoint": "U+706B",
+      "source": {
+        "id": "kanjidic2",
+        "version": "2026-07-13",
+        "entryId": "火"
+      },
+      "strokeCount": 4,
+      "grade": 1,
+      "frequency": 574,
+      "readings": {
+        "on": [
+          "カ"
+        ],
+        "kun": [
+          "ひ",
+          "-び",
+          "ほ-"
+        ],
+        "nanori": []
+      },
+      "meanings": {
+        "en": [
+          "fire"
+        ]
+      },
+      "tags": []
+    },
+    {
+      "schemaVersion": 1,
+      "id": "kanjidic2-U+91D1",
+      "literal": "金",
+      "codePoint": "U+91D1",
+      "source": {
+        "id": "kanjidic2",
+        "version": "2026-07-13",
+        "entryId": "金"
+      },
+      "strokeCount": 8,
+      "grade": 1,
+      "frequency": 53,
+      "readings": {
+        "on": [
+          "キン",
+          "コン",
+          "ゴン"
+        ],
+        "kun": [
+          "かね",
+          "かな-",
+          "-がね"
+        ],
+        "nanori": [
+          "かん",
+          "きむ",
+          "こ",
+          "この",
+          "ん"
+        ]
+      },
+      "meanings": {
+        "en": [
+          "gold"
+        ]
+      },
+      "tags": []
+    }
+  ],
+  "translations": [
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1022880:jmdict-1022880:sense:1",
+      "entryId": "jmdict-1022880",
+      "senseId": "jmdict-1022880:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "internet"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kata_intaanetto"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1038350:jmdict-1038350:sense:1",
+      "entryId": "jmdict-1038350",
+      "senseId": "jmdict-1038350:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "camera"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kata_kamera"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1049180:jmdict-1049180:sense:1",
+      "entryId": "jmdict-1049180",
+      "senseId": "jmdict-1049180:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "cafe"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kata_koohii"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1053350:jmdict-1053350:sense:1",
+      "entryId": "jmdict-1053350",
+      "senseId": "jmdict-1053350:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "computador"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kata_konpyuuta"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1073210:jmdict-1073210:sense:1",
+      "entryId": "jmdict-1073210",
+      "senseId": "jmdict-1073210:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "esportes"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kata_supoostu"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1076190:jmdict-1076190:sense:1",
+      "entryId": "jmdict-1076190",
+      "senseId": "jmdict-1076190:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "taxi"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kata_takushii"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1077720:jmdict-1077720:sense:1",
+      "entryId": "jmdict-1077720",
+      "senseId": "jmdict-1077720:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "ingresso",
+        "passagem"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kata_chiketto"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1080510:jmdict-1080510:sense:1",
+      "entryId": "jmdict-1080510",
+      "senseId": "jmdict-1080510:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "televisao"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kata_terebi"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1098390:jmdict-1098390:sense:1",
+      "entryId": "jmdict-1098390",
+      "senseId": "jmdict-1098390:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "ônibus"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kata_pasu"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1101510:jmdict-1101510:sense:1",
+      "entryId": "jmdict-1101510",
+      "senseId": "jmdict-1101510:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "passaporte"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kata_pasupooto"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1103090:jmdict-1103090:sense:1",
+      "entryId": "jmdict-1103090",
+      "senseId": "jmdict-1103090:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "pão"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kata_pan"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1106620:jmdict-1106620:sense:1",
+      "entryId": "jmdict-1106620",
+      "senseId": "jmdict-1106620:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "pizza"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kata_piza"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1122650:jmdict-1122650:sense:1",
+      "entryId": "jmdict-1122650",
+      "senseId": "jmdict-1122650:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "hotel"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kata_hoteru"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1133790:jmdict-1133790:sense:1",
+      "entryId": "jmdict-1133790",
+      "senseId": "jmdict-1133790:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "menu"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kata_menyu"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1145310:jmdict-1145310:sense:1",
+      "entryId": "jmdict-1145310",
+      "senseId": "jmdict-1145310:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "restaurante"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kata_resutoran"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1149830:jmdict-1149830:sense:1",
+      "entryId": "jmdict-1149830",
+      "senseId": "jmdict-1149830:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "America",
+        "Estados Unidos"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kata_amerika"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1191730:jmdict-1191730:sense:1",
+      "entryId": "jmdict-1191730",
+      "senseId": "jmdict-1191730:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "casa"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_ie"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1194290:jmdict-1194290:sense:1",
+      "entryId": "jmdict-1194290",
+      "senseId": "jmdict-1194290:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "terça-feira"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kanji_kayoubi"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1194500:jmdict-1194500:sense:1",
+      "entryId": "jmdict-1194500",
+      "senseId": "jmdict-1194500:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "flor"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_hana"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1243320:jmdict-1243320:sense:1",
+      "entryId": "jmdict-1243320",
+      "senseId": "jmdict-1243320:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "sexta-feira"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kanji_kinyoubi"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1245290:jmdict-1245290:sense:1",
+      "entryId": "jmdict-1245290",
+      "senseId": "jmdict-1245290:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "céu"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_sora"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1255890:jmdict-1255890:sense:1",
+      "entryId": "jmdict-1255890",
+      "senseId": "jmdict-1255890:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "segunda-feira"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kanji_getsuyoubi"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1258330:jmdict-1258330:sense:1",
+      "entryId": "jmdict-1258330",
+      "senseId": "jmdict-1258330:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "cachorro"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_inu"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1301940:jmdict-1301940:sense:1",
+      "entryId": "jmdict-1301940",
+      "senseId": "jmdict-1301940:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "guarda-chuva"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_kasa"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1302680:jmdict-1302680:sense:1",
+      "entryId": "jmdict-1302680",
+      "senseId": "jmdict-1302680:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "montanha"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_yama"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1323080:jmdict-1323080:sense:1",
+      "entryId": "jmdict-1323080",
+      "senseId": "jmdict-1323080:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "carro"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_kuruma"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1347750:jmdict-1347750:sense:1",
+      "entryId": "jmdict-1347750",
+      "senseId": "jmdict-1347750:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "pequeno"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kanji_chiisai"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1358340:jmdict-1358340:sense:1",
+      "entryId": "jmdict-1358340",
+      "senseId": "jmdict-1358340:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "comida"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_tabemono"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1371260:jmdict-1371260:sense:1",
+      "entryId": "jmdict-1371260",
+      "senseId": "jmdict-1371260:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "água"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_mizu"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1372190:jmdict-1372190:sense:1",
+      "entryId": "jmdict-1372190",
+      "senseId": "jmdict-1372190:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "quarta-feira"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kanji_suiyoubi"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1387990:jmdict-1387990:sense:1",
+      "entryId": "jmdict-1387990",
+      "senseId": "jmdict-1387990:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "professor"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_sensei"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1390020:jmdict-1390020:sense:1",
+      "entryId": "jmdict-1390020",
+      "senseId": "jmdict-1390020:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "rio"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_kawa"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1413240:jmdict-1413240:sense:1",
+      "entryId": "jmdict-1413240",
+      "senseId": "jmdict-1413240:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "universidade"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kanji_daigaku"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1428280:jmdict-1428280:sense:1",
+      "entryId": "jmdict-1428280",
+      "senseId": "jmdict-1428280:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "manhã"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_asa"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1445590:jmdict-1445590:sense:1",
+      "entryId": "jmdict-1445590",
+      "senseId": "jmdict-1445590:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "sábado"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kanji_doyoubi"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1467640:jmdict-1467640:sense:1",
+      "entryId": "jmdict-1467640",
+      "senseId": "jmdict-1467640:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "gato"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_neko"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1483800:jmdict-1483800:sense:1",
+      "entryId": "jmdict-1483800",
+      "senseId": "jmdict-1483800:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "pele"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_kawa"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1486720:jmdict-1486720:sense:1",
+      "entryId": "jmdict-1486720",
+      "senseId": "jmdict-1486720:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "nariz"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_hana"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1534890:jmdict-1534890:sense:1",
+      "entryId": "jmdict-1534890",
+      "senseId": "jmdict-1534890:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "quinta-feira"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kanji_mokuyoubi"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1536350:jmdict-1536350:sense:1",
+      "entryId": "jmdict-1536350",
+      "senseId": "jmdict-1536350:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "noite"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_yoru"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1540170:jmdict-1540170:sense:1",
+      "entryId": "jmdict-1540170",
+      "senseId": "jmdict-1540170:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "amigo"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_tomodachi"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1580640:jmdict-1580640:sense:1",
+      "entryId": "jmdict-1580640",
+      "senseId": "jmdict-1580640:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "pessoa"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kanji_hito"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1582710:jmdict-1582710:sense:1",
+      "entryId": "jmdict-1582710",
+      "senseId": "jmdict-1582710:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "Japão"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kanji_nihon"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1600430:jmdict-1600430:sense:1",
+      "entryId": "jmdict-1600430",
+      "senseId": "jmdict-1600430:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "bebida"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_nomimono"
+      },
+      "reviewedAt": "2026-07-13"
+    }
+  ],
+  "kanjiTranslations": [
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:kanjidic2-U+65E5",
+      "entryId": "kanjidic2-U+65E5",
+      "language": "pt-BR",
+      "meanings": [
+        "dia",
+        "sol"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "day-sun"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:kanjidic2-U+6708",
+      "entryId": "kanjidic2-U+6708",
+      "language": "pt-BR",
+      "meanings": [
+        "lua",
+        "mês"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "moon-month"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:kanjidic2-U+706B",
+      "entryId": "kanjidic2-U+706B",
+      "language": "pt-BR",
+      "meanings": [
+        "fogo"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "fire"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:kanjidic2-U+6C34",
+      "entryId": "kanjidic2-U+6C34",
+      "language": "pt-BR",
+      "meanings": [
+        "água"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "water"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:kanjidic2-U+6728",
+      "entryId": "kanjidic2-U+6728",
+      "language": "pt-BR",
+      "meanings": [
+        "árvore",
+        "madeira"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "tree-wood"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:kanjidic2-U+91D1",
+      "entryId": "kanjidic2-U+91D1",
+      "language": "pt-BR",
+      "meanings": [
+        "ouro",
+        "dinheiro"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "gold-money"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:kanjidic2-U+571F",
+      "entryId": "kanjidic2-U+571F",
+      "language": "pt-BR",
+      "meanings": [
+        "terra",
+        "solo"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "earth-soil"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:kanjidic2-U+4EBA",
+      "entryId": "kanjidic2-U+4EBA",
+      "language": "pt-BR",
+      "meanings": [
+        "pessoa"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "person"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:kanjidic2-U+5927",
+      "entryId": "kanjidic2-U+5927",
+      "language": "pt-BR",
+      "meanings": [
+        "grande"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "big"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:kanjidic2-U+5C0F",
+      "entryId": "kanjidic2-U+5C0F",
+      "language": "pt-BR",
+      "meanings": [
+        "pequeno"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "small"
+      },
+      "reviewedAt": "2026-07-13"
+    }
+  ],
+  "strokeAssets": [
+    {
+      "schemaVersion": 1,
+      "id": "kanjivg-U+4EBA",
+      "literal": "人",
+      "codePoint": "U+4EBA",
+      "path": "assets/strokes/kanji/04eba.svg",
+      "sha256": "7ca492d63bb75839711cbd3788d99d9d6269d0dcb91e949a93bd8ce3d76ea301",
+      "source": {
+        "id": "kanjivg",
+        "version": "r20250816",
+        "entryId": "U+4EBA"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "kanjivg-U+571F",
+      "literal": "土",
+      "codePoint": "U+571F",
+      "path": "assets/strokes/kanji/0571f.svg",
+      "sha256": "9567eab03a959ef792fa8a39bf1698ccdced66a390c8bfdc2890073d541d974d",
+      "source": {
+        "id": "kanjivg",
+        "version": "r20250816",
+        "entryId": "U+571F"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "kanjivg-U+5927",
+      "literal": "大",
+      "codePoint": "U+5927",
+      "path": "assets/strokes/kanji/05927.svg",
+      "sha256": "6fc5996c44cddc3de41ab897de467979e1df6338a2c9365094ac4cadbf39ca7d",
+      "source": {
+        "id": "kanjivg",
+        "version": "r20250816",
+        "entryId": "U+5927"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "kanjivg-U+5C0F",
+      "literal": "小",
+      "codePoint": "U+5C0F",
+      "path": "assets/strokes/kanji/05c0f.svg",
+      "sha256": "96a71bd0c810ee7e96e1fe82dbb5d95fcb8caa3985cd44d4620646fc2a797c95",
+      "source": {
+        "id": "kanjivg",
+        "version": "r20250816",
+        "entryId": "U+5C0F"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "kanjivg-U+65E5",
+      "literal": "日",
+      "codePoint": "U+65E5",
+      "path": "assets/strokes/kanji/065e5.svg",
+      "sha256": "11b4ee4ad6b759eb28d8353474607e500a4957b0891178be552e3e717715d516",
+      "source": {
+        "id": "kanjivg",
+        "version": "r20250816",
+        "entryId": "U+65E5"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "kanjivg-U+6708",
+      "literal": "月",
+      "codePoint": "U+6708",
+      "path": "assets/strokes/kanji/06708.svg",
+      "sha256": "2ef92b84f932d048f2eb9d571bee70fd17146f2ce26ba0eb5f2f626d306d5329",
+      "source": {
+        "id": "kanjivg",
+        "version": "r20250816",
+        "entryId": "U+6708"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "kanjivg-U+6728",
+      "literal": "木",
+      "codePoint": "U+6728",
+      "path": "assets/strokes/kanji/06728.svg",
+      "sha256": "2e00b0fba5ea305e042d23c1c600e4eeff01590a1af2e2e4cf937bc76560dc82",
+      "source": {
+        "id": "kanjivg",
+        "version": "r20250816",
+        "entryId": "U+6728"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "kanjivg-U+6C34",
+      "literal": "水",
+      "codePoint": "U+6C34",
+      "path": "assets/strokes/kanji/06c34.svg",
+      "sha256": "f33827a6554064ce59983b3ab583ec04753d16e62ca8aa05a61aab12be13c2e0",
+      "source": {
+        "id": "kanjivg",
+        "version": "r20250816",
+        "entryId": "U+6C34"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "kanjivg-U+706B",
+      "literal": "火",
+      "codePoint": "U+706B",
+      "path": "assets/strokes/kanji/0706b.svg",
+      "sha256": "ef08ced3985d915a04e40a8f2eb91228462691b3e3925fa5462c5038ea029b31",
+      "source": {
+        "id": "kanjivg",
+        "version": "r20250816",
+        "entryId": "U+706B"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "kanjivg-U+91D1",
+      "literal": "金",
+      "codePoint": "U+91D1",
+      "path": "assets/strokes/kanji/091d1.svg",
+      "sha256": "2ef8294ade8a6db8baaa2126443f84678af9b0daf037c84bb84da5ea886bfe26",
+      "source": {
+        "id": "kanjivg",
+        "version": "r20250816",
+        "entryId": "U+91D1"
+      }
+    }
+  ],
+  "licensesPath": "../licenses.json",
+  "aliases": {
+    "lexical": [
+      {
+        "legacyId": "hira_asa",
+        "entryIds": [
+          "jmdict-1428280"
+        ]
+      },
+      {
+        "legacyId": "hira_yoru",
+        "entryIds": [
+          "jmdict-1536350"
+        ]
+      },
+      {
+        "legacyId": "hira_mizu",
+        "entryIds": [
+          "jmdict-1371260"
+        ]
+      },
+      {
+        "legacyId": "hira_hana",
+        "entryIds": [
+          "jmdict-1194500",
+          "jmdict-1486720"
+        ]
+      },
+      {
+        "legacyId": "hira_sora",
+        "entryIds": [
+          "jmdict-1245290"
+        ]
+      },
+      {
+        "legacyId": "hira_yama",
+        "entryIds": [
+          "jmdict-1302680"
+        ]
+      },
+      {
+        "legacyId": "hira_kawa",
+        "entryIds": [
+          "jmdict-1390020",
+          "jmdict-1483800"
+        ]
+      },
+      {
+        "legacyId": "hira_ie",
+        "entryIds": [
+          "jmdict-1191730"
+        ]
+      },
+      {
+        "legacyId": "hira_neko",
+        "entryIds": [
+          "jmdict-1467640"
+        ]
+      },
+      {
+        "legacyId": "hira_inu",
+        "entryIds": [
+          "jmdict-1258330"
+        ]
+      },
+      {
+        "legacyId": "hira_kasa",
+        "entryIds": [
+          "jmdict-1301940"
+        ]
+      },
+      {
+        "legacyId": "hira_kuruma",
+        "entryIds": [
+          "jmdict-1323080"
+        ]
+      },
+      {
+        "legacyId": "hira_tabemono",
+        "entryIds": [
+          "jmdict-1358340"
+        ]
+      },
+      {
+        "legacyId": "hira_nomimono",
+        "entryIds": [
+          "jmdict-1600430"
+        ]
+      },
+      {
+        "legacyId": "hira_tomodachi",
+        "entryIds": [
+          "jmdict-1540170"
+        ]
+      },
+      {
+        "legacyId": "hira_sensei",
+        "entryIds": [
+          "jmdict-1387990"
+        ]
+      },
+      {
+        "legacyId": "kata_amerika",
+        "entryIds": [
+          "jmdict-1149830"
+        ]
+      },
+      {
+        "legacyId": "kata_kamera",
+        "entryIds": [
+          "jmdict-1038350"
+        ]
+      },
+      {
+        "legacyId": "kata_koohii",
+        "entryIds": [
+          "jmdict-1049180"
+        ]
+      },
+      {
+        "legacyId": "kata_pasu",
+        "entryIds": [
+          "jmdict-1098390"
+        ]
+      },
+      {
+        "legacyId": "kata_takushii",
+        "entryIds": [
+          "jmdict-1076190"
+        ]
+      },
+      {
+        "legacyId": "kata_terebi",
+        "entryIds": [
+          "jmdict-1080510"
+        ]
+      },
+      {
+        "legacyId": "kata_piza",
+        "entryIds": [
+          "jmdict-1106620"
+        ]
+      },
+      {
+        "legacyId": "kata_pan",
+        "entryIds": [
+          "jmdict-1103090"
+        ]
+      },
+      {
+        "legacyId": "kata_resutoran",
+        "entryIds": [
+          "jmdict-1145310"
+        ]
+      },
+      {
+        "legacyId": "kata_hoteru",
+        "entryIds": [
+          "jmdict-1122650"
+        ]
+      },
+      {
+        "legacyId": "kata_supoostu",
+        "entryIds": [
+          "jmdict-1073210"
+        ]
+      },
+      {
+        "legacyId": "kata_pasupooto",
+        "entryIds": [
+          "jmdict-1101510"
+        ]
+      },
+      {
+        "legacyId": "kata_konpyuuta",
+        "entryIds": [
+          "jmdict-1053350"
+        ]
+      },
+      {
+        "legacyId": "kata_intaanetto",
+        "entryIds": [
+          "jmdict-1022880"
+        ]
+      },
+      {
+        "legacyId": "kata_menyu",
+        "entryIds": [
+          "jmdict-1133790"
+        ]
+      },
+      {
+        "legacyId": "kata_chiketto",
+        "entryIds": [
+          "jmdict-1077720"
+        ]
+      },
+      {
+        "legacyId": "kanji_nihon",
+        "entryIds": [
+          "jmdict-1582710"
+        ]
+      },
+      {
+        "legacyId": "kanji_getsuyoubi",
+        "entryIds": [
+          "jmdict-1255890"
+        ]
+      },
+      {
+        "legacyId": "kanji_kayoubi",
+        "entryIds": [
+          "jmdict-1194290"
+        ]
+      },
+      {
+        "legacyId": "kanji_suiyoubi",
+        "entryIds": [
+          "jmdict-1372190"
+        ]
+      },
+      {
+        "legacyId": "kanji_mokuyoubi",
+        "entryIds": [
+          "jmdict-1534890"
+        ]
+      },
+      {
+        "legacyId": "kanji_kinyoubi",
+        "entryIds": [
+          "jmdict-1243320"
+        ]
+      },
+      {
+        "legacyId": "kanji_doyoubi",
+        "entryIds": [
+          "jmdict-1445590"
+        ]
+      },
+      {
+        "legacyId": "kanji_hito",
+        "entryIds": [
+          "jmdict-1580640"
+        ]
+      },
+      {
+        "legacyId": "kanji_daigaku",
+        "entryIds": [
+          "jmdict-1413240"
+        ]
+      },
+      {
+        "legacyId": "kanji_chiisai",
+        "entryIds": [
+          "jmdict-1347750"
+        ]
+      }
+    ],
+    "kanji": [
+      {
+        "legacyId": "day-sun",
+        "entryId": "kanjidic2-U+65E5"
+      },
+      {
+        "legacyId": "moon-month",
+        "entryId": "kanjidic2-U+6708"
+      },
+      {
+        "legacyId": "fire",
+        "entryId": "kanjidic2-U+706B"
+      },
+      {
+        "legacyId": "water",
+        "entryId": "kanjidic2-U+6C34"
+      },
+      {
+        "legacyId": "tree-wood",
+        "entryId": "kanjidic2-U+6728"
+      },
+      {
+        "legacyId": "gold-money",
+        "entryId": "kanjidic2-U+91D1"
+      },
+      {
+        "legacyId": "earth-soil",
+        "entryId": "kanjidic2-U+571F"
+      },
+      {
+        "legacyId": "person",
+        "entryId": "kanjidic2-U+4EBA"
+      },
+      {
+        "legacyId": "big",
+        "entryId": "kanjidic2-U+5927"
+      },
+      {
+        "legacyId": "small",
+        "entryId": "kanjidic2-U+5C0F"
+      }
+    ]
+  },
+  "editorial": {
+    "status": "reviewed",
+    "reviewedTranslations": 54,
+    "draftTranslations": 0,
+    "ambiguousLexicalEntries": 0
+  }
+}

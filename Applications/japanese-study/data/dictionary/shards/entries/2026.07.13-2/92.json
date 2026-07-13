@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-entry-shard",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-2",
+  "shardId": "92",
+  "entries": [
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1098390",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1098390"
+      },
+      "writtenForms": [],
+      "readings": [
+        "バス"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1098390:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "bus"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1098390:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [
+            "computing"
+          ],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "bus"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "translations": [
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1098390:jmdict-1098390:sense:1",
+      "entryId": "jmdict-1098390",
+      "senseId": "jmdict-1098390:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "ônibus"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kata_pasu"
+      },
+      "reviewedAt": "2026-07-13"
+    }
+  ]
+}

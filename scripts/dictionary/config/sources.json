@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "approvedAt": "2026-07-13",
+  "updatePolicy": {
+    "strategy": "pinned-source-snapshots",
+    "maximumAgeDays": 31,
+    "publicationRequiresReview": true
+  },
+  "bootstrap": {
+    "id": "bootstrap-n5",
+    "baselineDictionaryEntries": 42,
+    "baselineKanjiEntries": 10,
+    "include": [
+      "current-project-vocabulary",
+      "current-project-kanji",
+      "vocabulary-required-by-current-quizzes"
+    ],
+    "excludeUntilReviewed": [
+      "unrestricted-machine-translations",
+      "unreviewed-portuguese-glosses",
+      "full-jmdict-catalog",
+      "full-kanjivg-catalog"
+    ]
+  },
+  "sources": [
+    {
+      "id": "jmdict",
+      "role": "lexical",
+      "edition": "JMdict_e",
+      "homepage": "https://www.edrdg.org/jmdict/j_jmdict.html",
+      "downloadUrl": "https://www.edrdg.org/pub/Nihongo/JMdict_e.gz",
+      "license": {
+        "spdx": "CC-BY-SA-4.0",
+        "name": "Creative Commons Attribution-ShareAlike 4.0 International",
+        "url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "termsUrl": "https://www.edrdg.org/edrdg/licence.html",
+        "copyrightHolder": "Electronic Dictionary Research and Development Group"
+      },
+      "versionStrategy": "source-file-date-and-sha256",
+      "includedFields": [
+        "entry-sequence",
+        "written-forms",
+        "readings",
+        "restrictions",
+        "parts-of-speech",
+        "english-glosses",
+        "common-word-tags"
+      ]
+    },
+    {
+      "id": "kanjidic2",
+      "role": "kanji-metadata",
+      "edition": "KANJIDIC2",
+      "homepage": "https://www.edrdg.org/kanjidic/kanjd2index_legacy.html",
+      "downloadUrl": "https://www.edrdg.org/kanjidic/kanjidic2.xml.gz",
+      "license": {
+        "spdx": "CC-BY-SA-4.0",
+        "name": "Creative Commons Attribution-ShareAlike 4.0 International",
+        "url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "termsUrl": "https://www.edrdg.org/edrdg/licence.html",
+        "copyrightHolder": "Electronic Dictionary Research and Development Group"
+      },
+      "versionStrategy": "source-file-date-and-sha256",
+      "includedFields": [
+        "literal",
+        "unicode-codepoint",
+        "stroke-count",
+        "grade",
+        "frequency",
+        "readings",
+        "english-meanings"
+      ],
+      "excludedFields": [
+        "skip-codes",
+        "dictionary-reference-codes"
+      ]
+    },
+    {
+      "id": "kanjivg",
+      "role": "stroke-assets",
+      "edition": "main-release-non-variant-svg",
+      "homepage": "https://kanjivg.tagaini.net/",
+      "releasesUrl": "https://github.com/KanjiVG/kanjivg/releases",
+      "license": {
+        "spdx": "CC-BY-SA-3.0",
+        "name": "Creative Commons Attribution-ShareAlike 3.0 Unported",
+        "url": "https://creativecommons.org/licenses/by-sa/3.0/",
+        "termsUrl": "https://github.com/KanjiVG/kanjivg/blob/master/COPYING",
+        "copyrightHolder": "Ulrich Apel and KanjiVG contributors"
+      },
+      "versionStrategy": "pinned-release-and-sha256",
+      "selection": "bootstrap-kanji-only"
+    },
+    {
+      "id": "mathicx-ptbr",
+      "role": "portuguese-editorial-layer",
+      "homepage": "https://github.com/mathicx-file/mathicx-desktop",
+      "license": {
+        "spdx": "CC-BY-SA-4.0",
+        "name": "Creative Commons Attribution-ShareAlike 4.0 International",
+        "url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "copyrightHolder": "Mathicx-File contributors"
+      },
+      "versionStrategy": "git-commit",
+      "reviewRequired": true,
+      "machineTranslationPolicy": "not-accepted-without-human-review"
+    }
+  ]
+}

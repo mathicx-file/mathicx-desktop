@@ -22,3 +22,11 @@ assets/strokes/
 
 The app tries local files before falling back to the remote KanjiVG repository.
 Keep KanjiVG attribution and license notes when adding copied SVG assets.
+
+## Bootstrap N5
+
+The `kanji/` directory contains the 10 kanji selected for bootstrap package
+`2026.07.13-1`. They were extracted from the official KanjiVG release
+`r20250816`; each SVG preserves its original attribution and CC BY-SA 3.0
+license header. Source archive and per-file SHA-256 hashes are recorded in the
+dictionary package and its coverage report.

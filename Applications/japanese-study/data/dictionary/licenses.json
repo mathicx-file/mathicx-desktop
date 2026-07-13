@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "dataLicense": "CC-BY-SA-4.0",
+  "sources": [
+    {
+      "id": "jmdict",
+      "license": "CC-BY-SA-4.0",
+      "attribution": "JMdict is the property of the Electronic Dictionary Research and Development Group.",
+      "termsUrl": "https://www.edrdg.org/edrdg/licence.html"
+    },
+    {
+      "id": "kanjidic2",
+      "license": "CC-BY-SA-4.0",
+      "attribution": "KANJIDIC2 is the property of the Electronic Dictionary Research and Development Group.",
+      "termsUrl": "https://www.edrdg.org/edrdg/licence.html"
+    },
+    {
+      "id": "kanjivg",
+      "license": "CC-BY-SA-3.0",
+      "attribution": "KanjiVG is copyright Ulrich Apel and KanjiVG contributors.",
+      "termsUrl": "https://github.com/KanjiVG/kanjivg/blob/master/COPYING"
+    },
+    {
+      "id": "mathicx-ptbr",
+      "license": "CC-BY-SA-4.0",
+      "attribution": "Brazilian Portuguese editorial content by Mathicx-File contributors.",
+      "termsUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+    }
+  ]
+}

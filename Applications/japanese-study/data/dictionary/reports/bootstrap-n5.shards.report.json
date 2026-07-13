@@ -1,0 +1,271 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-entry-shards-report",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-2",
+  "routing": {
+    "strategy": "sha256-id-prefix",
+    "prefixLength": 2,
+    "logicalShardCount": 256,
+    "emittedShardCount": 39
+  },
+  "coverage": {
+    "lexicalEntries": 44,
+    "lexicalTranslations": 44
+  },
+  "distribution": {
+    "minEntries": 1,
+    "maxEntries": 3,
+    "totalRawBytes": 92900,
+    "minRawBytes": 1334,
+    "maxRawBytes": 6849,
+    "totalCompressedBytes": 23177,
+    "minCompressedBytes": 480,
+    "maxCompressedBytes": 940,
+    "belowIdealShards": 39,
+    "aboveIdealShards": 0
+  },
+  "limits": {
+    "idealCompressedBytes": {
+      "min": 51200,
+      "max": 256000
+    },
+    "maxCompressedBytes": 512000
+  },
+  "shards": [
+    {
+      "shardId": "01",
+      "entries": 2,
+      "rawBytes": 3693,
+      "compressedBytes": 838
+    },
+    {
+      "shardId": "03",
+      "entries": 1,
+      "rawBytes": 1461,
+      "compressedBytes": 532
+    },
+    {
+      "shardId": "0e",
+      "entries": 1,
+      "rawBytes": 1834,
+      "compressedBytes": 544
+    },
+    {
+      "shardId": "10",
+      "entries": 1,
+      "rawBytes": 3577,
+      "compressedBytes": 685
+    },
+    {
+      "shardId": "18",
+      "entries": 1,
+      "rawBytes": 1859,
+      "compressedBytes": 552
+    },
+    {
+      "shardId": "26",
+      "entries": 1,
+      "rawBytes": 1476,
+      "compressedBytes": 549
+    },
+    {
+      "shardId": "32",
+      "entries": 3,
+      "rawBytes": 5232,
+      "compressedBytes": 850
+    },
+    {
+      "shardId": "35",
+      "entries": 1,
+      "rawBytes": 3137,
+      "compressedBytes": 640
+    },
+    {
+      "shardId": "39",
+      "entries": 1,
+      "rawBytes": 2731,
+      "compressedBytes": 590
+    },
+    {
+      "shardId": "42",
+      "entries": 1,
+      "rawBytes": 1351,
+      "compressedBytes": 495
+    },
+    {
+      "shardId": "48",
+      "entries": 1,
+      "rawBytes": 1838,
+      "compressedBytes": 546
+    },
+    {
+      "shardId": "5c",
+      "entries": 1,
+      "rawBytes": 1399,
+      "compressedBytes": 508
+    },
+    {
+      "shardId": "6e",
+      "entries": 1,
+      "rawBytes": 4317,
+      "compressedBytes": 700
+    },
+    {
+      "shardId": "71",
+      "entries": 1,
+      "rawBytes": 2915,
+      "compressedBytes": 695
+    },
+    {
+      "shardId": "76",
+      "entries": 1,
+      "rawBytes": 2935,
+      "compressedBytes": 680
+    },
+    {
+      "shardId": "77",
+      "entries": 1,
+      "rawBytes": 1407,
+      "compressedBytes": 529
+    },
+    {
+      "shardId": "7f",
+      "entries": 1,
+      "rawBytes": 1409,
+      "compressedBytes": 531
+    },
+    {
+      "shardId": "86",
+      "entries": 1,
+      "rawBytes": 1413,
+      "compressedBytes": 532
+    },
+    {
+      "shardId": "8a",
+      "entries": 1,
+      "rawBytes": 1493,
+      "compressedBytes": 535
+    },
+    {
+      "shardId": "8e",
+      "entries": 2,
+      "rawBytes": 2623,
+      "compressedBytes": 617
+    },
+    {
+      "shardId": "92",
+      "entries": 1,
+      "rawBytes": 1746,
+      "compressedBytes": 505
+    },
+    {
+      "shardId": "94",
+      "entries": 1,
+      "rawBytes": 1387,
+      "compressedBytes": 505
+    },
+    {
+      "shardId": "95",
+      "entries": 1,
+      "rawBytes": 1772,
+      "compressedBytes": 525
+    },
+    {
+      "shardId": "96",
+      "entries": 1,
+      "rawBytes": 1430,
+      "compressedBytes": 520
+    },
+    {
+      "shardId": "a5",
+      "entries": 1,
+      "rawBytes": 4548,
+      "compressedBytes": 717
+    },
+    {
+      "shardId": "af",
+      "entries": 1,
+      "rawBytes": 2253,
+      "compressedBytes": 689
+    },
+    {
+      "shardId": "b2",
+      "entries": 1,
+      "rawBytes": 1349,
+      "compressedBytes": 482
+    },
+    {
+      "shardId": "b6",
+      "entries": 1,
+      "rawBytes": 3202,
+      "compressedBytes": 653
+    },
+    {
+      "shardId": "b9",
+      "entries": 1,
+      "rawBytes": 1375,
+      "compressedBytes": 507
+    },
+    {
+      "shardId": "c0",
+      "entries": 1,
+      "rawBytes": 1780,
+      "compressedBytes": 525
+    },
+    {
+      "shardId": "d6",
+      "entries": 1,
+      "rawBytes": 1383,
+      "compressedBytes": 515
+    },
+    {
+      "shardId": "e1",
+      "entries": 1,
+      "rawBytes": 1514,
+      "compressedBytes": 525
+    },
+    {
+      "shardId": "e3",
+      "entries": 1,
+      "rawBytes": 1843,
+      "compressedBytes": 541
+    },
+    {
+      "shardId": "e4",
+      "entries": 1,
+      "rawBytes": 1366,
+      "compressedBytes": 493
+    },
+    {
+      "shardId": "e7",
+      "entries": 1,
+      "rawBytes": 1334,
+      "compressedBytes": 480
+    },
+    {
+      "shardId": "e8",
+      "entries": 1,
+      "rawBytes": 4296,
+      "compressedBytes": 689
+    },
+    {
+      "shardId": "f2",
+      "entries": 1,
+      "rawBytes": 6849,
+      "compressedBytes": 940
+    },
+    {
+      "shardId": "f6",
+      "entries": 1,
+      "rawBytes": 1475,
+      "compressedBytes": 537
+    },
+    {
+      "shardId": "fe",
+      "entries": 2,
+      "rawBytes": 3898,
+      "compressedBytes": 681
+    }
+  ]
+}

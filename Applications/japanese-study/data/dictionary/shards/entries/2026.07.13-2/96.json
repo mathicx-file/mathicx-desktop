@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-entry-shard",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-2",
+  "shardId": "96",
+  "entries": [
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1358340",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1358340"
+      },
+      "writtenForms": [
+        "食べ物",
+        "食べもの"
+      ],
+      "readings": [
+        "たべもの"
+      ],
+      "common": true,
+      "tags": [
+        "search-only kanji form"
+      ],
+      "senses": [
+        {
+          "id": "jmdict-1358340:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "food"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "translations": [
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1358340:jmdict-1358340:sense:1",
+      "entryId": "jmdict-1358340",
+      "senseId": "jmdict-1358340:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "comida"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_tabemono"
+      },
+      "reviewedAt": "2026-07-13"
+    }
+  ]
+}

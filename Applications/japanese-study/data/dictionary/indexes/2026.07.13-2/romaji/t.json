@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-search-index-shard",
+  "indexKind": "romaji",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-2",
+  "bucket": "t",
+  "normalization": "wanakana-5.3.1-hepburn-ascii-v1",
+  "terms": {
+    "tabemono": [
+      "jmdict-1358340"
+    ],
+    "takishi": [
+      "jmdict-1076190"
+    ],
+    "takishii": [
+      "jmdict-1076190"
+    ],
+    "takushi": [
+      "jmdict-1076190"
+    ],
+    "takushii": [
+      "jmdict-1076190"
+    ],
+    "takushyi": [
+      "jmdict-1076190"
+    ],
+    "teiketto": [
+      "jmdict-1077720"
+    ],
+    "teketsu": [
+      "jmdict-1077720"
+    ],
+    "terebi": [
+      "jmdict-1080510"
+    ],
+    "tomodachi": [
+      "jmdict-1540170"
+    ]
+  }
+}

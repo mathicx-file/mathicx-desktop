@@ -1,0 +1,234 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-entry-shard",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-2",
+  "shardId": "32",
+  "entries": [
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1049180",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1049180"
+      },
+      "writtenForms": [
+        "珈琲"
+      ],
+      "readings": [
+        "コーヒー"
+      ],
+      "common": true,
+      "tags": [
+        "ateji (phonetic) reading"
+      ],
+      "senses": [
+        {
+          "id": "jmdict-1049180:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [
+            "word usually written using kana alone"
+          ],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "coffee"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1191730",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1191730"
+      },
+      "writtenForms": [
+        "家"
+      ],
+      "readings": [
+        "いえ"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1191730:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "house",
+              "residence",
+              "dwelling",
+              "home"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1191730:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "family",
+              "household"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1191730:sense:3",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "lineage",
+              "family name"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1301940",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1301940"
+      },
+      "writtenForms": [
+        "傘"
+      ],
+      "readings": [
+        "かさ"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1301940:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "umbrella",
+              "parasol"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1301940:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "something shaped like an umbrella or a conical hat",
+              "shade (of a lamp)",
+              "mushroom cap",
+              "pileus"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "translations": [
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1049180:jmdict-1049180:sense:1",
+      "entryId": "jmdict-1049180",
+      "senseId": "jmdict-1049180:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "cafe"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kata_koohii"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1191730:jmdict-1191730:sense:1",
+      "entryId": "jmdict-1191730",
+      "senseId": "jmdict-1191730:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "casa"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_ie"
+      },
+      "reviewedAt": "2026-07-13"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1301940:jmdict-1301940:sense:1",
+      "entryId": "jmdict-1301940",
+      "senseId": "jmdict-1301940:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "guarda-chuva"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_kasa"
+      },
+      "reviewedAt": "2026-07-13"
+    }
+  ]
+}

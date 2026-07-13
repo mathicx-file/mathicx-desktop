@@ -1,0 +1,792 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-search-indexes-report",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-2",
+  "romanization": {
+    "library": "wanakana",
+    "version": "5.3.1",
+    "style": "hepburn",
+    "upcaseKatakana": false,
+    "variants": [
+      "canonical",
+      "compact-apostrophe"
+    ]
+  },
+  "indexes": {
+    "written": {
+      "shards": 25,
+      "terms": 42,
+      "references": 42,
+      "entriesCovered": 30,
+      "rawBytes": 8066,
+      "compressedBytes": 5766,
+      "maxCompressedBytes": 268
+    },
+    "reading": {
+      "shards": 32,
+      "terms": 57,
+      "references": 59,
+      "entriesCovered": 44,
+      "rawBytes": 10975,
+      "compressedBytes": 7691,
+      "maxCompressedBytes": 278
+    },
+    "romaji": {
+      "shards": 15,
+      "terms": 57,
+      "references": 59,
+      "entriesCovered": 44,
+      "rawBytes": 6461,
+      "compressedBytes": 3677,
+      "maxCompressedBytes": 311
+    },
+    "pt": {
+      "shards": 18,
+      "terms": 49,
+      "references": 53,
+      "entriesCovered": 44,
+      "rawBytes": 6818,
+      "compressedBytes": 4259,
+      "maxCompressedBytes": 294
+    }
+  },
+  "distribution": {
+    "totalShards": 90,
+    "totalRawBytes": 32320,
+    "totalCompressedBytes": 21393,
+    "minCompressedBytes": 214,
+    "maxCompressedBytes": 311,
+    "belowIdealShards": 90,
+    "aboveIdealShards": 0
+  },
+  "limits": {
+    "idealCompressedBytes": {
+      "min": 10240,
+      "max": 102400
+    },
+    "maxCompressedBytes": 256000
+  },
+  "shards": [
+    {
+      "indexKind": "written",
+      "bucket": "u-4e",
+      "terms": 4,
+      "references": 4,
+      "rawBytes": 444,
+      "compressedBytes": 262
+    },
+    {
+      "indexKind": "written",
+      "bucket": "u-50",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 288,
+      "compressedBytes": 218
+    },
+    {
+      "indexKind": "written",
+      "bucket": "u-51",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 291,
+      "compressedBytes": 224
+    },
+    {
+      "indexKind": "written",
+      "bucket": "u-53",
+      "terms": 2,
+      "references": 2,
+      "rawBytes": 340,
+      "compressedBytes": 238
+    },
+    {
+      "indexKind": "written",
+      "bucket": "u-57",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 294,
+      "compressedBytes": 226
+    },
+    {
+      "indexKind": "written",
+      "bucket": "u-59",
+      "terms": 3,
+      "references": 3,
+      "rawBytes": 380,
+      "compressedBytes": 242
+    },
+    {
+      "indexKind": "written",
+      "bucket": "u-5b",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 288,
+      "compressedBytes": 218
+    },
+    {
+      "indexKind": "written",
+      "bucket": "u-5c",
+      "terms": 2,
+      "references": 2,
+      "rawBytes": 337,
+      "compressedBytes": 241
+    },
+    {
+      "indexKind": "written",
+      "bucket": "u-5d",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 288,
+      "compressedBytes": 218
+    },
+    {
+      "indexKind": "written",
+      "bucket": "u-65",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 291,
+      "compressedBytes": 224
+    },
+    {
+      "indexKind": "written",
+      "bucket": "u-67",
+      "terms": 3,
+      "references": 3,
+      "rawBytes": 386,
+      "compressedBytes": 250
+    },
+    {
+      "indexKind": "written",
+      "bucket": "u-6c",
+      "terms": 3,
+      "references": 3,
+      "rawBytes": 380,
+      "compressedBytes": 249
+    },
+    {
+      "indexKind": "written",
+      "bucket": "u-70",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 294,
+      "compressedBytes": 228
+    },
+    {
+      "indexKind": "written",
+      "bucket": "u-72",
+      "terms": 2,
+      "references": 2,
+      "rawBytes": 331,
+      "compressedBytes": 228
+    },
+    {
+      "indexKind": "written",
+      "bucket": "u-73",
+      "terms": 2,
+      "references": 2,
+      "rawBytes": 334,
+      "compressedBytes": 239
+    },
+    {
+      "indexKind": "written",
+      "bucket": "u-76",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 288,
+      "compressedBytes": 219
+    },
+    {
+      "indexKind": "written",
+      "bucket": "u-7a",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 288,
+      "compressedBytes": 218
+    },
+    {
+      "indexKind": "written",
+      "bucket": "u-82",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 288,
+      "compressedBytes": 219
+    },
+    {
+      "indexKind": "written",
+      "bucket": "u-83",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 288,
+      "compressedBytes": 219
+    },
+    {
+      "indexKind": "written",
+      "bucket": "u-86",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 288,
+      "compressedBytes": 218
+    },
+    {
+      "indexKind": "written",
+      "bucket": "u-8e",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 288,
+      "compressedBytes": 218
+    },
+    {
+      "indexKind": "written",
+      "bucket": "u-91",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 294,
+      "compressedBytes": 228
+    },
+    {
+      "indexKind": "written",
+      "bucket": "u-96",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 297,
+      "compressedBytes": 235
+    },
+    {
+      "indexKind": "written",
+      "bucket": "u-98",
+      "terms": 5,
+      "references": 5,
+      "rawBytes": 493,
+      "compressedBytes": 268
+    },
+    {
+      "indexKind": "written",
+      "bucket": "u-9f",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 288,
+      "compressedBytes": 219
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-3042",
+      "terms": 2,
+      "references": 2,
+      "rawBytes": 349,
+      "compressedBytes": 244
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-3044",
+      "terms": 5,
+      "references": 5,
+      "rawBytes": 523,
+      "compressedBytes": 275
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-304b",
+      "terms": 4,
+      "references": 5,
+      "rawBytes": 468,
+      "compressedBytes": 278
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-304c",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 297,
+      "compressedBytes": 225
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-304d",
+      "terms": 2,
+      "references": 2,
+      "rawBytes": 358,
+      "compressedBytes": 256
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-304f",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 300,
+      "compressedBytes": 229
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-3052",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 306,
+      "compressedBytes": 236
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-3053",
+      "terms": 3,
+      "references": 3,
+      "rawBytes": 422,
+      "compressedBytes": 262
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-3059",
+      "terms": 2,
+      "references": 2,
+      "rawBytes": 358,
+      "compressedBytes": 255
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-305b",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 303,
+      "compressedBytes": 231
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-305d",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 297,
+      "compressedBytes": 226
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-305f",
+      "terms": 6,
+      "references": 6,
+      "rawBytes": 557,
+      "compressedBytes": 271
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-3060",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 303,
+      "compressedBytes": 232
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-3061",
+      "terms": 2,
+      "references": 2,
+      "rawBytes": 355,
+      "compressedBytes": 253
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-3066",
+      "terms": 3,
+      "references": 3,
+      "rawBytes": 404,
+      "compressedBytes": 261
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-3068",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 303,
+      "compressedBytes": 231
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-3069",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 303,
+      "compressedBytes": 233
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-306b",
+      "terms": 2,
+      "references": 2,
+      "rawBytes": 352,
+      "compressedBytes": 244
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-306d",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 297,
+      "compressedBytes": 226
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-306e",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 303,
+      "compressedBytes": 230
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-306f",
+      "terms": 1,
+      "references": 2,
+      "rawBytes": 321,
+      "compressedBytes": 234
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-3070",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 297,
+      "compressedBytes": 226
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-3071",
+      "terms": 2,
+      "references": 2,
+      "rawBytes": 352,
+      "compressedBytes": 250
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-3072",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 297,
+      "compressedBytes": 225
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-3074",
+      "terms": 3,
+      "references": 3,
+      "rawBytes": 401,
+      "compressedBytes": 246
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-307b",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 300,
+      "compressedBytes": 229
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-307f",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 297,
+      "compressedBytes": 225
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-3081",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 303,
+      "compressedBytes": 230
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-3082",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 306,
+      "compressedBytes": 235
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-3084",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 297,
+      "compressedBytes": 226
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-3088",
+      "terms": 2,
+      "references": 2,
+      "rawBytes": 340,
+      "compressedBytes": 231
+    },
+    {
+      "indexKind": "reading",
+      "bucket": "u-308c",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 306,
+      "compressedBytes": 236
+    },
+    {
+      "indexKind": "romaji",
+      "bucket": "a",
+      "terms": 2,
+      "references": 2,
+      "rawBytes": 341,
+      "compressedBytes": 229
+    },
+    {
+      "indexKind": "romaji",
+      "bucket": "b",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 295,
+      "compressedBytes": 215
+    },
+    {
+      "indexKind": "romaji",
+      "bucket": "c",
+      "terms": 2,
+      "references": 2,
+      "rawBytes": 346,
+      "compressedBytes": 231
+    },
+    {
+      "indexKind": "romaji",
+      "bucket": "d",
+      "terms": 2,
+      "references": 2,
+      "rawBytes": 345,
+      "compressedBytes": 233
+    },
+    {
+      "indexKind": "romaji",
+      "bucket": "g",
+      "terms": 2,
+      "references": 2,
+      "rawBytes": 345,
+      "compressedBytes": 235
+    },
+    {
+      "indexKind": "romaji",
+      "bucket": "h",
+      "terms": 3,
+      "references": 4,
+      "rawBytes": 409,
+      "compressedBytes": 250
+    },
+    {
+      "indexKind": "romaji",
+      "bucket": "i",
+      "terms": 5,
+      "references": 5,
+      "rawBytes": 486,
+      "compressedBytes": 249
+    },
+    {
+      "indexKind": "romaji",
+      "bucket": "k",
+      "terms": 11,
+      "references": 12,
+      "rawBytes": 791,
+      "compressedBytes": 311
+    },
+    {
+      "indexKind": "romaji",
+      "bucket": "m",
+      "terms": 3,
+      "references": 3,
+      "rawBytes": 390,
+      "compressedBytes": 245
+    },
+    {
+      "indexKind": "romaji",
+      "bucket": "n",
+      "terms": 4,
+      "references": 4,
+      "rawBytes": 434,
+      "compressedBytes": 247
+    },
+    {
+      "indexKind": "romaji",
+      "bucket": "p",
+      "terms": 4,
+      "references": 4,
+      "rawBytes": 434,
+      "compressedBytes": 244
+    },
+    {
+      "indexKind": "romaji",
+      "bucket": "r",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 300,
+      "compressedBytes": 217
+    },
+    {
+      "indexKind": "romaji",
+      "bucket": "s",
+      "terms": 4,
+      "references": 4,
+      "rawBytes": 437,
+      "compressedBytes": 253
+    },
+    {
+      "indexKind": "romaji",
+      "bucket": "t",
+      "terms": 10,
+      "references": 10,
+      "rawBytes": 727,
+      "compressedBytes": 285
+    },
+    {
+      "indexKind": "romaji",
+      "bucket": "y",
+      "terms": 3,
+      "references": 3,
+      "rawBytes": 381,
+      "compressedBytes": 233
+    },
+    {
+      "indexKind": "pt",
+      "bucket": "a",
+      "terms": 3,
+      "references": 3,
+      "rawBytes": 384,
+      "compressedBytes": 239
+    },
+    {
+      "indexKind": "pt",
+      "bucket": "b",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 294,
+      "compressedBytes": 214
+    },
+    {
+      "indexKind": "pt",
+      "bucket": "c",
+      "terms": 9,
+      "references": 9,
+      "rawBytes": 659,
+      "compressedBytes": 294
+    },
+    {
+      "indexKind": "pt",
+      "bucket": "e",
+      "terms": 2,
+      "references": 2,
+      "rawBytes": 343,
+      "compressedBytes": 229
+    },
+    {
+      "indexKind": "pt",
+      "bucket": "f",
+      "terms": 2,
+      "references": 6,
+      "rawBytes": 433,
+      "compressedBytes": 250
+    },
+    {
+      "indexKind": "pt",
+      "bucket": "g",
+      "terms": 2,
+      "references": 2,
+      "rawBytes": 338,
+      "compressedBytes": 229
+    },
+    {
+      "indexKind": "pt",
+      "bucket": "h",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 293,
+      "compressedBytes": 214
+    },
+    {
+      "indexKind": "pt",
+      "bucket": "i",
+      "terms": 2,
+      "references": 2,
+      "rawBytes": 344,
+      "compressedBytes": 230
+    },
+    {
+      "indexKind": "pt",
+      "bucket": "j",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 293,
+      "compressedBytes": 214
+    },
+    {
+      "indexKind": "pt",
+      "bucket": "m",
+      "terms": 3,
+      "references": 3,
+      "rawBytes": 385,
+      "compressedBytes": 239
+    },
+    {
+      "indexKind": "pt",
+      "bucket": "n",
+      "terms": 2,
+      "references": 2,
+      "rawBytes": 338,
+      "compressedBytes": 230
+    },
+    {
+      "indexKind": "pt",
+      "bucket": "o",
+      "terms": 1,
+      "references": 1,
+      "rawBytes": 294,
+      "compressedBytes": 216
+    },
+    {
+      "indexKind": "pt",
+      "bucket": "p",
+      "terms": 8,
+      "references": 8,
+      "rawBytes": 620,
+      "compressedBytes": 289
+    },
+    {
+      "indexKind": "pt",
+      "bucket": "q",
+      "terms": 2,
+      "references": 2,
+      "rawBytes": 340,
+      "compressedBytes": 229
+    },
+    {
+      "indexKind": "pt",
+      "bucket": "r",
+      "terms": 2,
+      "references": 2,
+      "rawBytes": 342,
+      "compressedBytes": 231
+    },
+    {
+      "indexKind": "pt",
+      "bucket": "s",
+      "terms": 3,
+      "references": 3,
+      "rawBytes": 386,
+      "compressedBytes": 240
+    },
+    {
+      "indexKind": "pt",
+      "bucket": "t",
+      "terms": 3,
+      "references": 3,
+      "rawBytes": 386,
+      "compressedBytes": 240
+    },
+    {
+      "indexKind": "pt",
+      "bucket": "u",
+      "terms": 2,
+      "references": 2,
+      "rawBytes": 346,
+      "compressedBytes": 232
+    }
+  ]
+}

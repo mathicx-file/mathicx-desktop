@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "packageId": "bootstrap-n5",
+  "packageVersion": "2026.07.13-2",
+  "sourceVersions": {
+    "jmdict": "2026-07-13",
+    "kanjidic2": "2026-07-13",
+    "kanjivg": "r20250816",
+    "mathicx-ptbr": "ea879a4"
+  },
+  "coverage": {
+    "baselineWords": 42,
+    "matchedWords": 42,
+    "uniqueWords": 26,
+    "ambiguousWords": 16,
+    "lexicalEntries": 44,
+    "baselineKanji": 10,
+    "matchedKanji": 10,
+    "strokeAssets": 10,
+    "draftLexicalTranslations": 0,
+    "draftKanjiTranslations": 0,
+    "reviewedTranslations": 54
+  },
+  "publication": {
+    "ready": true,
+    "blockers": []
+  },
+  "reviewQueue": []
+}

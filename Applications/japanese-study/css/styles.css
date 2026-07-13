@@ -1242,6 +1242,33 @@ body {
   color: var(--danger);
 }
 
+.dictionary-credit-list {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0.85rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dictionary-credit-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.dictionary-credit-list a {
+  width: fit-content;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.dictionary-credit-list span {
+  color: var(--text-secondary);
+  font-size: 0.76rem;
+}
+
 .sync-status {
   display: flex;
   align-items: flex-start;

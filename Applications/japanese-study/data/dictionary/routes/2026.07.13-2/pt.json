@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-search-routes",
+  "indexKind": "pt",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-2",
+  "routing": "first-ascii-character",
+  "normalization": "ptbr-nfkd-alphanumeric-tokens-v1",
+  "coverage": {
+    "shards": 18,
+    "terms": 49,
+    "references": 53
+  },
+  "buckets": {
+    "a": {
+      "path": "indexes/2026.07.13-2/pt/a.json",
+      "byteLength": 384,
+      "sha256": "10fa5cacdd6365bbd519587b0d1905ba99119882936b0d521595440abf8a266f"
+    },
+    "b": {
+      "path": "indexes/2026.07.13-2/pt/b.json",
+      "byteLength": 294,
+      "sha256": "03dd18090911cba08dac1c28e12db3abad77846999ce39c9e484abeb6580b60c"
+    },
+    "c": {
+      "path": "indexes/2026.07.13-2/pt/c.json",
+      "byteLength": 659,
+      "sha256": "38a9013e0273235366ab03f9537bb270e5df664f518e4d3a2783a08caded9999"
+    },
+    "e": {
+      "path": "indexes/2026.07.13-2/pt/e.json",
+      "byteLength": 343,
+      "sha256": "af84ec1d63821ce5d005a79360ea1b81edd6d398399efb0c7f0adfbb4f570701"
+    },
+    "f": {
+      "path": "indexes/2026.07.13-2/pt/f.json",
+      "byteLength": 433,
+      "sha256": "3178c3af49ef59f4b567fbab1a6e8811fc599ea9ece3cf40d37f2321bec9e03a"
+    },
+    "g": {
+      "path": "indexes/2026.07.13-2/pt/g.json",
+      "byteLength": 338,
+      "sha256": "a0e8031b1dadc882f7590ea4a58d394f008aa188df48f9cba81c933d705921cd"
+    },
+    "h": {
+      "path": "indexes/2026.07.13-2/pt/h.json",
+      "byteLength": 293,
+      "sha256": "a6b6169831babdf9720d9a2c57d389c561ef3c4026d5fdea96feb68d810acf7f"
+    },
+    "i": {
+      "path": "indexes/2026.07.13-2/pt/i.json",
+      "byteLength": 344,
+      "sha256": "b30e31bab2672761b49bbb185ac87af548a426453cd8f64357c4c48ab2f0f967"
+    },
+    "j": {
+      "path": "indexes/2026.07.13-2/pt/j.json",
+      "byteLength": 293,
+      "sha256": "5d8571050d70a986754f03d5158b6c3c407405df6a08410a06e414abf5813a8e"
+    },
+    "m": {
+      "path": "indexes/2026.07.13-2/pt/m.json",
+      "byteLength": 385,
+      "sha256": "2040e42b5288be29d701bd9dd8d5698ce6500173c4a04ca5bd336217ec2df3d2"
+    },
+    "n": {
+      "path": "indexes/2026.07.13-2/pt/n.json",
+      "byteLength": 338,
+      "sha256": "7a32dc62f33d5e6fb329c39e1ea622737d5502f1d57e47d326aa3b0358102fe2"
+    },
+    "o": {
+      "path": "indexes/2026.07.13-2/pt/o.json",
+      "byteLength": 294,
+      "sha256": "2b21582b934a5d7f9fa8b7f70347f1253ed71459e86e441af23716b84c37d085"
+    },
+    "p": {
+      "path": "indexes/2026.07.13-2/pt/p.json",
+      "byteLength": 620,
+      "sha256": "d68427e9605fb583e6e96b4e3e1761d9140c16d028b630263193e34263d2feb4"
+    },
+    "q": {
+      "path": "indexes/2026.07.13-2/pt/q.json",
+      "byteLength": 340,
+      "sha256": "142a58b868e24162dd8bbdfb8ceb484376b5f46b9b7b5544d0ac7f2ed5284c4f"
+    },
+    "r": {
+      "path": "indexes/2026.07.13-2/pt/r.json",
+      "byteLength": 342,
+      "sha256": "5f868e86843d6cc7ce9fafb596d333f6320a593685fa7fb758f6837ae0e71315"
+    },
+    "s": {
+      "path": "indexes/2026.07.13-2/pt/s.json",
+      "byteLength": 386,
+      "sha256": "3a9021403c7c9d1d3831082a65e32aa18cf7084fe625e82fbac29dbae4479c88"
+    },
+    "t": {
+      "path": "indexes/2026.07.13-2/pt/t.json",
+      "byteLength": 386,
+      "sha256": "d10c72a16c852c8facb422ac3e387b8842b1fab46e5ac2820e64e7952def177f"
+    },
+    "u": {
+      "path": "indexes/2026.07.13-2/pt/u.json",
+      "byteLength": 346,
+      "sha256": "9e6473fd437ae4638111b45380badc18bcbce6ff9312ed47964bf0fb5132f75e"
+    }
+  }
+}

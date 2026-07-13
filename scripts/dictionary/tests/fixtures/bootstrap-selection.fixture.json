@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "packageId": "bootstrap-n5",
+  "lexicalBaselinePath": "scripts/dictionary/tests/fixtures/legacy-dictionary.fixture.json",
+  "kanjiBaselinePath": "scripts/dictionary/tests/fixtures/legacy-kanji.fixture.json",
+  "lexicalMatchFields": ["word", "reading"],
+  "kanjiMatchField": "char",
+  "allowAmbiguousLexicalMatches": true,
+  "requireAllKanjiMatches": true
+}

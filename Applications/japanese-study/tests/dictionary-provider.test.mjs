@@ -147,6 +147,76 @@ test('runtime falls back to legacy data when provider initialization fails', asy
   assert.equal(results[0].id, 'hira_mizu');
 });
 
+test('lazy runtime preserves stable IDs and resolves legacy favorites through compatibility data', async () => {
+  const stableMizu = {
+    id: 'jmdict-1371260',
+    headword: '水',
+    readings: ['みず'],
+    romaji: ['mizu'],
+    meanings: [{ language: 'pt-BR', text: 'água' }],
+    scripts: ['kanji'],
+    tags: ['substantivo'],
+  };
+  let searches = 0;
+  const source = {
+    id: 'lazy-test',
+    async load() {
+      return { entries: [], metadata: { sourceId: 'lazy-test', version: '2', count: 44, lazy: true } };
+    },
+    async search() {
+      searches += 1;
+      return [stableMizu];
+    },
+    async getMany(ids) {
+      return ids.includes(stableMizu.id) ? [stableMizu] : [];
+    },
+    getMetrics() {
+      return { searches };
+    },
+  };
+  const legacyDictionary = createLegacyDictionaryStub();
+  const runtime = new DictionaryRuntime({
+    providerEnabled: true,
+    provider: new DictionaryProvider({ source }),
+    legacyDictionary,
+    loadLegacyEntries: async () => dictionaryData,
+  });
+
+  const state = await runtime.init();
+  assert.equal(state.lazy, true);
+  assert.equal(searches, 0);
+  assert.equal(legacyDictionary.getAll().length, 42);
+  assert.equal((await runtime.search('mizu'))[0].id, stableMizu.id);
+
+  const favorites = await runtime.filterByIds([stableMizu.id, 'hira_mizu']);
+  assert.deepEqual(favorites.map((entry) => entry.id), [stableMizu.id, 'hira_mizu']);
+  assert.equal(runtime.getMetrics().searches, 1);
+});
+
+test('lazy runtime falls back per query without hiding intentional aborts', async () => {
+  const legacyDictionary = createLegacyDictionaryStub();
+  let error = new Error('network unavailable');
+  const runtime = new DictionaryRuntime({
+    providerEnabled: true,
+    provider: new DictionaryProvider({
+      source: {
+        id: 'lazy-failure',
+        load: async () => ({ entries: [], metadata: { lazy: true } }),
+        search: async () => { throw error; },
+      },
+    }),
+    legacyDictionary,
+    loadLegacyEntries: async () => dictionaryData,
+  });
+
+  assert.equal((await runtime.search('mizu'))[0].id, 'hira_mizu');
+  assert.equal(runtime.getState().fallback, true);
+
+  error = new Error('obsolete search');
+  error.name = 'AbortError';
+  await assert.rejects(runtime.search('mizu'), { name: 'AbortError' });
+});
+
 function createLegacyDictionaryStub() {
   let entries = [];
   return {

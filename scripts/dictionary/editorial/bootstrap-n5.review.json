@@ -1,0 +1,977 @@
+{
+  "schemaVersion": 1,
+  "packageId": "bootstrap-n5",
+  "packageVersion": "2026.07.13-2",
+  "policy": {
+    "mode": "hybrid-ptbr-optional",
+    "fallbackLanguage": "en",
+    "futurePtBRRequired": false,
+    "acceptedAt": "2026-07-13",
+    "reviewMethod": "chat-batches",
+    "candidatePriority": [
+      "current-meaning-match",
+      "common-everyday-usage",
+      "exact-written-form"
+    ],
+    "rareCandidatePolicy": "exclude-unless-required-by-current-meaning"
+  },
+  "lexical": [
+    {
+      "legacyId": "hira_asa",
+      "status": "reviewed",
+      "currentPtBR": [
+        "manhã"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1428280",
+        "jmdict-1524290"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1428280",
+          "senseId": "jmdict-1428280:sense:1",
+          "glossesPtBR": [
+            "manhã"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "hira_yoru",
+      "status": "reviewed",
+      "currentPtBR": [
+        "noite"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1168660",
+        "jmdict-1219680",
+        "jmdict-1536350",
+        "jmdict-1612210",
+        "jmdict-2019410",
+        "jmdict-2818630",
+        "jmdict-2828224"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1536350",
+          "senseId": "jmdict-1536350:sense:1",
+          "glossesPtBR": [
+            "noite"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "hira_mizu",
+      "status": "reviewed",
+      "currentPtBR": [
+        "água"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1371260",
+        "jmdict-2854165"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1371260",
+          "senseId": "jmdict-1371260:sense:1",
+          "glossesPtBR": [
+            "água"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "hira_hana",
+      "status": "reviewed",
+      "currentPtBR": [
+        "flor",
+        "nariz"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1194500",
+        "jmdict-1486720",
+        "jmdict-1581610",
+        "jmdict-1634180"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1194500",
+          "senseId": "jmdict-1194500:sense:1",
+          "glossesPtBR": [
+            "flor"
+          ]
+        },
+        {
+          "entryId": "jmdict-1486720",
+          "senseId": "jmdict-1486720:sense:1",
+          "glossesPtBR": [
+            "nariz"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "hira_sora",
+      "status": "reviewed",
+      "currentPtBR": [
+        "ceu"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1245290",
+        "jmdict-1959910"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1245290",
+          "senseId": "jmdict-1245290:sense:1",
+          "glossesPtBR": [
+            "céu"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "hira_yama",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "montanha"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1302680"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1302680",
+          "senseId": "jmdict-1302680:sense:1",
+          "glossesPtBR": [
+            "montanha"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "hira_kawa",
+      "status": "reviewed",
+      "currentPtBR": [
+        "rio",
+        "pele"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1189930",
+        "jmdict-1390020",
+        "jmdict-1483800",
+        "jmdict-1483805",
+        "jmdict-1581310",
+        "jmdict-2514240",
+        "jmdict-2754360"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1390020",
+          "senseId": "jmdict-1390020:sense:1",
+          "glossesPtBR": [
+            "rio"
+          ]
+        },
+        {
+          "entryId": "jmdict-1483800",
+          "senseId": "jmdict-1483800:sense:1",
+          "glossesPtBR": [
+            "pele"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "hira_ie",
+      "status": "reviewed",
+      "currentPtBR": [
+        "casa"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1191730",
+        "jmdict-1583250"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1191730",
+          "senseId": "jmdict-1191730:sense:1",
+          "glossesPtBR": [
+            "casa"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "hira_neko",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "gato"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1467640"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1467640",
+          "senseId": "jmdict-1467640:sense:1",
+          "glossesPtBR": [
+            "gato"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "hira_inu",
+      "status": "reviewed",
+      "currentPtBR": [
+        "cachorro"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1258330",
+        "jmdict-1567040",
+        "jmdict-2146060",
+        "jmdict-2863156"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1258330",
+          "senseId": "jmdict-1258330:sense:1",
+          "glossesPtBR": [
+            "cachorro"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "hira_kasa",
+      "status": "reviewed",
+      "currentPtBR": [
+        "guarda-chuva"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1207670",
+        "jmdict-1301940",
+        "jmdict-1956520",
+        "jmdict-1957130",
+        "jmdict-2130640",
+        "jmdict-2735950"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1301940",
+          "senseId": "jmdict-1301940:sense:1",
+          "glossesPtBR": [
+            "guarda-chuva"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "hira_kuruma",
+      "status": "reviewed",
+      "currentPtBR": [
+        "carro"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1323080",
+        "jmdict-1563460"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1323080",
+          "senseId": "jmdict-1323080:sense:1",
+          "glossesPtBR": [
+            "carro"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "hira_tabemono",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "comida"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1358340"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1358340",
+          "senseId": "jmdict-1358340:sense:1",
+          "glossesPtBR": [
+            "comida"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "hira_nomimono",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "bebida"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1600430"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1600430",
+          "senseId": "jmdict-1600430:sense:1",
+          "glossesPtBR": [
+            "bebida"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "hira_tomodachi",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "amigo"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1540170"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1540170",
+          "senseId": "jmdict-1540170:sense:1",
+          "glossesPtBR": [
+            "amigo"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "hira_sensei",
+      "status": "reviewed",
+      "currentPtBR": [
+        "professor"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1387980",
+        "jmdict-1387990",
+        "jmdict-1388000",
+        "jmdict-1389710",
+        "jmdict-1389810",
+        "jmdict-2236910",
+        "jmdict-2832235",
+        "jmdict-2845423",
+        "jmdict-2859527"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1387990",
+          "senseId": "jmdict-1387990:sense:1",
+          "glossesPtBR": [
+            "professor"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kata_amerika",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "America",
+        "Estados Unidos"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1149830"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1149830",
+          "senseId": "jmdict-1149830:sense:1",
+          "glossesPtBR": [
+            "America",
+            "Estados Unidos"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kata_kamera",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "camera"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1038350"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1038350",
+          "senseId": "jmdict-1038350:sense:1",
+          "glossesPtBR": [
+            "camera"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kata_koohii",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "cafe"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1049180"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1049180",
+          "senseId": "jmdict-1049180:sense:1",
+          "glossesPtBR": [
+            "cafe"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kata_pasu",
+      "status": "reviewed",
+      "currentPtBR": [
+        "onibus"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1098390",
+        "jmdict-2845312",
+        "jmdict-2845314",
+        "jmdict-2845315"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1098390",
+          "senseId": "jmdict-1098390:sense:1",
+          "glossesPtBR": [
+            "ônibus"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kata_takushii",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "taxi"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1076190"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1076190",
+          "senseId": "jmdict-1076190:sense:1",
+          "glossesPtBR": [
+            "taxi"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kata_terebi",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "televisao"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1080510"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1080510",
+          "senseId": "jmdict-1080510:sense:1",
+          "glossesPtBR": [
+            "televisao"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kata_piza",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "pizza"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1106620"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1106620",
+          "senseId": "jmdict-1106620:sense:1",
+          "glossesPtBR": [
+            "pizza"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kata_pan",
+      "status": "reviewed",
+      "currentPtBR": [
+        "pao"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1103090",
+        "jmdict-2827858",
+        "jmdict-2850596",
+        "jmdict-2850597"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1103090",
+          "senseId": "jmdict-1103090:sense:1",
+          "glossesPtBR": [
+            "pão"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kata_resutoran",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "restaurante"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1145310"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1145310",
+          "senseId": "jmdict-1145310:sense:1",
+          "glossesPtBR": [
+            "restaurante"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kata_hoteru",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "hotel"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1122650"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1122650",
+          "senseId": "jmdict-1122650:sense:1",
+          "glossesPtBR": [
+            "hotel"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kata_supoostu",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "esportes"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1073210"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1073210",
+          "senseId": "jmdict-1073210:sense:1",
+          "glossesPtBR": [
+            "esportes"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kata_pasupooto",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "passaporte"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1101510"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1101510",
+          "senseId": "jmdict-1101510:sense:1",
+          "glossesPtBR": [
+            "passaporte"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kata_konpyuuta",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "computador"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1053350"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1053350",
+          "senseId": "jmdict-1053350:sense:1",
+          "glossesPtBR": [
+            "computador"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kata_intaanetto",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "internet"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1022880"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1022880",
+          "senseId": "jmdict-1022880:sense:1",
+          "glossesPtBR": [
+            "internet"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kata_menyu",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "menu"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1133790"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1133790",
+          "senseId": "jmdict-1133790:sense:1",
+          "glossesPtBR": [
+            "menu"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kata_chiketto",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "ingresso",
+        "passagem"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1077720"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1077720",
+          "senseId": "jmdict-1077720:sense:1",
+          "glossesPtBR": [
+            "ingresso",
+            "passagem"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kanji_nihon",
+      "status": "reviewed",
+      "currentPtBR": [
+        "Japão"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1582710",
+        "jmdict-2005520"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1582710",
+          "senseId": "jmdict-1582710:sense:1",
+          "glossesPtBR": [
+            "Japão"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kanji_getsuyoubi",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "segunda-feira"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1255890"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1255890",
+          "senseId": "jmdict-1255890:sense:1",
+          "glossesPtBR": [
+            "segunda-feira"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kanji_kayoubi",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "terça-feira"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1194290"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1194290",
+          "senseId": "jmdict-1194290:sense:1",
+          "glossesPtBR": [
+            "terça-feira"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kanji_suiyoubi",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "quarta-feira"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1372190"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1372190",
+          "senseId": "jmdict-1372190:sense:1",
+          "glossesPtBR": [
+            "quarta-feira"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kanji_mokuyoubi",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "quinta-feira"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1534890"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1534890",
+          "senseId": "jmdict-1534890:sense:1",
+          "glossesPtBR": [
+            "quinta-feira"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kanji_kinyoubi",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "sexta-feira"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1243320"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1243320",
+          "senseId": "jmdict-1243320:sense:1",
+          "glossesPtBR": [
+            "sexta-feira"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kanji_doyoubi",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "sábado"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1445590"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1445590",
+          "senseId": "jmdict-1445590:sense:1",
+          "glossesPtBR": [
+            "sábado"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kanji_hito",
+      "status": "reviewed",
+      "currentPtBR": [
+        "pessoa"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1366410",
+        "jmdict-1366420",
+        "jmdict-1482640",
+        "jmdict-1580640",
+        "jmdict-1581400",
+        "jmdict-1617160",
+        "jmdict-1689490",
+        "jmdict-2149890",
+        "jmdict-2821500"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1580640",
+          "senseId": "jmdict-1580640:sense:1",
+          "glossesPtBR": [
+            "pessoa"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kanji_daigaku",
+      "status": "reviewed",
+      "currentPtBR": [
+        "universidade"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1413240",
+        "jmdict-2844103"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1413240",
+          "senseId": "jmdict-1413240:sense:1",
+          "glossesPtBR": [
+            "universidade"
+          ]
+        }
+      ]
+    },
+    {
+      "legacyId": "kanji_chiisai",
+      "status": "accepted-baseline",
+      "currentPtBR": [
+        "pequeno"
+      ],
+      "candidateEntryIds": [
+        "jmdict-1347750"
+      ],
+      "selections": [
+        {
+          "entryId": "jmdict-1347750",
+          "senseId": "jmdict-1347750:sense:1",
+          "glossesPtBR": [
+            "pequeno"
+          ]
+        }
+      ]
+    }
+  ],
+  "kanji": [
+    {
+      "legacyId": "day-sun",
+      "status": "accepted-baseline",
+      "entryId": "kanjidic2-U+65E5",
+      "meaningsPtBR": [
+        "dia",
+        "sol"
+      ]
+    },
+    {
+      "legacyId": "moon-month",
+      "status": "accepted-baseline",
+      "entryId": "kanjidic2-U+6708",
+      "meaningsPtBR": [
+        "lua",
+        "mês"
+      ]
+    },
+    {
+      "legacyId": "fire",
+      "status": "accepted-baseline",
+      "entryId": "kanjidic2-U+706B",
+      "meaningsPtBR": [
+        "fogo"
+      ]
+    },
+    {
+      "legacyId": "water",
+      "status": "accepted-baseline",
+      "entryId": "kanjidic2-U+6C34",
+      "meaningsPtBR": [
+        "água"
+      ]
+    },
+    {
+      "legacyId": "tree-wood",
+      "status": "accepted-baseline",
+      "entryId": "kanjidic2-U+6728",
+      "meaningsPtBR": [
+        "árvore",
+        "madeira"
+      ]
+    },
+    {
+      "legacyId": "gold-money",
+      "status": "accepted-baseline",
+      "entryId": "kanjidic2-U+91D1",
+      "meaningsPtBR": [
+        "ouro",
+        "dinheiro"
+      ]
+    },
+    {
+      "legacyId": "earth-soil",
+      "status": "accepted-baseline",
+      "entryId": "kanjidic2-U+571F",
+      "meaningsPtBR": [
+        "terra",
+        "solo"
+      ]
+    },
+    {
+      "legacyId": "person",
+      "status": "accepted-baseline",
+      "entryId": "kanjidic2-U+4EBA",
+      "meaningsPtBR": [
+        "pessoa"
+      ]
+    },
+    {
+      "legacyId": "big",
+      "status": "accepted-baseline",
+      "entryId": "kanjidic2-U+5927",
+      "meaningsPtBR": [
+        "grande"
+      ]
+    },
+    {
+      "legacyId": "small",
+      "status": "accepted-baseline",
+      "entryId": "kanjidic2-U+5C0F",
+      "meaningsPtBR": [
+        "pequeno"
+      ]
+    }
+  ]
+}

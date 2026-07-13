@@ -13,6 +13,7 @@ export class DictionaryRuntime {
     this.loadLegacyEntries = options.loadLegacyEntries;
     this.mode = 'uninitialized';
     this.fallbackError = null;
+    this.metadata = null;
   }
 
   async init() {
@@ -20,9 +21,13 @@ export class DictionaryRuntime {
 
     if (this.providerEnabled) {
       try {
-        await this.provider.init();
-        const entries = await this.provider.search('');
-        this.legacyDictionary.setData(entries.map(toLegacyDictionaryEntry));
+        this.metadata = await this.provider.init();
+        if (this.metadata.lazy) {
+          await this.loadCompatibilityEntries();
+        } else {
+          const entries = await this.provider.search('');
+          this.legacyDictionary.setData(entries.map(toLegacyDictionaryEntry));
+        }
         this.mode = 'provider';
         return this.getState();
       } catch (error) {
@@ -42,11 +47,18 @@ export class DictionaryRuntime {
   async search(query, filters = {}) {
     await this.init();
     if (this.mode === 'provider') {
-      const entries = await this.provider.search(query, {
-        script: filters.script,
-        category: filters.category,
-      });
-      return entries.map(toLegacyDictionaryEntry);
+      try {
+        const entries = await this.provider.search(query, {
+          script: filters.script,
+          category: filters.category,
+          limit: filters.limit,
+          signal: filters.signal,
+        });
+        return entries.map(toLegacyDictionaryEntry);
+      } catch (error) {
+        if (isAbortError(error)) throw error;
+        this.fallbackError = error;
+      }
     }
     return this.legacyDictionary.search(query, filters);
   }
@@ -54,14 +66,21 @@ export class DictionaryRuntime {
   async filterByIds(ids, filters = {}) {
     await this.init();
     if (this.mode === 'provider') {
-      const entries = await this.provider.getMany(ids);
-      return entries
-        .filter((entry) => (
-          !filters.script
-          || filters.script === 'all'
-          || entry.scripts.includes(filters.script)
-        ))
-        .map(toLegacyDictionaryEntry);
+      try {
+        const entries = await this.provider.getMany(ids, { signal: filters.signal });
+        const providerEntries = new Map(entries
+          .filter((entry) => matchesScript(entry.scripts, filters.script))
+          .map((entry) => [entry.id, toLegacyDictionaryEntry(entry)]));
+        const legacyEntries = new Map(
+          this.legacyDictionary.filterByIds(ids, filters).map((entry) => [entry.id, entry]),
+        );
+        return (Array.isArray(ids) ? ids : [])
+          .map((id) => providerEntries.get(String(id)) || legacyEntries.get(String(id)))
+          .filter(Boolean);
+      } catch (error) {
+        if (isAbortError(error)) throw error;
+        this.fallbackError = error;
+      }
     }
     return this.legacyDictionary.filterByIds(ids, filters);
   }
@@ -72,10 +91,35 @@ export class DictionaryRuntime {
       providerRequested: this.providerEnabled,
       fallback: Boolean(this.fallbackError),
       error: this.fallbackError?.message || '',
+      lazy: this.metadata?.lazy === true,
+      sourceVersion: this.metadata?.sourceVersion || '',
+      metrics: this.provider?.getMetrics?.() || null,
     };
+  }
+
+  getMetrics() {
+    return this.provider?.getMetrics?.() || null;
+  }
+
+  async loadCompatibilityEntries() {
+    if (typeof this.loadLegacyEntries !== 'function') return;
+    try {
+      const entries = await this.loadLegacyEntries();
+      this.legacyDictionary.setData(entries);
+    } catch (error) {
+      console.warn('[dictionary-runtime] legacy compatibility data unavailable', error);
+    }
   }
 }
 
 export function createDictionaryRuntime(options = {}) {
   return new DictionaryRuntime(options);
+}
+
+function matchesScript(scripts, script) {
+  return !script || script === 'all' || scripts.includes(script);
+}
+
+function isAbortError(error) {
+  return error?.name === 'AbortError';
 }

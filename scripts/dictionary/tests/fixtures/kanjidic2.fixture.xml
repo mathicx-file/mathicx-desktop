@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kanjidic2>
+  <header><file_version>4</file_version><database_version>test</database_version></header>
+  <character>
+    <literal>水</literal>
+    <misc><grade>1</grade><stroke_count>4</stroke_count><freq>223</freq></misc>
+    <reading_meaning>
+      <rmgroup>
+        <reading r_type="ja_on">スイ</reading>
+        <reading r_type="ja_kun">みず</reading>
+        <meaning>water</meaning>
+        <meaning m_lang="fr">eau</meaning>
+      </rmgroup>
+      <nanori>み</nanori>
+    </reading_meaning>
+  </character>
+  <character>
+    <literal>火</literal>
+    <misc><grade>1</grade><stroke_count>4</stroke_count></misc>
+    <reading_meaning>
+      <rmgroup>
+        <reading r_type="ja_on">カ</reading>
+        <reading r_type="ja_kun">ひ</reading>
+        <meaning>fire</meaning>
+      </rmgroup>
+    </reading_meaning>
+  </character>
+</kanjidic2>

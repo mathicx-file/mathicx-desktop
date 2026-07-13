@@ -1,0 +1,193 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-entry-shard",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-2",
+  "shardId": "6e",
+  "entries": [
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1245290",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1245290"
+      },
+      "writtenForms": [
+        "空",
+        "虚"
+      ],
+      "readings": [
+        "そら"
+      ],
+      "common": true,
+      "tags": [
+        "word containing out-dated kanji or kanji usage"
+      ],
+      "senses": [
+        {
+          "id": "jmdict-1245290:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "sky",
+              "the air",
+              "the heavens"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1245290:sense:2",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "weather"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1245290:sense:3",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "far-off place",
+              "distant place"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1245290:sense:4",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "state of mind",
+              "feeling"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1245290:sense:5",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "(from) memory",
+              "(by) heart"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1245290:sense:6",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "falsehood",
+              "lie"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1245290:sense:7",
+          "partOfSpeech": [
+            "noun, used as a prefix"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "somehow",
+              "vaguely"
+            ]
+          }
+        },
+        {
+          "id": "jmdict-1245290:sense:8",
+          "partOfSpeech": [
+            "noun, used as a prefix"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "fake"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "translations": [
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1245290:jmdict-1245290:sense:1",
+      "entryId": "jmdict-1245290",
+      "senseId": "jmdict-1245290:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "céu"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "hira_sora"
+      },
+      "reviewedAt": "2026-07-13"
+    }
+  ]
+}

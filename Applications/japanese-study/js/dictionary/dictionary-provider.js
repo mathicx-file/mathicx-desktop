@@ -34,13 +34,20 @@ export class DictionaryProvider {
       sourceId,
       sourceVersion: sourceMetadata.version || 'unversioned',
       sourceFormat: sourceMetadata.format || 'unknown',
-      count: this.entries.length,
+      count: Number.isSafeInteger(sourceMetadata.count) ? sourceMetadata.count : this.entries.length,
+      lazy: sourceMetadata.lazy === true,
     });
     return this.getMetadata();
   }
 
   async search(query, options = {}) {
     await this.init();
+    if (typeof this.source.search === 'function') {
+      const entries = normalizeDictionaryEntries(await this.source.search(query, options), {
+        sourceId: this.metadata.sourceId,
+      });
+      return filterDelegatedEntries(entries, options).slice(0, normalizeLimit(options.limit));
+    }
     const normalizedQuery = normalizeDictionaryQuery(query);
     const script = normalizeFilter(options.script);
     const tag = normalizeFilter(options.tag || options.category);
@@ -54,13 +61,22 @@ export class DictionaryProvider {
       .map((item) => item.entry);
   }
 
-  async getById(id) {
+  async getById(id, options = {}) {
     await this.init();
+    if (typeof this.source.getById === 'function') {
+      const entry = await this.source.getById(String(id || ''), options);
+      return entry ? normalizeDictionaryEntries([entry], { sourceId: this.metadata.sourceId })[0] : null;
+    }
     return this.entriesById.get(String(id || '')) || null;
   }
 
-  async getMany(ids) {
+  async getMany(ids, options = {}) {
     await this.init();
+    if (typeof this.source.getMany === 'function') {
+      return normalizeDictionaryEntries(await this.source.getMany(ids, options), {
+        sourceId: this.metadata.sourceId,
+      });
+    }
     return (Array.isArray(ids) ? ids : [])
       .map((id) => this.entriesById.get(String(id || '')))
       .filter(Boolean);
@@ -70,6 +86,20 @@ export class DictionaryProvider {
     if (!this.metadata) await this.init();
     return { ...this.metadata };
   }
+
+  getMetrics() {
+    return typeof this.source.getMetrics === 'function' ? this.source.getMetrics() : null;
+  }
+}
+
+function filterDelegatedEntries(entries, options) {
+  const script = normalizeFilter(options.script);
+  const tag = normalizeFilter(options.tag || options.category);
+  return entries.filter((entry) => {
+    if (script && !entry.scripts.some((value) => normalizeDictionaryQuery(value) === script)) return false;
+    if (tag && !entry.tags.some((value) => normalizeDictionaryQuery(value) === tag)) return false;
+    return true;
+  });
 }
 
 export function createDictionaryProvider(source) {

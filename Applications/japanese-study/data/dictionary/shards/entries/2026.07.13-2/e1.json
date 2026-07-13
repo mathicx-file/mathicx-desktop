@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-entry-shard",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-2",
+  "shardId": "e1",
+  "entries": [
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1076190",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1076190"
+      },
+      "writtenForms": [],
+      "readings": [
+        "タクシー",
+        "タクシ",
+        "タキシ",
+        "タキシー",
+        "タクシィ",
+        "タクシイ",
+        "タキシイ"
+      ],
+      "common": true,
+      "tags": [
+        "search-only kana form"
+      ],
+      "senses": [
+        {
+          "id": "jmdict-1076190:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "taxi"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "translations": [
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1076190:jmdict-1076190:sense:1",
+      "entryId": "jmdict-1076190",
+      "senseId": "jmdict-1076190:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "taxi"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kata_takushii"
+      },
+      "reviewedAt": "2026-07-13"
+    }
+  ]
+}

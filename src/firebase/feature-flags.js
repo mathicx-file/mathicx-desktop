@@ -23,7 +23,7 @@ export const featureFlags = Object.freeze({
 
   dictionaryProviderV2Enabled: true,
   dictionaryRemoteManifestEnabled: false,
-  dictionaryChunkLoadingEnabled: false,
+  dictionaryChunkLoadingEnabled: true,
   dictionaryOfflinePacksEnabled: false,
 
   localMigrationEnabled: false,

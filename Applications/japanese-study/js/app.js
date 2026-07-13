@@ -13,6 +13,8 @@ import { JapaneseTypingEvaluator } from './typing-evaluator.js';
 import { createTypingSession } from './typing-session.js';
 import { JapaneseKanaPrintExport } from './kana-print-export.js';
 import { createDictionaryRuntime } from './dictionary/dictionary-runtime.js';
+import { DictionaryCacheRepository } from './dictionary/dictionary-cache-repository.js';
+import { LazyDictionarySource } from './dictionary/lazy-dictionary-source.js';
 
 const JapaneseApp = (() => {
   let allData = [];
@@ -30,6 +32,8 @@ const JapaneseApp = (() => {
   let currentTypingResult = null;
   let firebaseSyncModule = null;
   let dictionaryRuntime = null;
+  let dictionarySearchController = null;
+  let dictionaryRenderSequence = 0;
 
   async function init() {
     if (initialized) return;
@@ -73,7 +77,6 @@ const JapaneseApp = (() => {
 
       const initialChars = allData.filter(c => c.script === 'hiragana');
       JapaneseUI.renderGrid(initialChars);
-      renderDictionary();
       renderTyping();
       if (JapaneseUI.getCurrentView() === 'quiz') renderQuiz();
       if (JapaneseUI.getCurrentView() === 'dictionary') renderDictionary();
@@ -219,8 +222,13 @@ const JapaneseApp = (() => {
 
   async function setupDictionaryRuntime() {
     const providerEnabled = await isDictionaryProviderEnabled();
+    const chunkLoadingEnabled = providerEnabled && await isDictionaryChunkLoadingEnabled();
+    const source = chunkLoadingEnabled
+      ? new LazyDictionarySource({ repository: new DictionaryCacheRepository() })
+      : undefined;
     dictionaryRuntime = createDictionaryRuntime({
       providerEnabled,
+      source,
       loadLegacyEntries: async () => {
         const payload = await loadJSON('data/dictionary.json');
         return payload.words || payload;
@@ -230,13 +238,13 @@ const JapaneseApp = (() => {
     if (state.fallback) {
       console.warn('[dictionary-runtime] provider unavailable; using legacy source', state.error);
     } else {
-      console.info(`[dictionary-runtime] mode=${state.mode}`);
+      console.info(`[dictionary-runtime] mode=${state.mode} lazy=${state.lazy}`);
     }
     return state;
   }
 
   async function isDictionaryProviderEnabled() {
-    const override = new URLSearchParams(location.search).get('dictionaryProviderV2');
+    const override = getRuntimeOverride('dictionaryProviderV2');
     if (override === '1') return true;
     if (override === '0') return false;
     try {
@@ -245,6 +253,31 @@ const JapaneseApp = (() => {
     } catch {
       return false;
     }
+  }
+
+  async function isDictionaryChunkLoadingEnabled() {
+    const override = getRuntimeOverride('dictionaryChunks');
+    if (override === '1') return true;
+    if (override === '0') return false;
+    try {
+      const module = await import('../../../src/firebase/feature-flags.js');
+      return module.featureFlags?.dictionaryChunkLoadingEnabled === true;
+    } catch {
+      return false;
+    }
+  }
+
+  function getRuntimeOverride(name) {
+    const local = new URLSearchParams(location.search).get(name);
+    if (local !== null) return local;
+    try {
+      if (window.parent && window.parent !== window) {
+        return new URLSearchParams(window.parent.location.search).get(name);
+      }
+    } catch {
+      return null;
+    }
+    return null;
   }
 
   function applyFilters() {
@@ -571,25 +604,37 @@ const JapaneseApp = (() => {
   }
 
   async function renderDictionary() {
+    const sequence = ++dictionaryRenderSequence;
+    dictionarySearchController?.abort();
+    dictionarySearchController = new AbortController();
+    const signal = dictionarySearchController.signal;
     const dictionaryInput = document.getElementById('dictionary-search-input');
     const query = dictionaryInput ? dictionaryInput.value : '';
     const filters = JapaneseUI.getDictionaryFilters();
     let results = [];
 
-    if (filters.tab === 'history') {
-      const history = await JapaneseStorage.getDictionaryHistory(50);
-      const ids = history.map(item => item.charId);
-      results = await dictionaryRuntime.filterByIds(ids, filters);
-      results = filterDictionaryWords(results, query);
-    } else if (filters.tab === 'favorites') {
-      const ids = JapaneseStorage.getDictionaryFavorites();
-      results = await dictionaryRuntime.filterByIds(ids, filters);
-      results = filterDictionaryWords(results, query);
-    } else {
-      results = await dictionaryRuntime.search(query, filters);
+    try {
+      if (filters.tab === 'history') {
+        const history = await JapaneseStorage.getDictionaryHistory(50);
+        const ids = history.map(item => item.charId);
+        results = await dictionaryRuntime.filterByIds(ids, { ...filters, signal });
+        results = filterDictionaryWords(results, query);
+      } else if (filters.tab === 'favorites') {
+        const ids = JapaneseStorage.getDictionaryFavorites();
+        results = await dictionaryRuntime.filterByIds(ids, { ...filters, signal });
+        results = filterDictionaryWords(results, query);
+      } else {
+        results = await dictionaryRuntime.search(query, { ...filters, signal });
+      }
+    } catch (error) {
+      if (error?.name === 'AbortError') return;
+      console.error('[dictionary-runtime] search failed', error);
+      return;
     }
 
-    JapaneseUI.renderDictionary(results);
+    if (sequence === dictionaryRenderSequence && !signal.aborted) {
+      JapaneseUI.renderDictionary(results);
+    }
   }
 
   function renderQuiz() {

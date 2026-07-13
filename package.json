@@ -6,10 +6,32 @@
     "test:app-ids": "node scripts/test-app-id-migration.mjs",
     "test:launcher-dictionary": "node --test scripts/test-launcher-dictionary-search.mjs",
     "test:dictionary-equivalence": "node --test scripts/test-dictionary-equivalence.mjs",
+    "test:dictionary-pipeline": "node --test scripts/dictionary/tests/pipeline-schema.test.mjs scripts/dictionary/tests/source-matrix.test.mjs scripts/dictionary/tests/importers.test.mjs scripts/dictionary/tests/bootstrap-package.test.mjs scripts/dictionary/tests/editorial-review.test.mjs scripts/dictionary/tests/entry-shards.test.mjs scripts/dictionary/tests/search-indexes.test.mjs scripts/dictionary/tests/distribution-manifest.test.mjs scripts/dictionary/tests/dictionary-cache.test.mjs",
+    "test:dictionary-cache": "node --test scripts/dictionary/tests/dictionary-cache.test.mjs",
+    "test:dictionary-lazy": "node --test Applications/japanese-study/tests/lazy-dictionary-source.test.mjs",
+    "dictionary:import:jmdict": "node scripts/dictionary/import-jmdict.mjs",
+    "dictionary:import:kanjidic2": "node scripts/dictionary/import-kanjidic2.mjs",
+    "dictionary:validate-imports": "node scripts/dictionary/validate-imports.mjs",
+    "dictionary:generate-bootstrap": "node scripts/dictionary/generate-bootstrap.mjs",
+    "dictionary:validate-bootstrap": "node scripts/dictionary/validate-bootstrap.mjs",
+    "dictionary:prepare-editorial-review": "node scripts/dictionary/prepare-editorial-review.mjs",
+    "dictionary:generate-entry-shards": "node scripts/dictionary/generate-entry-shards.mjs",
+    "dictionary:validate-entry-shards": "node scripts/dictionary/validate-entry-shards.mjs",
+    "dictionary:generate-search-indexes": "node scripts/dictionary/generate-search-indexes.mjs",
+    "dictionary:validate-search-indexes": "node scripts/dictionary/validate-search-indexes.mjs",
+    "dictionary:generate-manifest": "node scripts/dictionary/generate-distribution-manifest.mjs",
+    "dictionary:validate-manifest": "node scripts/dictionary/validate-distribution-manifest.mjs",
+    "dictionary:measure-runtime": "node scripts/dictionary/measure-runtime-performance.mjs",
+    "pages:build": "node scripts/pages/build-pages-artifact.mjs",
+    "pages:validate": "node scripts/pages/validate-pages-artifact.mjs",
+    "test:pages-artifact": "node --test scripts/pages/tests/pages-artifact.test.mjs",
     "test:firestore-rules": "firebase emulators:exec --only firestore \"node scripts/firebase/test-firestore-rules.mjs\" --project desktop-main"
   },
   "devDependencies": {
     "@firebase/rules-unit-testing": "^5.0.0",
-    "firebase": "^12.15.0"
+    "fake-indexeddb": "6.2.5",
+    "fast-xml-parser": "5.10.0",
+    "firebase": "^12.15.0",
+    "wanakana": "^5.3.1"
   }
 }

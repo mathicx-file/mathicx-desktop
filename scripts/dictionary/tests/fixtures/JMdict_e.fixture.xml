@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE JMdict [
+  <!ENTITY n "noun (common) (futsuumeishi)">
+  <!ENTITY adj-na "adjectival nouns or quasi-adjectives (keiyodoshi)">
+]>
+<JMdict>
+  <entry>
+    <ent_seq>1000010</ent_seq>
+    <k_ele><keb>水</keb><ke_pri>news1</ke_pri></k_ele>
+    <r_ele><reb>みず</reb><re_pri>ichi1</re_pri></r_ele>
+    <sense><pos>&n;</pos><gloss>water</gloss></sense>
+  </entry>
+  <entry>
+    <ent_seq>1000020</ent_seq>
+    <k_ele><keb>花</keb></k_ele>
+    <r_ele><reb>はな</reb></r_ele>
+    <sense>
+      <pos>&n;</pos>
+      <gloss xml:lang="eng">flower</gloss>
+      <gloss xml:lang="spa">flor</gloss>
+    </sense>
+  </entry>
+  <entry>
+    <ent_seq>1000030</ent_seq>
+    <k_ele><keb>鼻</keb></k_ele>
+    <r_ele><reb>はな</reb></r_ele>
+    <sense><pos>&n;</pos><gloss>nose</gloss></sense>
+  </entry>
+  <entry>
+    <ent_seq>1000040</ent_seq>
+    <r_ele><reb>しずか</reb></r_ele>
+    <sense><pos>&adj-na;</pos><gloss>quiet</gloss></sense>
+  </entry>
+</JMdict>

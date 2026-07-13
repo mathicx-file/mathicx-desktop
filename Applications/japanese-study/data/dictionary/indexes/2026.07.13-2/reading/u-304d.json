@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-search-index-shard",
+  "indexKind": "reading",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-2",
+  "bucket": "u-304d",
+  "normalization": "wanakana-hiragana-nfkc-v1",
+  "terms": {
+    "きゃめら": [
+      "jmdict-1038350"
+    ],
+    "きんようび": [
+      "jmdict-1243320"
+    ]
+  }
+}

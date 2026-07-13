@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictionary-entry-shard",
+  "packageId": "bootstrap-n5",
+  "dictionaryVersion": "2026.07.13-2",
+  "shardId": "e7",
+  "entries": [
+    {
+      "schemaVersion": 1,
+      "id": "jmdict-1122650",
+      "source": {
+        "id": "jmdict",
+        "version": "2026-07-13",
+        "entryId": "1122650"
+      },
+      "writtenForms": [],
+      "readings": [
+        "ホテル"
+      ],
+      "common": true,
+      "tags": [],
+      "senses": [
+        {
+          "id": "jmdict-1122650:sense:1",
+          "partOfSpeech": [
+            "noun (common) (futsuumeishi)"
+          ],
+          "fields": [],
+          "misc": [],
+          "restrictions": {
+            "writtenForms": [],
+            "readings": []
+          },
+          "glosses": {
+            "en": [
+              "hotel"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "translations": [
+    {
+      "schemaVersion": 1,
+      "id": "mathicx-ptbr:jmdict-1122650:jmdict-1122650:sense:1",
+      "entryId": "jmdict-1122650",
+      "senseId": "jmdict-1122650:sense:1",
+      "language": "pt-BR",
+      "glosses": [
+        "hotel"
+      ],
+      "status": "reviewed",
+      "source": {
+        "id": "mathicx-ptbr",
+        "version": "ea879a4",
+        "entryId": "kata_hoteru"
+      },
+      "reviewedAt": "2026-07-13"
+    }
+  ]
+}
