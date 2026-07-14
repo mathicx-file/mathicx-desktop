@@ -101,7 +101,7 @@ test('service worker keeps dictionary artifacts outside Cache Storage', async ()
   assert.match(source, /url\.pathname\.includes\(DICTIONARY_PATH_MARKER\)/u);
   assert.match(source, /request\.mode === 'navigate'/u);
   assert.match(source, /networkFirst\(request, INDEX_URL\)/u);
-  assert.match(source, /\$\{SHELL_CACHE_PREFIX\}v6/u);
+  assert.match(source, /\$\{SHELL_CACHE_PREFIX\}v9/u);
   assert.match(source, /fetch\(request, \{ cache: 'no-store' \}\)/u);
   assert.match(source, /REBUILD_SHELL_CACHE/u);
   assert.match(source, /SHELL_REPAIR_CACHE_NAME/u);

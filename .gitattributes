@@ -1,0 +1,3 @@
+# Dictionary distribution files are content-addressed and must keep exact bytes.
+Applications/japanese-study/data/dictionary/**/*.json -text
+Applications/japanese-study/data/dictionary/**/*.gz -text

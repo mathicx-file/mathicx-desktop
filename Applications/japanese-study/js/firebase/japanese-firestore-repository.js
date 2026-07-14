@@ -55,30 +55,38 @@ export class JapaneseFirestoreRepository {
     });
   }
 
-  async saveSnapshot(uid, backup) {
+  async saveSnapshot(uid, backup, options = {}) {
     const { firestore } = await this._init();
-    const operations = [
+    const operations = options.replaceRemote
+      ? await buildReplacementDeletes(firestore, uid, backup)
+      : [];
+    operations.push(
       {
         path: firestorePaths.japaneseSettings(uid),
         data: withTimestamp(buildSettingsPayload(backup)),
+        merge: options.replaceRemote !== true,
       },
       {
         path: firestorePaths.japaneseProgression(uid),
         data: withTimestamp(buildProgressionSummary(backup)),
+        merge: options.replaceRemote !== true,
       },
       ...buildSrsEntries(backup?.data?.srs).map(([id, data]) => ({
         path: firestorePaths.japaneseSrs(uid, id),
         data: withTimestamp(data),
+        merge: options.replaceRemote !== true,
       })),
       ...buildGamificationEventEntries(backup?.data?.progress).map(([id, data]) => ({
         path: firestorePaths.japaneseEvent(uid, id),
         data: withTimestamp(data),
+        merge: options.replaceRemote !== true,
       })),
       ...buildAchievementEntries(backup?.data?.settings).map(([id, data]) => ({
         path: firestorePaths.japaneseAchievement(uid, id),
         data: withTimestamp(data),
+        merge: options.replaceRemote !== true,
       })),
-    ];
+    );
 
     await commitOperations(firestore, operations);
     return {
@@ -137,11 +145,30 @@ async function waitForAuthUser(auth) {
 async function commitOperations(firestore, operations) {
   for (let index = 0; index < operations.length; index += BATCH_LIMIT) {
     const batch = writeBatch(firestore);
-    operations.slice(index, index + BATCH_LIMIT).forEach(({ path, data }) => {
-      batch.set(doc(firestore, path), data, { merge: true });
+    operations.slice(index, index + BATCH_LIMIT).forEach(({ path, data, merge = true, delete: remove }) => {
+      if (remove) {
+        batch.delete(doc(firestore, path));
+        return;
+      }
+      batch.set(doc(firestore, path), data, { merge });
     });
     await batch.commit();
   }
+}
+
+async function buildReplacementDeletes(firestore, uid, backup) {
+  const collectionNames = ['srs', 'events', 'achievements'];
+  const retainedPaths = new Set([
+    ...buildSrsEntries(backup?.data?.srs).map(([id]) => firestorePaths.japaneseSrs(uid, id)),
+    ...buildGamificationEventEntries(backup?.data?.progress).map(([id]) => firestorePaths.japaneseEvent(uid, id)),
+    ...buildAchievementEntries(backup?.data?.settings).map(([id]) => firestorePaths.japaneseAchievement(uid, id)),
+  ]);
+  const snapshots = await Promise.all(collectionNames.map((name) => (
+    getDocs(collection(firestore, `${firestorePaths.japaneseBase(uid)}/${name}`))
+  )));
+  return snapshots.flatMap((snapshot) => snapshot.docs
+    .filter((item) => !retainedPaths.has(item.ref.path))
+    .map((item) => ({ path: item.ref.path, delete: true })));
 }
 
 function withTimestamp(data) {

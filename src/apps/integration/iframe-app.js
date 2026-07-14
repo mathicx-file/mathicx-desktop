@@ -3,6 +3,7 @@
  */
 import { bus, EVT } from '../../core/event-bus.js';
 import { themeManager } from '../../themes/theme-manager.js';
+import { appDataHost } from './app-data-host.js';
 
 const DEFAULT_SANDBOX = [
   'allow-same-origin',
@@ -56,6 +57,7 @@ export function mountIframeApp(host, options = {}) {
   iframe.title = title || appId;
 
   iframe.addEventListener('load', () => {
+    appDataHost.announceReady(appId, iframe);
     container.querySelector('.spinner')?.remove();
     if (forwardTheme) post('theme', getResolvedTheme());
     if (hasPayload(initialPayload)) post(actionType, initialPayload);
@@ -116,8 +118,10 @@ export function mountIframeApp(host, options = {}) {
 
   window.addEventListener('message', handleHostMessage);
   container.appendChild(iframe);
+  const unregisterAppData = appDataHost.register(appId, iframe);
 
   return () => {
+    unregisterAppData();
     window.removeEventListener('message', handleHostMessage);
     unsubscribeTheme?.();
     unsubscribeAction?.();

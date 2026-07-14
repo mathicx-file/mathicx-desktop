@@ -1977,7 +1977,7 @@ export const JapaneseUI = (() => {
   function sendHostMessage(type, payload) {
     try {
       if (window.parent && window.parent !== window) {
-        window.parent.postMessage({ type, payload }, '*');
+        window.parent.postMessage({ type, payload }, window.location.origin);
       }
     } catch {}
   }

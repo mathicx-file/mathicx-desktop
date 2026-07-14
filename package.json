@@ -4,6 +4,14 @@
   "type": "module",
   "scripts": {
     "test:app-ids": "node scripts/test-app-id-migration.mjs",
+    "test:app-data-contract": "node --test src/apps/integration/app-data-contract.test.mjs",
+    "test:sync-center": "node --test src/apps/configuracoes/sync-center.test.mjs",
+    "test:unified-backup": "node --test src/apps/integration/unified-backup.test.mjs",
+    "test:encrypted-backup": "node --test src/apps/integration/encrypted-backup.test.mjs",
+    "test:restore-backup": "node --test src/apps/integration/restore-backup.test.mjs",
+    "test:recovery": "node --test src/apps/integration/restore-backup.test.mjs src/apps/integration/recovery-integration.test.mjs src/apps/integration/encrypted-backup.test.mjs src/apps/integration/unified-backup.test.mjs",
+    "test:security-baseline": "node --test scripts/firebase/test-security-baseline.mjs",
+    "test:app-check": "node --test src/firebase/firebase-app-check.test.mjs",
     "test:launcher-dictionary": "node --test scripts/test-launcher-dictionary-search.mjs",
     "test:dictionary-equivalence": "node --test scripts/test-dictionary-equivalence.mjs",
     "test:dictionary-pipeline": "node --test scripts/dictionary/tests/pipeline-schema.test.mjs scripts/dictionary/tests/source-matrix.test.mjs scripts/dictionary/tests/importers.test.mjs scripts/dictionary/tests/bootstrap-package.test.mjs scripts/dictionary/tests/editorial-review.test.mjs scripts/dictionary/tests/entry-shards.test.mjs scripts/dictionary/tests/search-indexes.test.mjs scripts/dictionary/tests/browse-pages.test.mjs scripts/dictionary/tests/distribution-manifest.test.mjs scripts/dictionary/tests/dictionary-cache.test.mjs",
@@ -28,7 +36,9 @@
     "pages:build": "node scripts/pages/build-pages-artifact.mjs",
     "pages:validate": "node scripts/pages/validate-pages-artifact.mjs",
     "test:pages-artifact": "node --test scripts/pages/tests/pages-artifact.test.mjs",
-    "test:firestore-rules": "firebase emulators:exec --only firestore \"node scripts/firebase/test-firestore-rules.mjs\" --project desktop-main"
+    "test:firestore-rules": "firebase emulators:exec --only firestore \"node scripts/firebase/test-firestore-rules.mjs\" --project desktop-main",
+    "test:auth-firestore-integration": "firebase emulators:exec --only auth,firestore \"node scripts/firebase/test-auth-firestore-integration.mjs\" --project desktop-main",
+    "test:firebase-security": "firebase emulators:exec --only auth,firestore \"node scripts/firebase/test-security-emulators.mjs\" --project desktop-main"
   },
   "devDependencies": {
     "@firebase/rules-unit-testing": "^5.0.0",

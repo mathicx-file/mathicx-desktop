@@ -12,6 +12,8 @@ import { JapaneseTypingContentProvider } from './typing-content-provider.js';
 import { JapaneseTypingEvaluator } from './typing-evaluator.js';
 import { createTypingSession } from './typing-session.js';
 import { JapaneseKanaPrintExport } from './kana-print-export.js';
+import { createAppDataResponder } from '../../../src/apps/integration/app-data-contract.js';
+import { createJapaneseAppDataHandlers } from './app-data-adapter.js';
 import { createDictionaryRuntime } from './dictionary/dictionary-runtime.js?v=15.7';
 import { DictionaryCacheRepository } from './dictionary/dictionary-cache-repository.js';
 import { LazyDictionarySource } from './dictionary/lazy-dictionary-source.js?v=15.9';
@@ -40,6 +42,11 @@ const JapaneseApp = (() => {
   let currentTypingValue = '';
   let currentTypingResult = null;
   let firebaseSyncModule = null;
+  let firebaseSyncStatus = {
+    state: 'checking',
+    message: 'Sincronizacao ainda nao inicializada.',
+  };
+  let disposeAppDataResponder = null;
   let dictionaryRuntime = null;
   let dictionarySearchController = null;
   let dictionaryRenderSequence = 0;
@@ -66,7 +73,7 @@ const JapaneseApp = (() => {
     setupDictionaryBrowseControls();
     setupAppShellControls();
     void initializeAppShell();
-    const firebaseSyncReady = setupFirebaseSync();
+    const firebaseSyncReady = setupFirebaseSync().finally(() => setupAppDataBridge());
     const dictionaryRuntimeReady = setupDictionaryRuntime();
 
     const loadingEl = document.getElementById('loading-state');
@@ -1089,14 +1096,14 @@ const JapaneseApp = (() => {
       if (result?.enabled) {
         console.info('[japanese-firebase-sync] enabled for current user');
       } else if (result?.reason) {
-        JapaneseUI.updateFirebaseSyncStatus({
+        updateFirebaseSyncStatus({
           state: result.reason === 'user-not-approved' ? 'pending' : 'disabled',
           message: getFirebaseSyncDisabledMessage(result.reason)
         });
       }
     } catch (error) {
       console.info('[japanese-firebase-sync] unavailable in this runtime', error?.message || error);
-      JapaneseUI.updateFirebaseSyncStatus({
+      updateFirebaseSyncStatus({
         state: 'error',
         message: 'Nao foi possivel iniciar a sincronizacao Firebase.'
       });
@@ -1105,8 +1112,32 @@ const JapaneseApp = (() => {
 
   function setupFirebaseSyncStatusListener() {
     window.addEventListener('japanese:firebase-sync-status', (event) => {
-      JapaneseUI.updateFirebaseSyncStatus(event.detail || {});
+      updateFirebaseSyncStatus(event.detail || {});
     });
+  }
+
+  function setupAppDataBridge() {
+    if (disposeAppDataResponder) return;
+    disposeAppDataResponder = createAppDataResponder({
+      appId: 'japanese-study',
+      handlers: createJapaneseAppDataHandlers({
+        storage: JapaneseStorage,
+        getSyncStatus: () => firebaseSyncStatus,
+        syncNow: () => firebaseSyncModule?.japaneseFirebaseSync?.syncNow()
+          || { ok: false, reason: 'not-ready' },
+        beginRestore: () => firebaseSyncModule?.japaneseFirebaseSync?.beginRestore()
+          || { ok: true, supported: false },
+        afterImport: (mode) => firebaseSyncModule?.japaneseFirebaseSync?.commitRestoreImport(mode)
+          || { ok: true, supported: false },
+        endRestore: (payload) => firebaseSyncModule?.japaneseFirebaseSync?.endRestore(payload)
+          || { ok: true, supported: false },
+      }),
+    });
+  }
+
+  function updateFirebaseSyncStatus(detail) {
+    firebaseSyncStatus = { ...firebaseSyncStatus, ...detail };
+    JapaneseUI.updateFirebaseSyncStatus(firebaseSyncStatus);
   }
 
   function getFirebaseSyncDisabledMessage(reason) {
@@ -1119,7 +1150,7 @@ const JapaneseApp = (() => {
 
   async function syncFirebaseNow() {
     if (!firebaseSyncModule?.japaneseFirebaseSync) {
-      JapaneseUI.updateFirebaseSyncStatus({
+      updateFirebaseSyncStatus({
         state: 'error',
         message: 'Sincronizacao Firebase ainda nao inicializada.'
       });

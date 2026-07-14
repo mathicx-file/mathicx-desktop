@@ -48,6 +48,18 @@ test('builds a minimal, versioned and valid Pages artifact', async () => {
   assert.deepEqual(catalog.packages.slice(1).map((item) => item.distributionRevision), [2, 2]);
 });
 
+test('pins content-addressed dictionary files to their original bytes', async () => {
+  const attributes = await fs.readFile(path.join(workspaceRoot, '.gitattributes'), 'utf8');
+  assert.match(
+    attributes,
+    /Applications\/japanese-study\/data\/dictionary\/\*\*\/\*\.json -text/u,
+  );
+  assert.match(
+    attributes,
+    /Applications\/japanese-study\/data\/dictionary\/\*\*\/\*\.gz -text/u,
+  );
+});
+
 test('rejects a compressed offline package artifact whose hash no longer matches', async () => {
   const catalog = JSON.parse(await fs.readFile(path.join(dictionaryRoot, 'packages', 'catalog.json'), 'utf8'));
   const manifestDescriptor = catalog.packages.find((item) => item.id === 'core').manifest;

@@ -4,7 +4,7 @@
 >
 > Status: fonte oficial de planejamento e execucao
 >
-> Fase atual: Fase 15 concluida; Fase 16 e o proximo marco oficial
+> Fase atual: Fase 17.3 em andamento; pronta para deploy e observacao
 
 ## 1. Autoridade Deste Documento
 
@@ -69,8 +69,8 @@ Fase 10.3 Metricas de equivalencia com o JSON legado
 | 13 | Pipeline do dicionario no GitHub Pages | Concluida | Antiga Fase 10 revisada |
 | 14 | Manifesto remoto, atualizacao e rollback | Concluida | Antiga Fase 11 revisada |
 | 15 | Dicionario ampliado, pacotes offline e PWA | Concluida | Antiga Fase 12 revisada |
-| 16 | Confiabilidade, backup e recuperacao | Planejada | Melhoria incorporada |
-| 17 | Seguranca, rollout e remocao do legado | Parcial | Planos anteriores 12/13 |
+| 16 | Confiabilidade, backup e recuperacao | Concluida | Melhoria incorporada |
+| 17 | Seguranca, rollout e remocao do legado | Em andamento | Planos anteriores 12/13 |
 | 18 | Evolucoes opcionais | Opcional | Antiga Fase 13 revisada |
 
 ## 5. Fases Concluidas
@@ -478,7 +478,7 @@ deste recorte.
 
 ### Fase 16: Confiabilidade, Backup e Recuperacao
 
-Status: **Planejada**.
+Status: **Concluida tecnicamente em 2026-07-14**.
 
 Origem: melhoria descoberta apos as integracoes das Fases 7-9.
 
@@ -497,12 +497,12 @@ Implementacao recomendada:
 
 Subfases previstas:
 
-- `16.1`: contratos compartilhados entre host e iframes;
-- `16.2`: Central de Sincronizacao;
-- `16.3`: exportacao unificada;
-- `16.4`: criptografia do pacote;
-- `16.5`: restauracao seletiva e rollback;
-- `16.6`: testes integrados de recuperacao.
+- `16.1`: contratos compartilhados entre host e iframes - **concluida tecnicamente**;
+- `16.2`: Central de Sincronizacao - **concluida e aprovada**;
+- `16.3`: exportacao unificada - **concluida e aprovada**;
+- `16.4`: criptografia do pacote - **concluida e aprovada**;
+- `16.5`: restauracao seletiva e rollback - **concluida e aprovada**;
+- `16.6`: testes integrados de recuperacao - **concluida tecnicamente**.
 
 Criterios de aceite:
 
@@ -511,11 +511,13 @@ Criterios de aceite:
 - falha de rede nao remove alteracoes locais;
 - dados financeiros recebem protecao adequada no arquivo exportado.
 
-Intervencao do proprietario: confirmar a politica de senha e backup sem criptografia.
+Intervencao do proprietario: politica hibrida aprovada. Backups sem dados
+financeiros poderao ser exportados sem senha; pacotes que incluam o Finances
+exigirao criptografia por senha a partir da Fase 16.4.
 
 ### Fase 17: Seguranca, Rollout e Remocao do Legado
 
-Status: **Parcial**.
+Status: **Em andamento**.
 
 Origem: App Check e rollout dos planos anteriores.
 
@@ -530,8 +532,7 @@ Ja existe:
 
 Ainda falta:
 
-- testes completos com Auth Emulator;
-- App Check em modo de observacao;
+- publicar o cliente instrumentado e observar as metricas do App Check;
 - token de debug fora do repositorio;
 - enforcement gradual;
 - avaliar custom claims ou script administrativo para papeis;
@@ -541,14 +542,17 @@ Ainda falta:
 
 Subfases previstas:
 
-- `17.1`: matriz de ameacas e limites;
-- `17.2`: testes Auth/Firestore integrados;
-- `17.3`: App Check em observacao;
+- `17.1`: matriz de ameacas e limites - **concluida tecnicamente**;
+- `17.2`: testes Auth/Firestore integrados - **concluida tecnicamente**;
+- `17.3`: App Check em observacao - **em andamento**;
 - `17.4`: papeis administrativos confiaveis;
 - `17.5`: rollout e monitoramento;
 - `17.6`: inventario e remocao gradual do legado.
 
-Intervencao do proprietario: configuracoes no Console Firebase e aprovacao do enforcement.
+A Fase 17 possui **6 subfases** no total.
+
+Intervencao do proprietario: registrar o Web App com reCAPTCHA Enterprise sem
+enforcement e, somente depois da janela de observacao, aprovar enforcement.
 
 ### Fase 18: Evolucoes Opcionais
 
@@ -637,7 +641,57 @@ Fase 15.9 implementada
 Nenhuma intervencao no Console Firebase e necessaria. A promocao modifica apenas
 os artefatos estaticos, o catalogo publico e a release do GitHub Pages.
 
-Proximo marco oficial: **Fase 16 - Confiabilidade, Backup e Recuperacao**.
+Marco atual: **Fase 16 - Confiabilidade, Backup e Recuperacao**.
+
+A `16.1` estabeleceu o protocolo `mathicx-app-data` v1 entre o host e os
+aplicativos integrados. Desktop, Japanese Study e Finances agora expoem a mesma
+lista fechada de operacoes para capacidades, estado de sync, sincronizacao
+manual, exportacao, validacao e importacao. As mensagens sao correlacionadas por
+`MessageChannel`, limitadas a mesma origem e recusam restauracao sem confirmacao
+e modo explicitos. Os formatos de backup sao versionados e o Finances declara a
+presenca de dados financeiros para a politica de criptografia da `16.4`.
+
+A `16.2` acrescentou uma aba de Sincronizacao nas Configuracoes. Ela apresenta
+Desktop, Japanese Study e Finances sob os mesmos estados normalizados, permite
+atualizar e sincronizar manualmente e reage ao ciclo de vida dos iframes. Os
+aplicativos integrados continuam lazy: quando fechados, podem ser abertos pela
+Central, mas nao sao inicializados silenciosamente.
+
+A `16.3` adicionou a composicao e o download de `mathicx-unified-backup` schema
+1. Desktop e Japanese Study podem ser selecionados e cada exportacao e validada
+pelo adaptador de origem. O pacote registra contratos e checksum SHA-256 por
+app. Finances fica bloqueado porque pacotes financeiros exigem a criptografia
+por senha da proxima subfase.
+
+A `16.4` adicionou o modo Com senha com envelope `mathicx-encrypted-backup`
+schema 1. A chave AES-GCM 256 e derivada por PBKDF2-HMAC-SHA-256 com salt
+aleatorio e 600.000 iteracoes; o IV de 96 bits e novo por arquivo. O envelope
+nao revela apps ou formatos internos e libera o Finances apenas dentro do
+ciphertext autenticado.
+
+A `16.5` adicionou leitura e desbloqueio de arquivos, selecao e modo por app,
+confirmacao explicita e um orquestrador transacional. Antes da primeira escrita,
+os uploads sao pausados e um recovery local e baixado. Falhas revertem os apps
+tocados em ordem reversa e a sincronizacao so e liberada depois do estado final.
+
+A `16.6` consolidou 17 testes de recuperacao em um comando unico, incluindo
+arquivo corrompido, recovery indisponivel, falha de pausa, rollback completo e
+incompleto, falha de rede no Japanese Study e round-trip protegido com os tres
+adaptadores reais. Com essa matriz aprovada, a Fase 16 foi encerrada.
+
+A `17.1` consolidou a matriz de ameacas, os limites de confianca e uma baseline
+executavel com 5 verificacoes. A `17.2` adicionou 10 testes focados nas rules e
+4 fluxos integrados com clientes reais nos emuladores de Authentication e
+Firestore, cobrindo cadastro pendente, aprovacao, isolamento por UID e logout.
+
+A `17.3` possui o inicializador compartilhado do App Check preparado antes de
+Auth e Firestore, com bypass para emuladores, debug restrito ao localhost e 6
+testes automatizados. O Web App foi registrado com reCAPTCHA Enterprise e a
+site key publica foi incluida no cliente. O artefato Pages voltou a ser
+reproduzivel no Windows apos fixar os bytes dos pacotes content-addressed e foi
+validado com 1.582 arquivos. A observacao real aguarda o deploy.
+
+Etapa atual: **concluir a ativacao sem enforcement da Fase 17.3**.
 
 ## 8. Protocolo de Atualizacao do Roteiro
 

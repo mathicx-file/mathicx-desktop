@@ -17,6 +17,8 @@ class FinancesFirebaseSync {
     this.pendingConflict = null;
     this.uploadPromise = null;
     this.syncMetadata = { revision: 0, dirty: false };
+    this.restoreDepth = 0;
+    this.restoreDirty = false;
   }
 
   async init({ storage }) {
@@ -120,6 +122,10 @@ class FinancesFirebaseSync {
 
   scheduleUpload() {
     if (this.hydrating || !this.flags?.firestoreFinancesWriteEnabled) return;
+    if (this.restoreDepth > 0) {
+      this.restoreDirty = true;
+      return;
+    }
     this.emitStatus({ state: 'syncing', message: 'Alteracoes locais aguardando envio.' });
     clearTimeout(this.writeTimer);
     this.writeTimer = setTimeout(() => {
@@ -199,6 +205,23 @@ class FinancesFirebaseSync {
       });
       return { ok: false, reason: 'upload-failed', error };
     }
+  }
+
+  beginRestore() {
+    this.restoreDepth += 1;
+    clearTimeout(this.writeTimer);
+    this.emitStatus({ state: 'restoring', message: 'Restauracao local em andamento.' });
+    return { ok: true, depth: this.restoreDepth };
+  }
+
+  endRestore({ commit = false } = {}) {
+    this.restoreDepth = Math.max(0, this.restoreDepth - 1);
+    if (this.restoreDepth > 0) return { ok: true, depth: this.restoreDepth };
+    const dirty = this.restoreDirty;
+    this.restoreDirty = false;
+    if (dirty) this.scheduleUpload();
+    else this.emitStatus({ state: 'synced', message: commit ? 'Restauracao concluida.' : 'Estado anterior restaurado.' });
+    return { ok: true, commit, pendingSync: dirty };
   }
 
   async resolveConflict(strategy) {

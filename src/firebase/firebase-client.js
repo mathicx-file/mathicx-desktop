@@ -9,6 +9,7 @@ import { getFirestore } from 'https://www.gstatic.com/firebasejs/12.15.0/firebas
 
 import { firebaseConfig as productionConfig } from './firebase-config.prod.js';
 import { featureFlags, isFirebaseRuntimeEnabled } from './feature-flags.js';
+import { initializeFirebaseAppCheck } from './firebase-app-check.js';
 import { connectFirebaseEmulators } from './firebase-emulators.js';
 
 let firebaseServices = null;
@@ -36,10 +37,13 @@ export async function initFirebase({ force = false } = {}) {
   validateFirebaseConfig(config);
 
   const app = getApps().length ? getApp() : initializeApp(config);
+  const appCheck = await initializeFirebaseAppCheck(app, config, {
+    emulatorsEnabled: featureFlags.firebaseEmulatorsEnabled,
+  });
   const auth = getAuth(app);
   const firestore = getFirestore(app);
 
-  firebaseServices = { app, auth, firestore, config };
+  firebaseServices = { app, appCheck, auth, firestore, config };
 
   if (featureFlags.firebaseEmulatorsEnabled) {
     connectFirebaseEmulators(firebaseServices);

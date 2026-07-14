@@ -164,6 +164,16 @@
     return firebaseSyncModule.financesFirebaseSync.syncNow();
   }
 
+  function beginFirebaseRestore() {
+    return firebaseSyncModule?.financesFirebaseSync?.beginRestore()
+      || { ok: true, supported: false };
+  }
+
+  function endFirebaseRestore(payload) {
+    return firebaseSyncModule?.financesFirebaseSync?.endRestore(payload)
+      || { ok: true, supported: false };
+  }
+
   async function resolveFirebaseConflict(strategy) {
     if (!firebaseSyncModule?.financesFirebaseSync) {
       return { ok: false, reason: 'not-ready' };
@@ -660,6 +670,8 @@
     renderProfileSelector,
     getFirebaseSyncStatus,
     syncFirebaseNow,
+    beginFirebaseRestore,
+    endFirebaseRestore,
     resolveFirebaseConflict,
     updateFirebaseSyncPanel
   });

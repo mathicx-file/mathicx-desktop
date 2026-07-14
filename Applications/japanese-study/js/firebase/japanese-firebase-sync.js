@@ -12,6 +12,9 @@ class JapaneseFirebaseSync {
     this.hydrating = false;
     this.writeTimer = null;
     this.onStorageChange = null;
+    this.restoreDepth = 0;
+    this.restoreDirty = false;
+    this.restoreMode = 'merge';
   }
 
   async init({ storage }) {
@@ -89,6 +92,10 @@ class JapaneseFirebaseSync {
 
   scheduleUpload() {
     if (this.hydrating || !this.flags?.firestoreJapaneseWriteEnabled) return;
+    if (this.restoreDepth > 0) {
+      this.restoreDirty = true;
+      return;
+    }
     this.emitStatus({ state: 'syncing', message: 'Alteracoes locais aguardando envio.' });
     clearTimeout(this.writeTimer);
     this.writeTimer = setTimeout(() => {
@@ -103,11 +110,11 @@ class JapaneseFirebaseSync {
     }, WRITE_DEBOUNCE_MS);
   }
 
-  async uploadNow(reason = 'manual') {
+  async uploadNow(reason = 'manual', options = {}) {
     if (!this.repo || !this.uid) return null;
     this.emitStatus({ state: 'syncing', message: 'Enviando dados para o Firebase.' });
     const backup = await this.storage.exportBackup();
-    const counts = await this.repo.saveSnapshot(this.uid, backup);
+    const counts = await this.repo.saveSnapshot(this.uid, backup, options);
     const lastSyncedAt = new Date().toISOString();
     this.storage.emitChange('firebase-sync-updated', { reason, counts, lastSyncedAt });
     this.emitStatus({
@@ -146,6 +153,37 @@ class JapaneseFirebaseSync {
     }
   }
 
+  beginRestore() {
+    if (!this.ready) {
+      throw new Error('A sincronizacao do Japanese Study ainda nao esta pronta para restaurar dados.');
+    }
+    this.restoreDepth += 1;
+    if (this.restoreDepth === 1) this.restoreMode = 'merge';
+    clearTimeout(this.writeTimer);
+    this.emitStatus({ state: 'restoring', message: 'Restauracao local em andamento.' });
+    return { ok: true, depth: this.restoreDepth };
+  }
+
+  async commitRestoreImport(mode = 'merge') {
+    if (this.restoreDepth <= 0) return { ok: true, deferred: false };
+    this.restoreMode = mode === 'replace' ? 'replace' : this.restoreMode;
+    const counts = await this.uploadNow('restore', {
+      replaceRemote: this.restoreMode === 'replace',
+    });
+    this.restoreDirty = false;
+    return { ok: true, counts, mode: this.restoreMode };
+  }
+
+  endRestore({ commit = false } = {}) {
+    this.restoreDepth = Math.max(0, this.restoreDepth - 1);
+    if (this.restoreDepth > 0) return { ok: true, depth: this.restoreDepth };
+    const dirty = this.restoreDirty;
+    this.restoreDirty = false;
+    if (dirty) this.scheduleUpload();
+    else this.emitStatus({ state: 'synced', message: commit ? 'Restauracao concluida.' : 'Estado anterior restaurado.' });
+    return { ok: true, commit, pendingSync: dirty };
+  }
+
   emitStatus(detail) {
     window.dispatchEvent(new CustomEvent('japanese:firebase-sync-status', {
       detail: {
@@ -162,6 +200,9 @@ class JapaneseFirebaseSync {
     }
     this.onStorageChange = null;
     this.ready = false;
+    this.restoreDepth = 0;
+    this.restoreDirty = false;
+    this.restoreMode = 'merge';
   }
 }
 

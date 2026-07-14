@@ -36,3 +36,12 @@ Applications/**/node_modules/
 # Firebase local configuration
 src/firebase/firebase-config.local.js
 src/firebase/*.local.js
+
+# Firebase privileged credentials and App Check debug material
+serviceAccountKey.json
+*-firebase-adminsdk-*.json
+firebase-admin-key*.json
+app-check-debug-token*
+.env
+.env.*
+!.env.example

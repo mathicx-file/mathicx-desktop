@@ -6,4 +6,10 @@ export const firebaseConfig = {
   messagingSenderId: '883696620025',
   appId: '1:883696620025:web:135b5d1bbf638a24056d28',
   measurementId: 'G-C6FZ87VV0T',
+  appCheck: {
+    enabled: true,
+    provider: 'recaptcha-enterprise',
+    siteKey: '6Lclo1MtAAAAAJ14V7keajqlyrzquJ_pEh3vSUm-',
+    debug: false,
+  },
 };

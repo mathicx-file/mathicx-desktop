@@ -26,6 +26,7 @@ import { toast } from '../ui/toast.js';
 import { authProvider } from '../auth/provider.js';
 import { LoginScreen } from '../auth/login-screen.js';
 import { desktopSync } from '../data/desktop/desktop-sync.js';
+import { registerDesktopAppData } from '../data/desktop/desktop-app-data.js';
 
 class Kernel {
   constructor() {
@@ -37,6 +38,7 @@ class Kernel {
     /** Subsistemas inicializados na ordem de boot. */
     this.modules = {};
     this._booted = false;
+    this._disposeDesktopAppData = registerDesktopAppData({ store, sync: desktopSync });
   }
 
   async boot() {
