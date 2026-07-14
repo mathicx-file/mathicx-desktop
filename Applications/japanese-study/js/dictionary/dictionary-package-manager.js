@@ -75,16 +75,22 @@ export class DictionaryPackageManager {
     }
 
     const previous = await this.repository.getPackageState(item.version, item.id);
-    if (previous?.status === 'ready') return { ...previous, status: 'ready', reused: true };
+    const updating = previous?.status === 'ready'
+      && normalizeDistributionRevision(previous.distributionRevision) < item.distributionRevision;
+    if (previous?.status === 'ready' && !updating) {
+      return { ...previous, status: 'ready', reused: true };
+    }
     await this.storageManager?.assertCapacity(item.estimatedByteLength, {
       version: item.version,
       packageId: item.id,
     });
-    await this.repository.setPackageState(item.version, item.id, {
-      status: 'installing',
-      startedAt: previous?.startedAt || this.now(),
-      resumedAt: previous ? this.now() : null,
-    });
+    if (!updating) {
+      await this.repository.setPackageState(item.version, item.id, {
+        status: 'installing',
+        startedAt: previous?.startedAt || this.now(),
+        resumedAt: previous ? this.now() : null,
+      });
+    }
 
     let currentPath = item.manifest.path;
     try {
@@ -136,6 +142,7 @@ export class DictionaryPackageManager {
         status: 'ready',
         packageId: item.id,
         version: item.version,
+        distributionRevision: item.distributionRevision,
         manifest,
         manifestDescriptor: { ...item.manifest },
         artifactCount: descriptors.length,
@@ -147,14 +154,19 @@ export class DictionaryPackageManager {
       await this.repository.setPackageState(item.version, item.id, result);
       return result;
     } catch (error) {
-      await this.repository.setPackageState(item.version, item.id, {
+      const failure = {
+        path: currentPath,
+        code: error?.name === 'QuotaExceededError' ? 'quota-exceeded' : 'installation-failed',
+        message: error?.message || String(error),
+      };
+      await this.repository.setPackageState(item.version, item.id, updating ? {
+        status: 'ready',
+        updateFailedAt: this.now(),
+        updateFailure: failure,
+      } : {
         status: 'interrupted',
         interruptedAt: this.now(),
-        failure: {
-          path: currentPath,
-          code: error?.name === 'QuotaExceededError' ? 'quota-exceeded' : 'installation-failed',
-          message: error?.message || String(error),
-        },
+        failure,
       }).catch(() => {});
       throw error;
     }
@@ -205,6 +217,7 @@ export function validatePackageCatalog(catalog) {
     if (!item.packageId || !item.name || !item.description || !VERSION_PATTERN.test(String(item.version || ''))) {
       throw new Error(`Dictionary package metadata is incomplete: ${item.id}`);
     }
+    const distributionRevision = normalizeDistributionRevision(item.distributionRevision);
     if (!['included', 'available', 'planned'].includes(item.availability)) {
       throw new Error(`Unsupported dictionary package availability: ${item.id}`);
     }
@@ -225,7 +238,7 @@ export function validatePackageCatalog(catalog) {
     if (item.availability !== 'available' && item.manifest) {
       throw new Error(`Unpublished dictionary package cannot have a manifest: ${item.id}`);
     }
-    return { ...item };
+    return { ...item, distributionRevision };
   });
   if (packages.filter((item) => item.required).length !== 1) {
     throw new Error('Dictionary package catalog must contain exactly one required package.');
@@ -239,7 +252,8 @@ export function validatePackageManifest(manifest, catalogItem) {
   }
   if (manifest.id !== catalogItem.id || manifest.packageId !== catalogItem.packageId
     || manifest.dictionaryVersion !== catalogItem.version || !Array.isArray(manifest.artifacts)
-    || !manifest.artifacts.length) {
+    || !manifest.artifacts.length
+    || normalizeDistributionRevision(manifest.distributionRevision) !== catalogItem.distributionRevision) {
     throw new Error(`Dictionary offline package identity is invalid: ${catalogItem.id}`);
   }
   const paths = new Set();
@@ -254,6 +268,7 @@ export function validatePackageManifest(manifest, catalogItem) {
   const routeDescriptors = [
     manifest.routes?.entries,
     ...['written', 'reading', 'romaji', 'pt'].map((kind) => manifest.routes?.indexes?.[kind]),
+    ...(manifest.routes?.browse ? [manifest.routes.browse] : []),
   ];
   routeDescriptors.forEach((descriptor) => {
     validateDescriptor(descriptor);
@@ -291,6 +306,10 @@ function packageView(item, state, matchingStates, cacheState, catalogSource) {
     }
     return { ...base, installed: true, status: 'online-only' };
   }
+  if (state?.status === 'ready'
+    && normalizeDistributionRevision(state.distributionRevision) < item.distributionRevision) {
+    return { ...base, installed: true, status: 'outdated', state };
+  }
   if (state?.status === 'ready') return { ...base, installed: true, status: 'ready', state };
   if (state?.status === 'installing' || state?.status === 'interrupted') {
     return { ...base, installed: false, status: state.status, state };
@@ -322,4 +341,12 @@ async function mapWithConcurrency(items, limit, task) {
 function normalizeConcurrency(value) {
   const concurrency = Number(value ?? 3);
   return Number.isSafeInteger(concurrency) && concurrency > 0 ? Math.min(concurrency, 3) : 3;
+}
+
+function normalizeDistributionRevision(value) {
+  const revision = Number(value ?? 1);
+  if (!Number.isSafeInteger(revision) || revision < 1) {
+    throw new Error(`Invalid dictionary package distribution revision: ${value}`);
+  }
+  return revision;
 }

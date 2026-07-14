@@ -1,4 +1,4 @@
-import { LazyDictionarySource } from './lazy-dictionary-source.js?v=15.7';
+import { LazyDictionarySource } from './lazy-dictionary-source.js?v=15.9';
 
 const PACKAGE_FORMAT = 'mathicx-japanese-dictionary-offline-package';
 
@@ -154,10 +154,16 @@ export class LayeredDictionarySource {
 function validateInstalledManifest(manifest, state) {
   if (manifest?.format !== PACKAGE_FORMAT || manifest.schemaVersion !== 1
     || manifest.id !== state.packageId || manifest.dictionaryVersion !== state.version
+    || normalizeDistributionRevision(manifest.distributionRevision) !== normalizeDistributionRevision(state.distributionRevision)
     || !manifest.routes?.entries || !manifest.routes?.indexes) {
     throw new Error(`Installed dictionary package manifest is invalid: ${state.packageId}`);
   }
   return manifest;
+}
+
+function normalizeDistributionRevision(value) {
+  const revision = Number(value || 1);
+  return Number.isSafeInteger(revision) && revision > 0 ? revision : 1;
 }
 
 function toRuntimeManifest(manifest) {

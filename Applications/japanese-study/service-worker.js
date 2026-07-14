@@ -1,5 +1,5 @@
 const SHELL_CACHE_PREFIX = 'mathicx-japanese-shell-';
-const SHELL_CACHE_NAME = `${SHELL_CACHE_PREFIX}v3`;
+const SHELL_CACHE_NAME = `${SHELL_CACHE_PREFIX}v6`;
 const SHELL_REPAIR_CACHE_NAME = `${SHELL_CACHE_NAME}-repair`;
 const DICTIONARY_PATH_MARKER = '/data/dictionary/';
 const SHELL_PATHS = [
@@ -35,8 +35,10 @@ const SHELL_PATHS = [
   './js/dictionary/dictionary-storage-manager.js',
   './js/dictionary/dictionary-update-manager.js',
   './js/dictionary/installed-dictionary-packages-source.js',
+  './js/dictionary/kana-romanizer.js',
   './js/dictionary/lazy-dictionary-source.js',
   './js/dictionary/legacy-dictionary-source.js',
+  './js/vendor/wanakana.js',
   './data/hiragana.json',
   './data/katakana.json',
   './data/kanji.json',

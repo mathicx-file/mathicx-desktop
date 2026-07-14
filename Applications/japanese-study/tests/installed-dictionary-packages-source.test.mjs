@@ -37,6 +37,8 @@ test('searches a gzip package from cache and composes it with the essential sour
 
   const page = await layered.browse({ packageId: 'core', page: 1, pageSize: 20 });
   assert.deepEqual(page.entries.map((entry) => entry.id), ['jmdict-999']);
+  assert.deepEqual(page.entries[0].romaji, ['inu']);
+  assert.equal(page.order, 'romaji-asc-pages');
   assert.equal(page.total, 1);
   assert.equal(page.hasNext, false);
   assert.deepEqual((await layered.search('inu', { packageId: 'core' })).map((entry) => entry.id), ['jmdict-999']);
@@ -93,6 +95,16 @@ function createInstalledFixture() {
   const payloads = new Map();
   const entryDescriptor = addArtifact(payloads, `packages/${version}/core/entries/${entryBucket}.json.gz`, entryShard, 'entry-shard');
   const romajiDescriptor = addArtifact(payloads, `packages/${version}/core/indexes/romaji/i.json.gz`, romajiShard, 'index-shard');
+  const browseDescriptor = addArtifact(payloads, `packages/${version}/core/browse/0000.json.gz`, {
+    schemaVersion: 1,
+    kind: 'dictionary-browse-page',
+    packageId,
+    dictionaryVersion: version,
+    order: 'romaji-asc-pages',
+    pageId: '0000',
+    rows: [[entryId, '犬', 'いぬ', 'inu', 'dog', 'kanji', 'noun']],
+    counts: { all: 1, hiragana: 0, katakana: 0, kanji: 1 },
+  }, 'browse-page');
   const routes = {
     entries: addArtifact(payloads, `packages/${version}/core/routes/entries.json.gz`, {
       schemaVersion: 1,
@@ -118,6 +130,16 @@ function createInstalledFixture() {
         addArtifact(payloads, `packages/${version}/core/routes/${kind}.json.gz`, payload, 'route'),
       ])),
     },
+    browse: addArtifact(payloads, `packages/${version}/core/routes/browse.json.gz`, {
+      schemaVersion: 1,
+      kind: 'dictionary-browse-routes',
+      packageId,
+      dictionaryVersion: version,
+      order: 'romaji-asc-pages',
+      pageSize: 1000,
+      coverage: { all: 1, hiragana: 0, katakana: 0, kanji: 1 },
+      pages: { '0000': { artifact: browseDescriptor, counts: { all: 1, hiragana: 0, katakana: 0, kanji: 1 } } },
+    }, 'route'),
   };
   const manifest = {
     format: 'mathicx-japanese-dictionary-offline-package',
@@ -125,10 +147,11 @@ function createInstalledFixture() {
     id: 'core',
     packageId,
     dictionaryVersion: version,
+    distributionRevision: 2,
     routes,
     artifacts: [...payloads.keys()],
   };
-  const state = { status: 'ready', packageId: 'core', version, manifest, updatedAt: 1 };
+  const state = { status: 'ready', packageId: 'core', version, distributionRevision: 2, manifest, updatedAt: 1 };
   return {
     repository: {
       networkRequests: 0,

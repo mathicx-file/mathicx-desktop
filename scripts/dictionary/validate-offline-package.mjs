@@ -41,9 +41,11 @@ const routes = {
   indexes: Object.fromEntries(['written', 'reading', 'romaji', 'pt'].map((kind) => (
     [kind, requirePayload(manifest.routes.indexes[kind], payloads)]
   ))),
+  browse: requirePayload(manifest.routes.browse, payloads),
 };
 validateRoute(routes.entries, manifest, 'entries');
 for (const [kind, route] of Object.entries(routes.indexes)) validateRoute(route, manifest, kind);
+validateRoute(routes.browse, manifest, 'browse');
 
 let lexicalEntries = 0;
 for (const [bucket, descriptor] of Object.entries(routes.entries.buckets)) {
@@ -80,6 +82,31 @@ for (const [kind, route] of Object.entries(routes.indexes)) {
   }
 }
 
+const browseRows = [];
+const browseCounts = { all: 0, hiragana: 0, katakana: 0, kanji: 0 };
+for (const [pageId, item] of Object.entries(routes.browse.pages)) {
+  assertManifestDescriptor(item.artifact, descriptors);
+  const page = await readPayload(root, item.artifact);
+  if (page.kind !== 'dictionary-browse-page' || page.pageId !== pageId
+    || page.packageId !== manifest.packageId || page.dictionaryVersion !== manifest.dictionaryVersion
+    || page.order !== routes.browse.order || !Array.isArray(page.rows)
+    || JSON.stringify(page.counts) !== JSON.stringify(item.counts)) {
+    throw new TypeError(`Invalid package browse page: ${pageId}`);
+  }
+  for (const row of page.rows) {
+    validateBrowseRow(row);
+    browseRows.push(row);
+    browseCounts.all += 1;
+    browseCounts[row[5]] += 1;
+  }
+}
+if (new Set(browseRows.map((row) => row[0])).size !== browseRows.length
+  || browseRows.length !== lexicalEntries
+  || JSON.stringify(browseRows) !== JSON.stringify([...browseRows].sort(compareBrowseRows))
+  || JSON.stringify(browseCounts) !== JSON.stringify(routes.browse.coverage)) {
+  throw new TypeError('Package browse coverage or ordering is inconsistent.');
+}
+
 console.log(JSON.stringify({
   valid: true,
   id: manifest.id,
@@ -88,6 +115,7 @@ console.log(JSON.stringify({
   artifacts: manifest.artifacts.length + 1,
   entryShards: Object.keys(routes.entries.buckets).length,
   indexShards,
+  browsePages: Object.keys(routes.browse.pages).length,
   lexicalEntries,
   compressedBytes,
   expandedBytes,
@@ -97,18 +125,41 @@ function validateManifest(manifest) {
   if (manifest?.format !== 'mathicx-japanese-dictionary-offline-package' || manifest.schemaVersion !== 1
     || !manifest.id || !manifest.packageId || !manifest.dictionaryVersion
     || !Array.isArray(manifest.artifacts) || !manifest.artifacts.length
-    || !manifest.routes?.entries || !manifest.routes?.indexes) {
+    || !manifest.routes?.entries || !manifest.routes?.indexes || !manifest.routes?.browse
+    || !Number.isSafeInteger(manifest.distributionRevision) || manifest.distributionRevision < 1) {
     throw new TypeError('Offline package manifest is invalid.');
   }
 }
 
 function validateRoute(route, manifest, kind) {
-  const expectedKind = kind === 'entries' ? 'dictionary-entry-routes' : 'dictionary-search-routes';
+  const expectedKind = kind === 'entries' ? 'dictionary-entry-routes'
+    : kind === 'browse' ? 'dictionary-browse-routes' : 'dictionary-search-routes';
   if (route?.kind !== expectedKind || route.packageId !== manifest.packageId
-    || route.dictionaryVersion !== manifest.dictionaryVersion || !route.buckets
-    || (kind !== 'entries' && route.indexKind !== kind)) {
+    || route.dictionaryVersion !== manifest.dictionaryVersion
+    || (kind === 'browse' ? !route.pages : !route.buckets)
+    || (kind === 'browse' && (route.order !== 'romaji-asc-pages'
+      || !Number.isSafeInteger(route.pageSize) || route.pageSize < 100
+      || !route.coverage || typeof route.coverage !== 'object'))
+    || (!['entries', 'browse'].includes(kind) && route.indexKind !== kind)) {
     throw new TypeError(`Offline package route is invalid: ${kind}`);
   }
+}
+
+function validateBrowseRow(row) {
+  if (!Array.isArray(row) || row.length !== 7 || row.some((value) => typeof value !== 'string')
+    || !row[0] || !row[1] || !row[2] || !row[3]
+    || !['hiragana', 'katakana', 'kanji'].includes(row[5])) {
+    throw new TypeError(`Invalid package browse row: ${row?.[0] || '<unknown>'}`);
+  }
+}
+
+function compareBrowseRows(left, right) {
+  return compareText(left[3], right[3]) || compareText(left[2], right[2])
+    || compareText(left[1], right[1]) || compareText(left[0], right[0]);
+}
+
+function compareText(left, right) {
+  return left === right ? 0 : left < right ? -1 : 1;
 }
 
 function assertManifestDescriptor(descriptor, descriptors) {

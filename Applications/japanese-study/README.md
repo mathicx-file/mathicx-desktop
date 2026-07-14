@@ -21,7 +21,7 @@ O projeto usa HTML, CSS e JavaScript vanilla com ES Modules. Nao ha framework, e
 ## Recursos
 
 - Estudo de hiragana, katakana e uma fatia inicial de Kanji N5.
-- Busca por romaji, kana, kanji, leitura, significado, radical, tag e vocabulario.
+- Busca por romaji, kana, kanji, leitura, significado, radical, tag e vocabulario; o romaji dos pacotes ampliados e derivado das leituras com WanaKana e a navegacao e ordenada globalmente por romaji.
 - Dicionario local com palavras em kana e kanji.
 - Dashboard com progresso, atividade recente, tempo de estudo, SRS, Kanji N5 e ultimos caracteres vistos.
 - Gamificacao local-first com XP, niveis, missoes, conquistas persistidas, metas configuraveis e caderno de erros.

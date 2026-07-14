@@ -4,7 +4,7 @@
 >
 > Status: fonte oficial de planejamento e execucao
 >
-> Fase atual: Fase 15 concluida; Fase 16 e o proximo marco planejado
+> Fase atual: Fase 15 concluida; Fase 16 e o proximo marco oficial
 
 ## 1. Autoridade Deste Documento
 
@@ -437,7 +437,7 @@ releases reais foi incorporada ao criterio da Fase 15.6.
 
 ### Fase 15: Dicionario Ampliado, Pacotes Offline e PWA
 
-Status: **Concluida**.
+Status: **Concluida e aprovada em 2026-07-14**.
 
 Origem: antiga Fase 12 revisada.
 
@@ -461,8 +461,9 @@ Subfases previstas:
 - `15.4`: experiencia offline e recuperacao - **concluida**;
 - `15.5`: Service Worker opcional - **concluida**;
 - `15.6`: validacao e primeira promocao real - **concluida**;
-- `15.7`: navegacao pelos pacotes instalados - **implementada; aguardando
-  validacao do proprietario**.
+- `15.7`: navegacao pelos pacotes instalados - **concluida e aprovada**;
+- `15.8`: romaji completo na exibicao - **concluida e aprovada**;
+- `15.9`: indice global ordenado por romaji - **concluida e aprovada**.
 
 Criterios de aceite:
 
@@ -569,7 +570,8 @@ Cada item aprovado deve virar subfase `18.x`, com motivacao, custo, risco e crit
 
 ## 7. Direcao Atual
 
-O projeto concluiu a **Fase 15: Dicionario Ampliado, Pacotes Offline e PWA**.
+O projeto concluiu e teve aprovada a **Fase 15: Dicionario Ampliado, Pacotes
+Offline e PWA** em 2026-07-14.
 A `15.1` definiu e mediu as camadas `essential/core/full`. A `15.2` implementou
 o catalogo e o ciclo seguro de instalacao/remocao. A `15.3` acrescentou medicao
 de uso, preflight de quota e solicitacao de persistencia, com interface aprovada
@@ -591,7 +593,25 @@ apenas quatro buckets decodificados em memoria. O Service Worker foi atualizado
 para `v3`, com modulos versionados, para impedir a mistura de arquivos de
 releases diferentes depois de um deploy. A implementacao automatizada passou em
 desktop e celular, e o artefato final validado possui 1.319 arquivos e
-27.120.050 bytes. A subfase aguarda apenas a validacao visual do proprietario.
+27.120.050 bytes. A subfase foi aprovada pelo proprietario.
+
+A `15.8` corrige os verbetes sem romaji visivel. O shell passa a incluir o
+WanaKana `5.3.1` como modulo ESM e deriva a romanizacao Hepburn de todas as
+leituras quando cada shard e aberto. Os indices de pesquisa e os 885 artefatos
+opcionais permanecem inalterados. O Service Worker foi promovido para `v4`.
+A validacao real confirmou 50 de 50 romajis na primeira pagina do pacote `full`,
+online e depois de uma recarga sem rede. O Pages final possui 1.321 arquivos e
+27.183.551 bytes.
+
+A `15.9` adicionou paginas compactas ordenadas por romaji para a navegacao
+global. O pacote `core` possui 31 paginas e 4.091.232 bytes; o `full` possui 218
+paginas e 29.507.478 bytes. A revisao de distribuicao `2` permite atualizar uma
+instalacao existente reaproveitando os shards inalterados. O runtime carrega no
+maximo quatro paginas de navegacao em memoria e preserva compatibilidade com
+manifestos antigos. A lista possui controles de pagina sincronizados no topo e
+no rodape. A validacao em Chromium cobriu paginas consecutivas, filtro
+de kanji, pagina 21 sem rede e viewport de 390 px. O Pages final possui 1.572
+arquivos e 35.419.550 bytes.
 
 Validacao final:
 
@@ -605,6 +625,13 @@ Fase 15.7 implementada
   -> seletor e paginacao por pacote instalado
   -> busca limitada ao pacote selecionado
   -> atualizacao consistente do shell validada
+Fase 15.8 implementada
+  -> romaji Hepburn derivado de todas as leituras
+  -> pacotes existentes preservados
+Fase 15.9 implementada
+  -> navegacao global ordenada por romaji
+  -> core com 31 paginas e full com 218 paginas
+  -> atualizacao incremental por revisao de distribuicao
 ```
 
 Nenhuma intervencao no Console Firebase e necessaria. A promocao modifica apenas

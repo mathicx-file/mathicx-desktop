@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "strategy": "romaji-asc-pages",
+  "pageSize": 1000,
+  "definitionMode": "first-gloss"
+}

@@ -4,6 +4,7 @@
   "id": "core",
   "packageId": "core-common",
   "dictionaryVersion": "2026.07.13-3",
+  "distributionRevision": 2,
   "encoding": "gzip",
   "routes": {
     "entries": {
@@ -42,6 +43,13 @@
         "kind": "route",
         "encoding": "gzip"
       }
+    },
+    "browse": {
+      "path": "packages/2026.07.13-3/core/routes/browse.json.gz",
+      "byteLength": 2142,
+      "sha256": "d65f72619dd78aa6e995289f27d8aa4d217a21db97b25ca39d8adb11f8a95129",
+      "kind": "route",
+      "encoding": "gzip"
     }
   },
   "artifacts": [
@@ -77,6 +85,13 @@
       "path": "packages/2026.07.13-3/core/routes/pt.json.gz",
       "byteLength": 230,
       "sha256": "35895349f22ac5ce8203b845299c218afd711ec8ecffe7797ef9a50365242c24",
+      "kind": "route",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/routes/browse.json.gz",
+      "byteLength": 2142,
+      "sha256": "d65f72619dd78aa6e995289f27d8aa4d217a21db97b25ca39d8adb11f8a95129",
       "kind": "route",
       "encoding": "gzip"
     },
@@ -1520,6 +1535,223 @@
       "byteLength": 3299,
       "sha256": "9268db597b6a5b9ef40d791ed2188cd92699ffe54396ff01265c8af2daf6ab86",
       "kind": "index-shard",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0000.json.gz",
+      "byteLength": 28960,
+      "sha256": "d1592b567822cdb17c9e82d7035489cba94de9b47ba65a5c0e55a3ad46950ac6",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0001.json.gz",
+      "byteLength": 27126,
+      "sha256": "5cbabd69517be8bf6632bfe1bf982aaa2067f2f971605ca9acad952ec497eaa7",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0002.json.gz",
+      "byteLength": 27972,
+      "sha256": "c1b445189eab8e68234acc2e57e72752a101b47e03c1a3e322827225d11c60e8",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0003.json.gz",
+      "byteLength": 27502,
+      "sha256": "3195b4659ef3e9f48dd93a551dc6ffcdbc96b363d3f1337c700d4dcad89a77b2",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0004.json.gz",
+      "byteLength": 27370,
+      "sha256": "f4a1f592b9576b9e30f7829832fc672c3728fd71066944ec87d055e4209d9e43",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0005.json.gz",
+      "byteLength": 27647,
+      "sha256": "f8c3bc096e8cd974301fe88a4aaa97b753df1c086a1415a02dd63b550d82a0fb",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0006.json.gz",
+      "byteLength": 27495,
+      "sha256": "07616ee034ab522b94fd636a161a10d6593f82feba73e873bb2f118147879dab",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0007.json.gz",
+      "byteLength": 27511,
+      "sha256": "8b1af43f04d30c429996ae72cf96cd0dd3d5b0ae2b0cc796274dc0937fc4fb18",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0008.json.gz",
+      "byteLength": 27845,
+      "sha256": "cc3670ef49ee616f73f98051f69230a709c5a0df6c0ccc13277e6f268e398cc6",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0009.json.gz",
+      "byteLength": 26950,
+      "sha256": "b11987dfdb573ceba65c3c7bcc83dbbe5bd4c550f1afe1fbd538bc7f40fe90ea",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0010.json.gz",
+      "byteLength": 27486,
+      "sha256": "99c2c1d31230c7ff03d71368442cc53f441358a3d7023e18115a1bfe229f69ca",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0011.json.gz",
+      "byteLength": 27561,
+      "sha256": "aa38765257f55148a371b19e9e4db8d61635bdf391f795121f0a3cceb9f02d84",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0012.json.gz",
+      "byteLength": 27366,
+      "sha256": "6229f420ea9ff46be24c27d50454168a8b16a3f67f686e8278f328aabc28169f",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0013.json.gz",
+      "byteLength": 27043,
+      "sha256": "0ca9436ed3f340a4fed9033bb63ae06d0452ef8461b4e15363019fcfa5b11809",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0014.json.gz",
+      "byteLength": 27103,
+      "sha256": "4518425b14fc6e3977f3a5d4b1584dbb668076d9687ac644bd84b2973fff3b7c",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0015.json.gz",
+      "byteLength": 27987,
+      "sha256": "b5829dc18f2e025c0df65a1197e850224d6d017f5df9ce77a8928fa2c6bb1c7c",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0016.json.gz",
+      "byteLength": 28464,
+      "sha256": "e71d354da54f5ebf6d719d770b1f0296b8890c0ca61f1acd8d23805ecc5a2740",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0017.json.gz",
+      "byteLength": 28372,
+      "sha256": "2e38bc794437aaed0b782b95af5981473e2f3ba902d082d3eb28369d1b6f71af",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0018.json.gz",
+      "byteLength": 29115,
+      "sha256": "672f40b1ce0e0cdb7c02f2270fcb5cf67bcf5e6f4a4cd2fbf6de1190750a3b5b",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0019.json.gz",
+      "byteLength": 27030,
+      "sha256": "8405fbf5e30571c9a6a17aa31335fc2811b573471960f8ebaee53a5f71489c49",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0020.json.gz",
+      "byteLength": 26537,
+      "sha256": "f484fde3cf3a79210111b3a4d09f920d7b1a4bda08c3980109b5f62b15574ebf",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0021.json.gz",
+      "byteLength": 27244,
+      "sha256": "ce8729c3030bd85859ed27602ce253aae1bbb3315174cd833a85d12b630b4b90",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0022.json.gz",
+      "byteLength": 27000,
+      "sha256": "8176ce3b936beb018715276dcaa4b9c61c83dea2d4efc6d03cebed8f5b20a93e",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0023.json.gz",
+      "byteLength": 26643,
+      "sha256": "84b6e13f806176f3a32dcb6754317926f23ef19ddf05276e87d80b2d93d87a9e",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0024.json.gz",
+      "byteLength": 26859,
+      "sha256": "4fd1d0c9cc71f9dbd374936d50f014b2be4595e1f7d6a651cf614f4ea049c11c",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0025.json.gz",
+      "byteLength": 27107,
+      "sha256": "33358aadc697c13a2710dc356b39b2ed87adf0b4357e244a022b7ff48ebb4805",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0026.json.gz",
+      "byteLength": 27812,
+      "sha256": "5c2a0579d56d139c3cacafd7714b785632ecb485f6a27455c8f916c6f6d0b0a1",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0027.json.gz",
+      "byteLength": 27925,
+      "sha256": "90a96dc7baed104b3aec62396c80ccc8499d19fb6588271c3a43c4b9f5477529",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0028.json.gz",
+      "byteLength": 28878,
+      "sha256": "09bf95655f337ca182d700d819a1a1eb49b3dbe1560d8a1fa82f386dcdca209f",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0029.json.gz",
+      "byteLength": 27665,
+      "sha256": "cc9b9c9e640bb3f52186295ea63d56787ca23ff31b80a662191c7a3977624ba1",
+      "kind": "browse-page",
+      "encoding": "gzip"
+    },
+    {
+      "path": "packages/2026.07.13-3/core/browse/0030.json.gz",
+      "byteLength": 4502,
+      "sha256": "3bc9c5237a79bd0deb8102c5d79cd8b708eb89144047580d6b2c9f8495dd5343",
+      "kind": "browse-page",
       "encoding": "gzip"
     }
   ]

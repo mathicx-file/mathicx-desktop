@@ -170,11 +170,16 @@
         <span id="dictionary-page-summary" class="dictionary-page-summary" aria-live="polite"></span>
       </div>
 
+      <nav class="dictionary-pagination dictionary-pagination-top" aria-label="Paginas do dicionario no topo" hidden>
+        <button type="button" data-dictionary-page-action="previous">Anterior</button>
+        <span data-dictionary-page-number>Pagina 1</span>
+        <button type="button" data-dictionary-page-action="next">Proxima</button>
+      </nav>
       <div id="dictionary-grid" class="dictionary-table"></div>
       <nav id="dictionary-pagination" class="dictionary-pagination" aria-label="Paginas do dicionario" hidden>
-        <button id="dictionary-page-previous" type="button">Anterior</button>
-        <span id="dictionary-page-number">Pagina 1</span>
-        <button id="dictionary-page-next" type="button">Proxima</button>
+        <button id="dictionary-page-previous" type="button" data-dictionary-page-action="previous">Anterior</button>
+        <span id="dictionary-page-number" data-dictionary-page-number>Pagina 1</span>
+        <button id="dictionary-page-next" type="button" data-dictionary-page-action="next">Proxima</button>
       </nav>
     </section>
 
@@ -413,6 +418,7 @@
           <ul class="dictionary-credit-list">
             <li><a href="https://www.edrdg.org/edrdg/licence.html" target="_blank" rel="noopener noreferrer">JMdict e KANJIDIC2</a> <span>EDRDG &middot; CC BY-SA 4.0</span></li>
             <li><a href="https://github.com/KanjiVG/kanjivg/blob/master/COPYING" target="_blank" rel="noopener noreferrer">KanjiVG</a> <span>Ulrich Apel e contribuidores &middot; CC BY-SA 3.0</span></li>
+            <li><a href="https://github.com/WaniKani/WanaKana" target="_blank" rel="noopener noreferrer">WanaKana</a> <span>WaniKani e contribuidores &middot; MIT</span></li>
             <li><a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">Revis&atilde;o pt-BR Mathicx-File</a> <span>CC BY-SA 4.0</span></li>
           </ul>
         </section>
@@ -444,6 +450,6 @@
     </div>
   </div>
 
-  <script type="module" src="js/app.js?v=15.7"></script>
+  <script type="module" src="js/app.js?v=15.9.1"></script>
 </body>
 </html>

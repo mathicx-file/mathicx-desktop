@@ -1,10 +1,12 @@
 import { DictionaryCacheRepository } from './dictionary-cache-repository.js';
 import { sha256Hex, verifyArtifact } from './dictionary-cache-installer.js';
+import { romanizeDictionaryReadings } from './kana-romanizer.js';
 
 const DEFAULT_DATA_URL = new URL('../../data/dictionary/', import.meta.url);
 const DEFAULT_MANIFEST_URL = new URL('manifests/2026.07.13-3.json', DEFAULT_DATA_URL);
 const INDEX_KINDS = ['written', 'reading', 'romaji', 'pt'];
 const MAX_BROWSE_BUCKET_CACHE = 4;
+const MAX_BROWSE_PAGE_CACHE = 4;
 
 export class LazyDictionarySource {
   constructor(options = {}) {
@@ -26,6 +28,7 @@ export class LazyDictionarySource {
     this.metrics = createMetrics();
     this.browseBucketCounts = new Map();
     this.browseBucketCache = new Map();
+    this.browsePageCache = new Map();
 
     if (typeof this.fetchImpl !== 'function') {
       throw new Error('Fetch is unavailable for the sharded dictionary source.');
@@ -45,6 +48,7 @@ export class LazyDictionarySource {
     const routePairs = [
       ['entries', manifest.routes.entries],
       ...INDEX_KINDS.map((kind) => [kind, manifest.routes.indexes[kind]]),
+      ...(manifest.routes.browse ? [['browse', manifest.routes.browse]] : []),
     ];
     const loadedRoutes = await Promise.all(routePairs.map(async ([kind, descriptor]) => {
       const bytes = await this.loadArtifact(descriptor, 'route');
@@ -173,6 +177,9 @@ export class LazyDictionarySource {
 
   async browse(options = {}) {
     await this.load();
+    if (this.routes.browse) return this.browseSorted(options);
+    if (this.manifest.packageId === 'bootstrap-n5') return this.browseDefaultPack(options);
+
     const page = normalizePositiveInteger(options.page, 1);
     const pageSize = Math.min(normalizePositiveInteger(options.pageSize, 50), 100);
     const script = normalizeScript(options.script);
@@ -219,6 +226,71 @@ export class LazyDictionarySource {
       hasNext: hasNext || (Number.isSafeInteger(total) && offset + entries.length < total),
       packageId: this.manifest.packageId,
       dictionaryVersion: this.manifest.dictionaryVersion,
+      order: 'legacy-shard-order',
+    };
+  }
+
+  async browseSorted(options = {}) {
+    const page = normalizePositiveInteger(options.page, 1);
+    const pageSize = Math.min(normalizePositiveInteger(options.pageSize, 50), 100);
+    const script = normalizeScript(options.script) || 'all';
+    const offset = (page - 1) * pageSize;
+    const route = this.routes.browse;
+    const entries = [];
+    let matched = 0;
+
+    for (const pageRoute of Object.values(route.pages)) {
+      throwIfAborted(options.signal);
+      const pageCount = Number(pageRoute.counts?.[script] || 0);
+      if (matched + pageCount <= offset) {
+        matched += pageCount;
+        continue;
+      }
+
+      const rows = await this.loadBrowsePage(pageRoute.artifact, options.signal);
+      for (const row of rows) {
+        if (script !== 'all' && row[5] !== script) continue;
+        if (matched >= offset && entries.length < pageSize) entries.push(convertBrowseRow(row));
+        matched += 1;
+        if (entries.length === pageSize) break;
+      }
+      if (entries.length === pageSize) break;
+    }
+
+    const total = Number(route.coverage?.[script] || 0);
+    return {
+      entries,
+      page,
+      pageSize,
+      total,
+      hasPrevious: page > 1,
+      hasNext: offset + entries.length < total,
+      packageId: this.manifest.packageId,
+      dictionaryVersion: this.manifest.dictionaryVersion,
+      order: route.order,
+    };
+  }
+
+  async browseDefaultPack(options = {}) {
+    const page = normalizePositiveInteger(options.page, 1);
+    const pageSize = Math.min(normalizePositiveInteger(options.pageSize, 50), 100);
+    const script = normalizeScript(options.script);
+    const offset = (page - 1) * pageSize;
+    const bytes = await this.loadArtifact(this.manifest.defaultPack, 'pack', options.signal);
+    const pack = parseJson(bytes, this.manifest.defaultPack.path, this.decoder);
+    const sorted = filterByScript(convertPayloadEntries(pack.entries, pack.translations), script)
+      .sort(compareEntriesByRomaji);
+    const entries = sorted.slice(offset, offset + pageSize);
+    return {
+      entries,
+      page,
+      pageSize,
+      total: sorted.length,
+      hasPrevious: page > 1,
+      hasNext: offset + entries.length < sorted.length,
+      packageId: this.manifest.packageId,
+      dictionaryVersion: this.manifest.dictionaryVersion,
+      order: 'romaji-asc-pages',
     };
   }
 
@@ -267,6 +339,24 @@ export class LazyDictionarySource {
       this.browseBucketCache.delete(this.browseBucketCache.keys().next().value);
     }
     return entries;
+  }
+
+  async loadBrowsePage(descriptor, signal) {
+    const key = descriptor.path;
+    if (this.browsePageCache.has(key)) {
+      const rows = this.browsePageCache.get(key);
+      this.browsePageCache.delete(key);
+      this.browsePageCache.set(key, rows);
+      return rows;
+    }
+    const bytes = await this.loadArtifact(descriptor, 'browse-page', signal);
+    const payload = parseJson(bytes, descriptor.path, this.decoder);
+    validateBrowsePage(payload, this.manifest);
+    this.browsePageCache.set(key, payload.rows);
+    while (this.browsePageCache.size > MAX_BROWSE_PAGE_CACHE) {
+      this.browsePageCache.delete(this.browsePageCache.keys().next().value);
+    }
+    return payload.rows;
   }
 
   async loadArtifact(descriptor, kind, signal) {
@@ -418,11 +508,16 @@ function convertPayloadEntries(entries = [], translations = [], romajiHints = ne
     const headword = entry.writtenForms?.[0] || entry.readings?.[0] || '';
     const script = detectScript(headword || entry.readings?.[0]);
     const legacyRomaji = legacyRomajiHint(entryTranslations);
+    const romaji = [
+      romajiHints.get(entry.id),
+      legacyRomaji,
+      ...romanizeDictionaryReadings(entry.readings),
+    ].filter(Boolean);
     return {
       id: entry.id,
       headword,
       readings: entry.readings || [],
-      romaji: [romajiHints.get(entry.id) || legacyRomaji].filter(Boolean),
+      romaji: [...new Set(romaji)],
       meanings,
       scripts: [script],
       tags: [...new Set([
@@ -458,6 +553,14 @@ function validateRoute(route, manifest, expectedKind) {
   if (expectedKind === 'entries' && route.kind !== 'dictionary-entry-routes') {
     throw new Error('Invalid dictionary entry route.');
   }
+  if (expectedKind === 'browse') {
+    if (route.kind !== 'dictionary-browse-routes' || route.order !== 'romaji-asc-pages'
+      || !route.pages || typeof route.pages !== 'object'
+      || !route.coverage || typeof route.coverage !== 'object') {
+      throw new Error('Invalid dictionary browse route.');
+    }
+    return;
+  }
   if (expectedKind !== 'entries'
     && (route.kind !== 'dictionary-search-routes' || route.indexKind !== expectedKind)) {
     throw new Error(`Invalid dictionary index route: ${expectedKind}.`);
@@ -486,6 +589,46 @@ function validateEntryShard(shard, manifest, bucket) {
     || shard.shardId !== bucket || !Array.isArray(shard.entries)) {
     throw new Error(`Invalid dictionary entry shard: ${bucket}.`);
   }
+}
+
+function validateBrowsePage(page, manifest) {
+  if (page?.schemaVersion !== 1 || page.kind !== 'dictionary-browse-page'
+    || page.dictionaryVersion !== manifest.dictionaryVersion
+    || (manifest.packageId && page.packageId !== manifest.packageId)
+    || page.order !== 'romaji-asc-pages' || !Array.isArray(page.rows)) {
+    throw new Error(`Invalid dictionary browse page: ${page?.pageId || '<unknown>'}.`);
+  }
+  page.rows.forEach((row) => {
+    if (!Array.isArray(row) || row.length !== 7 || row.some((value) => typeof value !== 'string')
+      || !row[0] || !row[1] || !row[2] || !row[3]
+      || !['hiragana', 'katakana', 'kanji'].includes(row[5])) {
+      throw new Error(`Invalid dictionary browse row: ${row?.[0] || '<unknown>'}.`);
+    }
+  });
+}
+
+function convertBrowseRow(row) {
+  return {
+    id: row[0],
+    headword: row[1],
+    readings: [row[2]],
+    romaji: [row[3]],
+    meanings: row[4] ? [{ language: 'und', text: row[4] }] : [],
+    scripts: [row[5]],
+    tags: row[6] ? [row[6]] : [],
+    level: 'N5',
+  };
+}
+
+function compareEntriesByRomaji(left, right) {
+  return compareText(left.romaji?.[0] || '', right.romaji?.[0] || '')
+    || compareText(left.readings?.[0] || '', right.readings?.[0] || '')
+    || compareText(left.headword || '', right.headword || '')
+    || compareText(left.id || '', right.id || '');
+}
+
+function compareText(left, right) {
+  return left === right ? 0 : left < right ? -1 : 1;
 }
 
 function scoreTerm(term, query, kind) {

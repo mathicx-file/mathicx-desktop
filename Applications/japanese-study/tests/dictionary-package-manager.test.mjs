@@ -131,6 +131,36 @@ test('reuses the cached catalog and reports essential offline readiness without 
   await repository.close();
 });
 
+test('updates a package distribution revision while reusing unchanged artifacts', async () => {
+  const repository = createRepository('distribution-revision');
+  const first = await createAvailableFixture(1);
+  const createManager = (fixture) => new DictionaryPackageManager({
+    repository,
+    dataUrl,
+    catalogUrl,
+    crypto: webcrypto,
+    fetchImpl: async (url) => {
+      const bytes = fixture.files.get(relativePath(url));
+      return bytes ? new Response(bytes, { status: 200 }) : new Response('missing', { status: 404 });
+    },
+  });
+
+  const initialManager = createManager(first);
+  await initialManager.loadCatalog();
+  assert.equal((await initialManager.install('core')).distributionRevision, 1);
+
+  const second = await createAvailableFixture(2);
+  const updateManager = createManager(second);
+  const packages = await updateManager.loadCatalog();
+  assert.equal(packages.find((item) => item.id === 'core').status, 'outdated');
+  const updated = await updateManager.install('core');
+  assert.equal(updated.distributionRevision, 2);
+  assert.equal(updated.reusedArtifacts, 1);
+  assert.equal(updated.downloadedArtifacts, 1);
+  assert.equal((await repository.getPackageState(second.version, 'core')).status, 'ready');
+  await repository.close();
+});
+
 function createRepository(label) {
   return new DictionaryCacheRepository({
     indexedDB,
@@ -185,7 +215,7 @@ function createCatalog(overrides = {}) {
   };
 }
 
-async function createAvailableFixture() {
+async function createAvailableFixture(distributionRevision = 1) {
   const version = '2026.07.13-3';
   const artifact = await descriptor(`packages/${version}/core/entries.json`, { entries: [{ id: 'one' }] });
   const manifest = {
@@ -194,6 +224,7 @@ async function createAvailableFixture() {
     id: 'core',
     packageId: 'core-common',
     dictionaryVersion: version,
+    distributionRevision,
     routes: {
       entries: {
         path: artifact.path,
@@ -219,6 +250,7 @@ async function createAvailableFixture() {
   const catalog = createCatalog();
   catalog.packages[1] = {
     ...catalog.packages[1],
+    distributionRevision,
     availability: 'available',
     manifest: {
       path: manifestDescriptor.path,

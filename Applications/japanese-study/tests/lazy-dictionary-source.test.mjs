@@ -151,8 +151,13 @@ test('browses deterministic essential pages without loading search indexes', asy
   assert.equal(first.hasNext, true);
   assert.equal(second.entries.length, 10);
   assert.equal(second.hasPrevious, true);
+  assert.equal(first.order, 'romaji-asc-pages');
   assert.equal(new Set([...first.entries, ...second.entries].map((entry) => entry.id)).size, 20);
-  assert.ok(requests.some((item) => item.includes('/shards/entries/')));
+  assert.ok([...first.entries, ...second.entries].every((entry) => entry.romaji.length > 0));
+  const combined = [...first.entries, ...second.entries];
+  assert.deepEqual(combined, [...combined].sort((left, right) => left.romaji[0].localeCompare(right.romaji[0])));
+  assert.ok(requests.some((item) => item.endsWith('/packs/bootstrap-n5.json')));
+  assert.ok(!requests.some((item) => item.includes('/shards/entries/')));
   assert.ok(!requests.some((item) => item.includes('/indexes/')));
   await source.repository.close();
 });

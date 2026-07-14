@@ -30,8 +30,8 @@ test('builds a minimal, versioned and valid Pages artifact', async () => {
   const result = await validatePagesArtifact({ outputRoot });
   assert.equal(result.valid, true);
   assert.ok(result.distributionArtifacts > 0);
-  assert.equal(result.optionalPackageArtifacts, 885);
-  assert.ok(result.optionalPackageBytes > 25_000_000);
+  assert.equal(result.optionalPackageArtifacts, 1136);
+  assert.ok(result.optionalPackageBytes > 33_000_000);
 
   await assert.rejects(fs.access(path.join(outputRoot, 'package.json')));
   await assert.rejects(fs.access(path.join(outputRoot, 'node_modules')));
@@ -45,6 +45,7 @@ test('builds a minimal, versioned and valid Pages artifact', async () => {
   const catalog = JSON.parse(await fs.readFile(path.join(dictionaryRoot, 'packages', 'catalog.json'), 'utf8'));
   assert.equal(catalog.dictionaryVersion, release.dictionaryVersion);
   assert.deepEqual(catalog.packages.map((item) => item.id), ['essential', 'core', 'full']);
+  assert.deepEqual(catalog.packages.slice(1).map((item) => item.distributionRevision), [2, 2]);
 });
 
 test('rejects a compressed offline package artifact whose hash no longer matches', async () => {

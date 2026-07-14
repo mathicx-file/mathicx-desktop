@@ -199,7 +199,7 @@ Validacao do proprietario: modelo e promocao aprovados em 2026-07-13.
 
 ### 15.7 - Navegacao pelos pacotes instalados
 
-Status: **Implementada em 2026-07-13; aguardando validacao do proprietario**.
+Status: **Concluida e aprovada pelo proprietario em 2026-07-14**.
 
 - seletor de fonte adicionado a aba **Dicionario**, exibindo `essential` e os
   pacotes opcionais efetivamente instalados;
@@ -227,6 +227,61 @@ verbetes sem sobreposicao, a busca exclusiva por `暗色` encontrou o verbete
 esperado e a interface foi verificada em desktop e celular sem erros de pagina.
 O artefato final manteve 1.319 arquivos e passou a 27.120.050 bytes.
 
+### 15.8 - Romaji completo na exibicao
+
+Status: **Concluida e aprovada pelo proprietario em 2026-07-14**.
+
+- causa identificada: JMdict fornece leituras em kana, enquanto a romanizacao
+  derivada estava armazenada apenas nos indices de pesquisa;
+- WanaKana `5.3.1` incorporado ao shell como modulo ESM, preservando a mesma
+  romanizacao Hepburn usada pelo pipeline;
+- cada verbete passa a derivar romaji de todas as suas leituras quando o shard
+  ja aberto e convertido para o modelo da interface;
+- dicas de romaji vindas da pesquisa e aliases legados continuam preservados e
+  aparecem antes das variantes derivadas;
+- conversao ocorre sob demanda, sem modificar ou republicar os 885 artefatos
+  dos pacotes `core/full`;
+- modulo e licenca MIT entram no artefato estatico e no cache offline;
+- Service Worker promovido para `v4` e entrada principal versionada como
+  `15.8`, evitando reutilizacao de runtime antigo pelo navegador;
+- testes cobrem hiragana, katakana, youon, consoante dupla, vogal longa,
+  deduplicacao e verbete instalado sem dados legados.
+
+Validacao automatizada e visual: a primeira pagina do pacote `full` exibiu 50
+verbetes e nenhum romaji ausente em desktop e celular. Depois da reconstrucao
+do cache `mathicx-japanese-shell-v4`, a recarga sem rede repetiu os 50 resultados
+sem ausencias. O Pages final possui 1.321 arquivos e 27.183.551 bytes; os 885
+artefatos opcionais e seus 25.370.201 bytes permaneceram inalterados.
+
+### 15.9 - Navegacao global ordenada por romaji
+
+Status: **Concluida e aprovada pelo proprietario em 2026-07-14**.
+
+- o pipeline gera resumos compactos ordenados por romaji, leitura, palavra e ID;
+- cada pagina fisica possui ate 1.000 verbetes e contagens por escrita;
+- o runtime pagina a lista global sem carregar os 217.856 verbetes nem abrir os
+  shards completos usados pela busca;
+- filtros de hiragana, katakana e kanji preservam a ordem global e pulam paginas
+  que nao possuem resultados da escrita selecionada;
+- controles de paginacao sincronizados aparecem antes e depois da lista para
+  evitar percorrer uma pagina inteira a cada navegacao;
+- o pacote essencial e ordenado em memoria; manifestos antigos continuam com o
+  percurso legado por shards como fallback;
+- `core` recebeu 31 paginas de navegacao e passou a 4.091.232 bytes;
+- `full` recebeu 218 paginas de navegacao e passou a 29.507.478 bytes;
+- a versao linguistica permanece `2026.07.13-3`, enquanto a nova
+  `distributionRevision: 2` sinaliza a atualizacao estrutural;
+- a atualizacao reaproveita artefatos cujo caminho e hash nao mudaram e baixa
+  somente o novo manifest, rotas e paginas necessarias;
+- o Service Worker foi promovido para `v6` e a entrada principal para `15.9.1`.
+
+Validacao automatizada: os pacotes cobrem 30.142 e 217.856 verbetes,
+respectivamente, sem IDs duplicados, ausencias ou inversoes na ordem global. A
+validacao em Chromium confirmou ordem continua, filtro de kanji, pagina 21 sem
+rede e layout sem rolagem horizontal em 390 px. O artefato Pages final possui
+1.572 arquivos e 35.419.550 bytes. A validacao visual pelo proprietario foi
+concluida, incluindo a navegacao sincronizada no topo e no rodape.
+
 ## 4. Decisao Para Iniciar
 
 Confirmar o modelo em camadas recomendado ou escolher entre:
@@ -253,6 +308,11 @@ Nenhuma intervencao no Console Firebase e necessaria para iniciar a `15.1`.
 - `15.5`: concluida e aprovada pelo proprietario;
 - `15.6`: concluida com promocao comprimida, integracao com a busca e rollback
   real validados;
-- `15.7`: implementada com seletor por pacote, navegacao paginada e consistencia
-  de atualizacao do shell; aguarda validacao do proprietario;
-- Fase 15 concluida; a proxima fase oficial e a Fase 16.
+- `15.7`: concluida e aprovada com seletor por pacote, navegacao paginada e
+  consistencia de atualizacao do shell;
+- `15.8`: concluida e aprovada com romaji Hepburn derivado para todos os
+  verbetes;
+- `15.9`: concluida e aprovada com navegacao global ordenada, atualizacao
+  incremental e paginacao no topo e no rodape;
+- Fase 15 oficialmente concluida em 2026-07-14;
+- proximo marco oficial: Fase 16 - Confiabilidade, Backup e Recuperacao.

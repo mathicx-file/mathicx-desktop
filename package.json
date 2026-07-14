@@ -6,7 +6,7 @@
     "test:app-ids": "node scripts/test-app-id-migration.mjs",
     "test:launcher-dictionary": "node --test scripts/test-launcher-dictionary-search.mjs",
     "test:dictionary-equivalence": "node --test scripts/test-dictionary-equivalence.mjs",
-    "test:dictionary-pipeline": "node --test scripts/dictionary/tests/pipeline-schema.test.mjs scripts/dictionary/tests/source-matrix.test.mjs scripts/dictionary/tests/importers.test.mjs scripts/dictionary/tests/bootstrap-package.test.mjs scripts/dictionary/tests/editorial-review.test.mjs scripts/dictionary/tests/entry-shards.test.mjs scripts/dictionary/tests/search-indexes.test.mjs scripts/dictionary/tests/distribution-manifest.test.mjs scripts/dictionary/tests/dictionary-cache.test.mjs",
+    "test:dictionary-pipeline": "node --test scripts/dictionary/tests/pipeline-schema.test.mjs scripts/dictionary/tests/source-matrix.test.mjs scripts/dictionary/tests/importers.test.mjs scripts/dictionary/tests/bootstrap-package.test.mjs scripts/dictionary/tests/editorial-review.test.mjs scripts/dictionary/tests/entry-shards.test.mjs scripts/dictionary/tests/search-indexes.test.mjs scripts/dictionary/tests/browse-pages.test.mjs scripts/dictionary/tests/distribution-manifest.test.mjs scripts/dictionary/tests/dictionary-cache.test.mjs",
     "test:dictionary-cache": "node --test scripts/dictionary/tests/dictionary-cache.test.mjs",
     "test:dictionary-lazy": "node --test Applications/japanese-study/tests/lazy-dictionary-source.test.mjs",
     "dictionary:import:jmdict": "node scripts/dictionary/import-jmdict.mjs",

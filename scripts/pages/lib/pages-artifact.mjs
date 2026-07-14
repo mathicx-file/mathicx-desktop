@@ -157,6 +157,8 @@ async function validatePublishedPackages(dictionaryRoot, packageCatalog) {
     if (manifest?.format !== 'mathicx-japanese-dictionary-offline-package'
       || manifest.schemaVersion !== 1 || manifest.id !== item.id
       || manifest.packageId !== item.packageId || manifest.dictionaryVersion !== item.version
+      || manifest.distributionRevision !== item.distributionRevision
+      || !manifest.routes?.entries || !manifest.routes?.indexes || !manifest.routes?.browse
       || !Array.isArray(manifest.artifacts) || !manifest.artifacts.length) {
       throw new TypeError(`Published offline package manifest is invalid: ${item.id}.`);
     }
@@ -172,6 +174,19 @@ async function validatePublishedPackages(dictionaryRoot, packageCatalog) {
       parsePublishedJson(gunzipSync(compressed), safePath);
       artifacts += 1;
       byteLength += compressed.byteLength;
+    }
+    const routeDescriptors = [
+      manifest.routes.entries,
+      ...Object.values(manifest.routes.indexes),
+      manifest.routes.browse,
+    ];
+    if (routeDescriptors.some((descriptor) => descriptor.kind !== 'route' || !paths.has(descriptor.path))) {
+      throw new TypeError(`Published offline package routes are invalid: ${item.id}.`);
+    }
+    const packageBytes = manifestBytes.byteLength
+      + manifest.artifacts.reduce((total, descriptor) => total + descriptor.byteLength, 0);
+    if (packageBytes !== item.estimatedByteLength) {
+      throw new TypeError(`Published offline package size is inconsistent: ${item.id}.`);
     }
     artifacts += 1;
     byteLength += manifestBytes.byteLength;

@@ -2,25 +2,32 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { gzipSync } from 'node:zlib';
 
+import { createBrowsePages, createBrowseRoute } from './lib/browse-pages.mjs';
 import { createArtifactDescriptor } from './lib/distribution-manifest.mjs';
 import { SEARCH_INDEX_KINDS } from './lib/search-indexes.mjs';
 import { parseCliArgs, readJsonFile, writeDeterministicJson } from './lib/source-io.mjs';
 
 const args = parseCliArgs(process.argv.slice(2), {
-  required: ['id', 'package-report', 'entry-report', 'index-report', 'entry-dir', 'index-dir', 'output'],
-  optional: ['entry-config', 'index-config'],
+  required: ['id', 'package', 'package-report', 'entry-report', 'index-report', 'entry-dir', 'index-dir', 'output'],
+  optional: ['entry-config', 'index-config', 'browse-config', 'distribution-revision'],
 });
-const [packageReport, entryReport, indexReport, entryConfig, indexConfig] = await Promise.all([
+const [packageData, packageReport, entryReport, indexReport, entryConfig, indexConfig, browseConfig] = await Promise.all([
+  readJsonFile(args.package),
   readJsonFile(args['package-report']),
   readJsonFile(args['entry-report']),
   readJsonFile(args['index-report']),
   readJsonFile(args['entry-config'] || 'scripts/dictionary/config/sharding.json'),
   readJsonFile(args['index-config'] || 'scripts/dictionary/config/search-indexes.json'),
+  readJsonFile(args['browse-config'] || 'scripts/dictionary/config/browse-pages.json'),
 ]);
 
 const packageId = packageReport.packageId;
 const version = packageReport.packageVersion;
 assertIdentity(packageId, version, entryReport, indexReport);
+if (packageData.id !== packageId || packageData.version !== version) {
+  throw new TypeError('Offline package source targets a different package identity.');
+}
+const distributionRevision = positiveInteger(args['distribution-revision'] || 2, 'distribution revision');
 const relativeRoot = `packages/${version}/${args.id}`;
 const outputRoot = path.resolve(args.output);
 const packageRoot = path.join(outputRoot, ...relativeRoot.split('/'));
@@ -55,6 +62,16 @@ const indexArtifacts = Object.fromEntries(await Promise.all(SEARCH_INDEX_KINDS.m
     },
   })]
 ))));
+const browseResult = createBrowsePages(packageData, browseConfig);
+const browseArtifacts = await Promise.all(browseResult.pages.map(async (payload) => ({
+  payload,
+  descriptor: (await writeCompressedJson(
+    outputRoot,
+    `${relativeRoot}/browse/${payload.pageId}.json.gz`,
+    payload,
+    'browse-page',
+  )).descriptor,
+})));
 
 if (entryArtifacts.length !== entryReport.routing.emittedShardCount) {
   throw new TypeError('Entry shard count differs from its validated report.');
@@ -101,12 +118,14 @@ const indexRoutes = Object.fromEntries(SEARCH_INDEX_KINDS.map((indexKind) => {
     buckets: Object.fromEntries(indexArtifacts[indexKind].map((item) => [item.bucket, item.descriptor])),
   }];
 }));
+const browseRoute = createBrowseRoute(packageData, browseArtifacts, browseConfig);
 
 const routeArtifacts = [
   await writeCompressedJson(outputRoot, `${relativeRoot}/routes/entries.json.gz`, entryRoute, 'route'),
   ...await Promise.all(SEARCH_INDEX_KINDS.map((kind) => writeCompressedJson(
     outputRoot, `${relativeRoot}/routes/${kind}.json.gz`, indexRoutes[kind], 'route',
   ))),
+  await writeCompressedJson(outputRoot, `${relativeRoot}/routes/browse.json.gz`, browseRoute, 'route'),
 ];
 const manifest = {
   format: 'mathicx-japanese-dictionary-offline-package',
@@ -114,17 +133,20 @@ const manifest = {
   id: args.id,
   packageId,
   dictionaryVersion: version,
+  distributionRevision,
   encoding: 'gzip',
   routes: {
     entries: routeArtifacts[0].descriptor,
     indexes: Object.fromEntries(SEARCH_INDEX_KINDS.map((kind, index) => (
       [kind, routeArtifacts[index + 1].descriptor]
     ))),
+    browse: routeArtifacts.at(-1).descriptor,
   },
   artifacts: [
     ...routeArtifacts.map((item) => item.descriptor),
     ...entryArtifacts.map((item) => item.descriptor),
     ...SEARCH_INDEX_KINDS.flatMap((kind) => indexArtifacts[kind].map((item) => item.descriptor)),
+    ...browseArtifacts.map((item) => item.descriptor),
   ],
 };
 const manifestPath = `${relativeRoot}/manifest.json`;
@@ -143,6 +165,9 @@ console.log(JSON.stringify({
   estimatedByteLength,
   entryCount: packageReport.counts.lexicalEntries,
   kanjiCount: packageReport.counts.kanjiEntries,
+  distributionRevision,
+  browsePages: browseArtifacts.length,
+  browseBytes: browseArtifacts.reduce((total, item) => total + item.descriptor.byteLength, 0),
 }, null, 2));
 
 async function compressDirectory(options) {
@@ -196,4 +221,10 @@ function assertIdentity(packageId, version, entryReport, indexReport) {
       throw new TypeError('Offline package reports target different package identities.');
     }
   }
+}
+
+function positiveInteger(value, label) {
+  const number = Number(value);
+  if (!Number.isSafeInteger(number) || number <= 0) throw new TypeError(`Invalid ${label}.`);
+  return number;
 }

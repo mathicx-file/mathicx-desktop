@@ -385,7 +385,7 @@ Kanji:
 - preparar o modelo para receber palavras com kanji futuramente;
 - integrar entradas com kanji na versão 2.0, junto ao roadmap de Kanji.
 
-Status atual: implementado. O app possui uma aba de dicionário com palavras em hiragana e katakana, busca por palavra/romaji/definição/categoria, filtros por escrita, histórico de consultas e favoritos de palavras separados dos favoritos de caracteres.
+Status atual: implementado. O app possui uma aba de dicionário com palavras em hiragana e katakana, busca por palavra/romaji/definição/categoria, filtros por escrita, histórico de consultas e favoritos de palavras separados dos favoritos de caracteres. Os pacotes ampliados derivam o romaji de todas as leituras com WanaKana 5.3.1, seguindo a mesma convenção Hepburn dos índices de pesquisa. A listagem sem consulta usa páginas compactas ordenadas globalmente por romaji, inclusive com filtros de escrita, sem carregar o catálogo completo em memória. Controles sincronizados antes e depois da lista permitem navegar sem atravessar toda a página de resultados.
 
 Nota de evolução: manter a lógica do dicionário atrás de um módulo/provider para permitir trocar a fonte de dados futuramente. A versão atual usa JSON local, mas o roadmap prevê migração para uma base remota quando o dicionário crescer.
 

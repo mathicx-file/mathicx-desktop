@@ -14,7 +14,7 @@ import { createTypingSession } from './typing-session.js';
 import { JapaneseKanaPrintExport } from './kana-print-export.js';
 import { createDictionaryRuntime } from './dictionary/dictionary-runtime.js?v=15.7';
 import { DictionaryCacheRepository } from './dictionary/dictionary-cache-repository.js';
-import { LazyDictionarySource } from './dictionary/lazy-dictionary-source.js?v=15.7';
+import { LazyDictionarySource } from './dictionary/lazy-dictionary-source.js?v=15.9';
 import { DictionaryReleaseClient } from './dictionary/dictionary-release-client.js';
 import { DictionaryUpdateManager } from './dictionary/dictionary-update-manager.js';
 import { DictionaryPackageManager } from './dictionary/dictionary-package-manager.js';
@@ -23,7 +23,7 @@ import { JapaneseAppShellManager } from './pwa-manager.js?v=15.7';
 import {
   InstalledDictionaryPackagesSource,
   LayeredDictionarySource,
-} from './dictionary/installed-dictionary-packages-source.js?v=15.7';
+} from './dictionary/installed-dictionary-packages-source.js?v=15.9';
 
 const JapaneseApp = (() => {
   let allData = [];
@@ -364,14 +364,16 @@ const JapaneseApp = (() => {
       dictionaryBrowsePage = 1;
       void renderDictionary();
     });
-    document.getElementById('dictionary-page-previous')?.addEventListener('click', () => {
-      if (dictionaryBrowsePage <= 1) return;
-      dictionaryBrowsePage -= 1;
-      void renderDictionary();
-    });
-    document.getElementById('dictionary-page-next')?.addEventListener('click', () => {
-      dictionaryBrowsePage += 1;
-      void renderDictionary();
+    document.querySelectorAll('[data-dictionary-page-action]').forEach((button) => {
+      button.addEventListener('click', () => {
+        if (button.dataset.dictionaryPageAction === 'previous') {
+          if (dictionaryBrowsePage <= 1) return;
+          dictionaryBrowsePage -= 1;
+        } else {
+          dictionaryBrowsePage += 1;
+        }
+        void renderDictionary();
+      });
     });
   }
 
@@ -671,7 +673,7 @@ const JapaneseApp = (() => {
     copy.append(heading, description, meta, state);
 
     const action = document.createElement('button');
-    action.className = `data-action${item.status === 'available' || item.status === 'interrupted' ? ' primary' : ''}`;
+    action.className = `data-action${['available', 'interrupted', 'outdated'].includes(item.status) ? ' primary' : ''}`;
     action.type = 'button';
     action.dataset.packageId = item.id;
     if (item.required && item.status === 'offline-ready') {
@@ -688,9 +690,10 @@ const JapaneseApp = (() => {
     } else if (item.status === 'ready') {
       action.dataset.packageAction = 'remove';
       action.textContent = 'Remover';
-    } else if (item.status === 'available' || item.status === 'interrupted') {
+    } else if (['available', 'interrupted', 'outdated'].includes(item.status)) {
       action.dataset.packageAction = 'install';
-      action.textContent = item.status === 'interrupted' ? 'Retomar' : 'Instalar';
+      action.textContent = item.status === 'interrupted' ? 'Retomar'
+        : item.status === 'outdated' ? 'Atualizar' : 'Instalar';
     } else {
       action.disabled = true;
       action.textContent = 'Em breve';
@@ -1288,23 +1291,24 @@ const JapaneseApp = (() => {
   }
 
   function renderDictionaryPagination(result, context = {}) {
-    const pagination = document.getElementById('dictionary-pagination');
-    const previous = document.getElementById('dictionary-page-previous');
-    const next = document.getElementById('dictionary-page-next');
-    const number = document.getElementById('dictionary-page-number');
+    const paginations = [...document.querySelectorAll('.dictionary-pagination')];
+    const previousButtons = [...document.querySelectorAll('[data-dictionary-page-action="previous"]')];
+    const nextButtons = [...document.querySelectorAll('[data-dictionary-page-action="next"]')];
+    const numbers = [...document.querySelectorAll('[data-dictionary-page-number]')];
     const summary = document.getElementById('dictionary-page-summary');
     const packageFilter = document.getElementById('dictionary-package-filter');
-    if (!pagination || !previous || !next || !number || !summary || !packageFilter) return;
+    if (!paginations.length || !summary || !packageFilter) return;
     const browsing = Boolean(result) && !context.query.trim() && context.tab === 'all';
     packageFilter.disabled = context.tab !== 'all';
-    pagination.hidden = !browsing;
+    paginations.forEach((pagination) => { pagination.hidden = !browsing; });
+    const orderLabel = result?.order === 'romaji-asc-pages' ? ' | Romaji A-Z' : '';
     summary.textContent = browsing
-      ? `${dictionaryPackageName(context.packageId)} | ${result.dictionaryVersion || 'base local'}`
+      ? `${dictionaryPackageName(context.packageId)} | ${result.dictionaryVersion || 'base local'}${orderLabel}`
       : context.tab === 'all' ? `Pesquisa em ${dictionaryPackageName(context.packageId)}` : '';
     if (!browsing) return;
-    previous.disabled = !result.hasPrevious;
-    next.disabled = !result.hasNext;
-    number.textContent = `Pagina ${formatNumber(result.page)}`;
+    previousButtons.forEach((button) => { button.disabled = !result.hasPrevious; });
+    nextButtons.forEach((button) => { button.disabled = !result.hasNext; });
+    numbers.forEach((number) => { number.textContent = `Pagina ${formatNumber(result.page)}`; });
   }
 
   function dictionaryPackageName(packageId) {
