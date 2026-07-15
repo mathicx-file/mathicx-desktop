@@ -2,9 +2,9 @@
 
 > Iniciada em: 2026-07-14
 >
-> Status geral: em andamento
+> Status geral: concluida e aprovada em 2026-07-15
 >
-> Subfase atual: 17.5.1 - preparacao dos gates de rollout
+> Subfase atual: nenhuma
 
 ## 1. Objetivo
 
@@ -285,9 +285,9 @@ que as sessoes legitimas atuais estao verificadas.
 Subfases:
 
 - `17.5.1`: gates tecnicos, checklist e rollback - **implementada**;
-- `17.5.2`: enforcement controlado do Cloud Firestore;
-- `17.5.3`: enforcement controlado do Authentication;
-- `17.5.4`: observacao final e aceite do rollout.
+- `17.5.2`: enforcement controlado do Cloud Firestore - **concluida**;
+- `17.5.3`: enforcement controlado do Authentication - **concluida**;
+- `17.5.4`: observacao final e aceite do rollout - **concluida**.
 
 O comando abaixo repete App Check, claims, baseline, rules integradas, build,
 validacao Pages e o inventario final de prontidao:
@@ -319,11 +319,13 @@ suficiente. O gate exige:
 1. manter Authentication e Cloud Firestore sem enforcement durante a revisao;
 2. ativar enforcement apenas para Cloud Firestore;
 3. aguardar ate 15 minutos e repetir login, leitura e sync dos tres modulos;
-4. observar pelo menos 24 horas sem regressao antes do segundo produto;
+4. observar uma janela controlada de 60 a 90 minutos sem regressao antes do
+   segundo produto, usando 24 horas como fallback se as metricas forem ambiguas;
 5. ativar enforcement para Authentication;
 6. aguardar ate 15 minutos, testar novo login, logout, restauracao de sessao e
    whitelist;
-7. observar mais 24 horas e registrar o aceite da `17.5.4`.
+7. observar outra janela controlada de 60 a 90 minutos e registrar o aceite da
+   `17.5.4`, usando 24 horas como fallback se as metricas forem ambiguas.
 
 Clientes locais deixarao de acessar o backend real depois do enforcement se nao
 usarem debug provider. O token de debug deve ser registrado no Console, mantido
@@ -343,7 +345,7 @@ Se login, leitura ou sincronizacao legitima falhar depois de um estagio:
 Desativar `appCheck.enabled` no cliente e um rollback secundario e so deve ser
 feito com todos os produtos novamente sem enforcement.
 
-Status: **17.5.1 implementada; aguarda revisao das metricas e aprovacao da 17.5.2**.
+Status: **17.5 concluida e aprovada**.
 
 Validacao em 2026-07-15:
 
@@ -354,7 +356,148 @@ Validacao em 2026-07-15:
 - 6 testes do artefato Pages passaram, inclusive credencial com nome suspeito;
 - artefato final validado com 1.583 arquivos e nenhuma ferramenta privilegiada.
 
-## 11. Fora de Escopo
+### Baseline Real da 17.5.2
+
+Metricas das ultimas 24 horas revisadas em 2026-07-15:
+
+| Produto | Estado | Verificadas | Desatualizadas | Origem desconhecida | Invalidas |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Authentication | Monitorando | 15/35 (43%) | 1/35 (3%) | 6/35 (17%) | 13/35 (37%) |
+| Cloud Firestore | Monitorando | 197/992 (20%) | 288/992 (29%) | 0/992 (0%) | 507/992 (51%) |
+
+Decisao: **no-go temporario para enforcement**. A janela ainda inclui as chaves
+incorretas, respostas 400/403, throttle, versoes Pages anteriores e testes locais
+sem debug provider. O extremo mais recente dos graficos mostra requisicoes
+verificadas, sinal compativel com a correcao, mas ainda nao substitui uma janela
+limpa.
+
+Proximo gate:
+
+1. usar somente a versao Pages durante a nova janela de observacao;
+2. nao acessar o backend real por localhost sem debug provider registrado;
+3. repetir login, logout e sync dos tres modulos pela versao publicada em uma
+   sessao comum e uma segunda sessao aprovada;
+4. aguardar entre 60 e 90 minutos e revisar o bloco horario mais recente dos
+   graficos de Authentication e Cloud Firestore;
+5. exigir que as sessoes deliberadas aparecam como verificadas e que nao gerem
+   novas requisicoes invalidas, desatualizadas ou de origem desconhecida antes
+   de aprovar a `17.5.2`;
+6. usar a janela completa de 24 horas como fallback quando o bloco horario nao
+   permitir separar o trafego controlado dos erros historicos.
+
+O resumo percentual do Console permanece agregado em 24 horas, mas o grafico
+oferece blocos horarios. Para este projeto pessoal e de baixo trafego, um bloco
+horario limpo produzido pelo teste controlado e aceito como gate acelerado para
+iniciar o enforcement do Cloud Firestore. Isso nao elimina a observacao posterior
+ao enforcement antes de avancar para Authentication.
+
+Validacao acelerada concluida em 2026-07-15, usando o filtro de ultimos 60
+minutos do Console:
+
+| Produto | Verificadas | Desatualizadas | Origem desconhecida | Invalidas |
+| --- | ---: | ---: | ---: | ---: |
+| Authentication | 8/8 (100%) | 0/8 | 0/8 | 0/8 |
+| Cloud Firestore | 101/101 (100%) | 0/101 | 0/101 | 0/101 |
+
+Decisao: **go para o enforcement controlado do Cloud Firestore**. Authentication
+deve permanecer em Monitorando ate a conclusao dos testes da `17.5.2`.
+
+O enforcement do Cloud Firestore foi aplicado em 2026-07-15. Depois da
+propagacao, login e sincronizacao do Mathicx Desktop, Japanese Study e Finances
+foram validados na versao Pages sem erros de App Check, permissao ou regressao
+funcional.
+
+Status da `17.5.2`: **concluida**.
+
+O enforcement do Authentication foi aplicado em 2026-07-15. Depois da
+propagacao, foram validados login e logout de usuario aprovado, restauracao de
+sessao, estados pendente e bloqueado, painel administrativo e sincronizacao das
+aplicacoes, sem regressao funcional ou erro de App Check.
+
+Status da `17.5.3`: **concluida**.
+
+Proxima etapa: **17.5.4 - repetir o gate tecnico, observar as metricas finais com
+os dois produtos aplicados e registrar o aceite do rollout**.
+
+Gate tecnico final executado em 2026-07-15:
+
+- `firebase:rollout:check` retornou `technicalReady: true`;
+- 18 de 18 controles de prontidao foram aprovados;
+- 6 testes App Check, 4 de claims e 9 de baseline passaram;
+- 12 testes de rules e 4 integracoes Auth/Firestore passaram;
+- o artefato Pages foi reconstruido e validado com 1.583 arquivos;
+- nenhuma ferramenta privilegiada foi incluida no artefato.
+
+Status da `17.5.4`: **gate tecnico aprovado; aguarda metricas finais de uma
+janela controlada com Authentication e Cloud Firestore aplicados**.
+
+Metricas finais aprovadas em 2026-07-15, com os dois produtos em estado
+**Aplicada** e filtro de ultimos 60 minutos:
+
+| Produto | Verificadas | Desatualizadas | Origem desconhecida | Invalidas |
+| --- | ---: | ---: | ---: | ---: |
+| Authentication | 23/23 (100%) | 0/23 | 0/23 | 0/23 |
+| Cloud Firestore | 242/242 (100%) | 0/242 | 0/242 | 0/242 |
+
+Status da `17.5.4`: **concluida e aprovada**.
+
+Status da `17.5`: **concluida e aprovada**.
+
+## 11. Inventario e Remocao Gradual do Legado na 17.6
+
+Subfases:
+
+- `17.6.1`: inventariar aliases, fallbacks, flags e caminhos de compatibilidade
+  - **concluida**;
+- `17.6.2`: classificar cada item e aprovar a estrategia de remocao
+  - **concluida**;
+- `17.6.3`: remover somente os itens aprovados, com migracao e rollback
+  - **concluida**;
+- `17.6.4`: executar regressao completa e encerrar a Fase 17
+  - **concluida**.
+
+Nenhuma compatibilidade sera removida durante a `17.6.1`.
+
+O inventario detalhado esta em `FIREBASE_PHASE_17_6_LEGACY_INVENTORY.md`. Ele
+separou persistencia local necessaria de autenticacao local dormente, identificou
+quatro flags sem consumidores e preservou alias de app, fallback do dicionario,
+controles de rollback e escopo por UID ate decisao explicita.
+
+A `17.6.2` aprovou a retirada somente das quatro flags sem consumidor e dos
+comentarios obsoletos. A autenticacao local e seus dados ficam preservados por
+uma release estavel; alias, fallback do dicionario, `role`, cache, offline e
+isolamento por UID permanecem suportados.
+
+A `17.6.3` removeu as quatro flags sem consumidor e atualizou comentarios de
+runtime obsoletos. O gate `firebase:rollout:check` permaneceu aprovado com 18 de
+18 controles, 12 testes de rules, 4 integracoes Auth/Firestore e artefato Pages
+valido. Nenhum dado, provider, alias ou fallback foi removido.
+
+A regressao da `17.6.4` aprovou 55 testes adicionais e o script de migracao de
+IDs. Foram cobertos launcher, contratos host/iframe, Central de Sincronizacao,
+backup protegido, restauracao e rollback, sync Firebase do Japanese Study e
+Finances, equivalencia do dicionario e carregamento lazy/offline.
+
+Status da `17.6`: **concluida**.
+
+Status da Fase 17: **concluida e aprovada em 2026-07-15**.
+
+### Aviso de Sandbox dos Aplicativos Integrados
+
+Chrome registra um aviso para Japanese Study e Finances porque os iframes de
+mesma origem usam simultaneamente `allow-scripts` e `allow-same-origin`. Essa
+combinacao e necessaria no desenho atual para Firebase Auth, armazenamento local,
+IndexedDB e contratos validados por origem, mas significa que o sandbox nao e
+uma fronteira forte contra codigo comprometido dentro desses aplicativos.
+
+Classificacao: **risco arquitetural aceito; nao bloqueia App Check**. Os dois
+aplicativos sao codigo first-party do mesmo repositorio e nenhum conteudo
+arbitrario e carregado no frame. Remover uma permissao isoladamente causaria
+regressoes. A `17.6` deve inventariar essa compatibilidade e uma evolucao futura
+pode mover aplicativos para origens separadas ou centralizar Auth/storage no
+host antes de endurecer o sandbox.
+
+## 12. Fora de Escopo
 
 - proteger dados contra controle total do dispositivo ou perfil do navegador;
 - criptografia ponta a ponta dos documentos armazenados no Firestore;
@@ -362,18 +505,18 @@ Validacao em 2026-07-15:
 - enforcement App Check antes da medicao da 17.3;
 - remocao de compatibilidade antes da 17.6.
 
-## 12. Subfases da Fase 17
+## 13. Subfases da Fase 17
 
 - `17.1`: matriz de ameacas e limites - **concluida tecnicamente**;
 - `17.2`: testes Auth/Firestore integrados - **concluida tecnicamente**;
 - `17.3`: App Check em observacao - **concluida e aprovada**;
 - `17.4`: papeis administrativos confiaveis - **concluida e aprovada**;
-- `17.5`: rollout e monitoramento - **em andamento (17.5.1)**;
-- `17.6`: inventario e remocao gradual do legado.
+- `17.5`: rollout e monitoramento - **concluida e aprovada**;
+- `17.6`: inventario e remocao gradual do legado - **concluida**.
 
 A Fase 17 possui **6 subfases** no total.
 
-## 13. Criterios de Saida Concluidos
+## 14. Criterios de Saida Concluidos
 
 - ativos e fronteiras de confianca documentados;
 - ameacas possuem impacto, controle e subfase responsavel;

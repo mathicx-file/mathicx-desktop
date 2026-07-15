@@ -1,9 +1,6 @@
 /**
  * mathicx-file · auth/firebase-auth-provider.js
- * Parallel Firebase Auth provider for migration Phase 2.
- *
- * This module is intentionally not wired into the kernel yet. Phase 3 will
- * decide when `authMode: "firebase"` becomes the desktop gate.
+ * Firebase Auth provider used by the desktop authentication gate.
  */
 
 import {

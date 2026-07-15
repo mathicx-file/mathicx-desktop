@@ -1,9 +1,7 @@
 /**
  * mathicx-file · firebase/feature-flags.js
- * Central switchboard for the Firebase migration.
- *
- * Phase 1 keeps every Firebase-backed runtime path disabled by default.
- * Later phases should flip one flag at a time.
+ * Runtime controls retained after the Firebase rollout.
+ * Production defaults stay explicit so rollback gates remain auditable.
  */
 
 export const featureFlags = Object.freeze({
@@ -11,7 +9,6 @@ export const featureFlags = Object.freeze({
   firebaseEnabled: true,
   firebaseEmulatorsEnabled: false,
 
-  firebaseAuthEnabled: true,
   firestoreDesktopReadEnabled: true,
   firestoreDesktopWriteEnabled: true,
 
@@ -22,12 +19,8 @@ export const featureFlags = Object.freeze({
   firestoreFinancesWriteEnabled: true,
 
   dictionaryProviderV2Enabled: true,
-  dictionaryRemoteManifestEnabled: false,
   dictionaryChunkLoadingEnabled: true,
   dictionaryOfflinePacksEnabled: true,
-
-  localMigrationEnabled: false,
-  localFallbackEnabled: true,
 });
 
 export function isFirebaseRuntimeEnabled() {

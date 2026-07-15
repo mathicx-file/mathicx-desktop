@@ -4,7 +4,7 @@
 >
 > Status: fonte oficial de planejamento e execucao
 >
-> Fase atual: Fase 17.5.1 - preparacao dos gates de rollout
+> Fase atual: Fase 18 - evolucoes opcionais (aguarda priorizacao)
 
 ## 1. Autoridade Deste Documento
 
@@ -70,7 +70,7 @@ Fase 10.3 Metricas de equivalencia com o JSON legado
 | 14 | Manifesto remoto, atualizacao e rollback | Concluida | Antiga Fase 11 revisada |
 | 15 | Dicionario ampliado, pacotes offline e PWA | Concluida | Antiga Fase 12 revisada |
 | 16 | Confiabilidade, backup e recuperacao | Concluida | Melhoria incorporada |
-| 17 | Seguranca, rollout e remocao do legado | Em andamento | Planos anteriores 12/13 |
+| 17 | Seguranca, rollout e remocao do legado | Concluida | Planos anteriores 12/13 |
 | 18 | Evolucoes opcionais | Opcional | Antiga Fase 13 revisada |
 
 ## 5. Fases Concluidas
@@ -517,7 +517,7 @@ exigirao criptografia por senha a partir da Fase 16.4.
 
 ### Fase 17: Seguranca, Rollout e Remocao do Legado
 
-Status: **Em andamento**.
+Status: **Concluida e aprovada em 2026-07-15**.
 
 Origem: App Check e rollout dos planos anteriores.
 
@@ -543,8 +543,8 @@ Subfases previstas:
 - `17.2`: testes Auth/Firestore integrados - **concluida tecnicamente**;
 - `17.3`: App Check em observacao - **concluida e aprovada**;
 - `17.4`: papeis administrativos confiaveis - **concluida e aprovada**;
-- `17.5`: rollout e monitoramento - **em andamento (17.5.1)**;
-- `17.6`: inventario e remocao gradual do legado.
+- `17.5`: rollout e monitoramento - **concluida e aprovada**;
+- `17.6`: inventario e remocao gradual do legado - **concluida**.
 
 A Fase 17 possui **6 subfases** no total.
 
@@ -553,7 +553,7 @@ estagio do enforcement App Check separadamente.
 
 ### Fase 18: Evolucoes Opcionais
 
-Status: **Opcional**.
+Status: **Planejada; aguarda aprovacao da primeira subfase**.
 
 Executar somente mediante necessidade comprovada:
 
@@ -568,6 +568,18 @@ Executar somente mediante necessidade comprovada:
 - sincronizacao em tempo real seletiva.
 
 Cada item aprovado deve virar subfase `18.x`, com motivacao, custo, risco e criterio de aceite.
+
+Planejamento consolidado em `FIREBASE_PHASE_18_OPTIONAL_EVOLUTIONS.md`:
+
+- `18.1`: kit de integracao para novos aplicativos - **recomendada**;
+- `18.2`: ambiente Firebase de desenvolvimento;
+- `18.3`: diagnostico operacional multi-app;
+- `18.4`: modo visitante estritamente local - **opcional e posterior**;
+- `18.5`: infraestrutura ampliada do dicionario;
+- `18.6`: sync seletivo e granularizacao orientados por evidencia.
+
+O placeholder `Applications/french-study` nao faz parte do planejamento
+versionado nem sera integrado antes de aprovacao explicita.
 
 ## 7. Direcao Atual
 
@@ -719,8 +731,68 @@ A `17.5.1` prepara o rollout por produto com o comando unico
 credenciais no artefato e um procedimento de rollback. O plano ativa primeiro
 Cloud Firestore, observa por 24 horas e somente depois considera Authentication.
 O gate completo aprovou 18 de 18 controles e retornou `technicalReady: true`.
+O aviso do Chrome para iframes com `allow-scripts` e `allow-same-origin` foi
+classificado como risco arquitetural aceito: ele nao afeta App Check, mas o
+sandbox nao e tratado como fronteira forte enquanto os apps forem same-origin.
 
-Etapa atual: **revisar metricas e decidir a Fase 17.5.2 - enforcement do Cloud Firestore**.
+A primeira leitura real da `17.5.2` manteve os dois produtos em Monitorando.
+Authentication registrou 43% verificado e 37% invalido; Cloud Firestore, 20%
+verificado e 51% invalido. Como a janela de 24 horas ainda inclui os erros de
+configuracao e clientes anteriores, o enforcement recebeu no-go temporario. Uma
+nova janela limpa sera coletada usando somente a versao Pages. O gate pode ser
+acelerado por um teste controlado de 60 a 90 minutos: o bloco horario mais recente
+deve registrar as sessoes deliberadas como verificadas, sem novas requisicoes
+invalidas, desatualizadas ou de origem desconhecida. A janela completa de 24
+horas permanece como fallback se os dados horarios forem ambiguos.
+
+O teste controlado dos ultimos 60 minutos aprovou 8 de 8 solicitacoes de
+Authentication e 101 de 101 solicitacoes do Cloud Firestore, todas verificadas e
+sem registros desatualizados, de origem desconhecida ou invalidos. O gate da
+`17.5.2` recebeu go. O enforcement do Cloud Firestore foi aplicado e os testes
+posteriores de login e sincronizacao dos tres modulos foram aprovados sem erros.
+Authentication permaneceu em Monitorando durante essa validacao.
+
+O enforcement do Authentication foi aplicado e os testes de login, logout,
+restauracao de sessao, whitelist, painel administrativo e sincronizacao foram
+aprovados. Com isso, a `17.5.3` foi concluida sem regressao.
+
+O gate tecnico da `17.5.4` foi repetido depois dos dois enforcements e retornou
+`technicalReady: true`, com 18 de 18 controles aprovados, 12 testes de rules, 4
+integracoes Auth/Firestore e o artefato Pages validados. Resta conferir a janela
+final de 60 a 90 minutos no Console; 24 horas sera usada apenas se as metricas
+forem ambiguas.
+
+As metricas finais dos ultimos 60 minutos confirmaram os dois produtos em estado
+Aplicada: Authentication teve 23 de 23 solicitacoes verificadas e Cloud Firestore
+242 de 242, sem clientes desatualizados, origens desconhecidas ou solicitacoes
+invalidas. A `17.5.4` e toda a `17.5` foram concluidas e aprovadas.
+
+A `17.6` foi dividida em inventario (`17.6.1`), classificacao e decisao
+(`17.6.2`), remocoes aprovadas (`17.6.3`) e regressao final (`17.6.4`). Nenhuma
+compatibilidade sera removida durante o inventario.
+
+O inventario `FIREBASE_PHASE_17_6_LEGACY_INVENTORY.md` foi concluido sem remover
+codigo ou dados. Ele identificou quatro flags sem consumidores, agrupou a
+autenticacao local como uma decisao unica de alto risco e preservou os mecanismos
+de cache, offline, isolamento por UID, alias de app e fallback do dicionario.
+
+A `17.6.2` aprovou um recorte conservador: remover quatro flags sem consumidor e
+comentarios obsoletos; preservar por uma release a autenticacao local dormente e
+seus dados; manter alias `financas`, fallback do dicionario, campo `role`, cache,
+offline, isolamento por UID e controles de rollback.
+
+A `17.6.3` removeu somente as quatro flags sem consumidor e atualizou comentarios
+obsoletos. O gate completo permaneceu com `technicalReady: true`, 18 de 18
+controles aprovados e o artefato Pages valido. Nenhum dado, provider, alias ou
+fallback foi removido.
+
+A `17.6.4` aprovou 55 testes adicionais e a migracao de IDs, cobrindo launcher,
+contratos host/iframe, Central de Sincronizacao, backup e rollback, sync Firebase
+dos apps e dicionario lazy/offline. Com o gate de seguranca, as metricas em
+producao e essa regressao aprovados, a Fase 17 foi encerrada em 2026-07-15.
+
+Etapa atual: **Fase 18 - escolher e justificar uma evolucao opcional antes de
+abrir uma nova subfase**.
 
 ## 8. Protocolo de Atualizacao do Roteiro
 
