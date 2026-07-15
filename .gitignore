@@ -41,6 +41,9 @@ src/firebase/*.local.js
 serviceAccountKey.json
 *-firebase-adminsdk-*.json
 firebase-admin-key*.json
+service-account*.json
+*-service-account*.json
+.firebase-admin/
 app-check-debug-token*
 .env
 .env.*

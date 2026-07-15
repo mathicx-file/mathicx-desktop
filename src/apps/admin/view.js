@@ -1,4 +1,5 @@
 import { authProvider } from '../../auth/provider.js';
+import { escapeHTML } from '../../core/utils.js';
 import { confirmModal } from '../../ui/modal.js';
 import { toast } from '../../ui/toast.js';
 
@@ -89,27 +90,35 @@ function _hbarChart(data, xKey, yKey) {
   return `<svg viewBox="0 0 ${W} ${H}" class="chart-svg">${bars}</svg>`;
 }
 
-function _usersTable(users, currentUserId) {
+function _usersTable(users, currentUserId, { firebaseMode = false } = {}) {
   const rows = users.map((u) => {
     const isMe = u.id === currentUserId;
+    const safeId = escapeHTML(u.id);
+    const safeAvatar = escapeHTML(u.avatar);
+    const safeName = escapeHTML(u.nome);
+    const safeEmail = escapeHTML(u.email);
+    const safeProfile = escapeHTML(u.perfil);
+    const safeStatus = escapeHTML(u.status);
     const statusMap = { ativo: 'badge-ativo', bloqueado: 'badge-bloqueado', pendente: 'badge-pendente' };
     const statusBadge = statusMap[u.status] || 'badge-pendente';
     const perfilBadge = u.perfil === 'admin' ? 'badge-admin' : 'badge-user';
     const actBlock = u.status === 'ativo' ? 'Bloquear' : (u.status === 'bloqueado' ? 'Reativar' : '');
     return `<tr>
-      <td>${u.avatar} <strong>${u.nome}</strong>${isMe ? ' (você)' : ''}</td>
-      <td>${u.email}</td>
-      <td><span class="badge ${perfilBadge}">${u.perfil}</span></td>
-      <td><span class="badge ${statusBadge}">${u.status}</span></td>
+      <td>${safeAvatar} <strong>${safeName}</strong>${isMe ? ' (você)' : ''}</td>
+      <td>${safeEmail}</td>
+      <td><span class="badge ${perfilBadge}">${safeProfile}</span></td>
+      <td><span class="badge ${statusBadge}">${safeStatus}</span></td>
       <td class="actions">
         ${!isMe && u.status !== 'pendente' ? `
-          <button class="btn-sm" data-act="block" data-id="${u.id}">${actBlock}</button>
-          <button class="btn-sm" data-act="promote" data-id="${u.id}">${u.perfil === 'admin' ? 'Rebaixar' : 'Promover'}</button>
-          <button class="btn-sm-danger" data-act="delete" data-id="${u.id}">Remover</button>
+          <button class="btn-sm" data-act="block" data-id="${safeId}">${actBlock}</button>
+          ${firebaseMode ? '' : `
+            <button class="btn-sm" data-act="promote" data-id="${safeId}">${u.perfil === 'admin' ? 'Rebaixar' : 'Promover'}</button>
+            <button class="btn-sm-danger" data-act="delete" data-id="${safeId}">Remover</button>
+          `}
         ` : ''}
         ${!isMe && u.status === 'pendente' ? `
-          <button class="btn-sm-approve" data-act="approve" data-id="${u.id}">✓ Aprovar</button>
-          <button class="btn-sm-deny" data-act="deny" data-id="${u.id}">✗ Recusar</button>
+          <button class="btn-sm-approve" data-act="approve" data-id="${safeId}">✓ Aprovar</button>
+          <button class="btn-sm-deny" data-act="deny" data-id="${safeId}">✗ Recusar</button>
         ` : ''}
         ${isMe ? '<span style="color:var(--muted);font-size:10px;">—</span>' : ''}
       </td>
@@ -122,7 +131,7 @@ export async function mount(host) {
   injectStyle();
 
   const user = authProvider.getCurrentUser();
-  if (!user || user.perfil !== 'admin') {
+  if (!user || !authProvider.isAdmin()) {
     host.innerHTML = `<div class="mx-admin"><div style="padding:24px;color:var(--danger);font-weight:700;">Acesso restrito a administradores.</div></div>`;
     return;
   }
@@ -143,7 +152,9 @@ export async function mount(host) {
     <div class="mx-admin">
       <div class="ah">
         <h2>🛡️ Painel Administrativo</h2>
-        <p>Estatísticas e gestão de usuários</p>
+        <p>${authProvider.isFirebaseMode
+          ? 'Whitelist Firebase; papeis administrativos sao geridos pelo script confiavel'
+          : 'Estatísticas e gestão de usuários'}</p>
       </div>
       <section class="kpis">
         ${_kpiCard('👥', 'Total', total)}
@@ -157,12 +168,12 @@ export async function mount(host) {
         ${pendentes.map((u) => `
           <div class="pending-card">
             <div class="pc-info">
-              <div class="t">${u.avatar} ${u.nome}</div>
-              <div class="d">${u.email} · ${u.username}</div>
+              <div class="t">${escapeHTML(u.avatar)} ${escapeHTML(u.nome)}</div>
+              <div class="d">${escapeHTML(u.email)}${u.username ? ` · ${escapeHTML(u.username)}` : ''}</div>
             </div>
             <div class="pc-actions">
-              <button class="btn-sm-approve" data-act="approve" data-id="${u.id}">✓ Aprovar</button>
-              <button class="btn-sm-deny" data-act="deny" data-id="${u.id}">✗ Recusar</button>
+              <button class="btn-sm-approve" data-act="approve" data-id="${escapeHTML(u.id)}">✓ Aprovar</button>
+              <button class="btn-sm-deny" data-act="deny" data-id="${escapeHTML(u.id)}">✗ Recusar</button>
             </div>
           </div>`).join('')}
       </section>` : ''}
@@ -178,7 +189,9 @@ export async function mount(host) {
       </section>
       <section class="users">
         <h3>Gestão de usuários</h3>
-        ${_usersTable(users, authProvider.getCurrentUser().id)}
+        ${_usersTable(users, authProvider.getCurrentUser().id, {
+          firebaseMode: authProvider.isFirebaseMode,
+        })}
       </section>
     </div>`;
 
@@ -195,13 +208,16 @@ function _wirePendingCards(host) {
     const all = await authProvider.listUsers();
     const target = all.find((x) => x.id === id);
     if (!target) return;
+    const safeTargetName = escapeHTML(target.nome);
     if (act === 'approve') {
       await authProvider.approveUser(id);
-      toast.success(`${target.nome} aprovado!`);
+      toast.success(`${safeTargetName} aprovado!`);
     }
     if (act === 'deny') {
-      await authProvider.deleteUser(id);
-      toast.success(`${target.nome} recusado e removido.`);
+      await authProvider.rejectUser(id);
+      toast.success(authProvider.isFirebaseMode
+        ? `${safeTargetName} recusado.`
+        : `${safeTargetName} recusado e removido.`);
     }
     mount(host);
   });
@@ -216,30 +232,33 @@ function _wireTable(host) {
     const all = await authProvider.listUsers();
     const target = all.find((x) => x.id === id);
     if (!target) return;
+    const safeTargetName = escapeHTML(target.nome);
 
     if (act === 'block') {
       const novo = target.status === 'ativo' ? 'bloqueado' : 'ativo';
       await authProvider.setStatus(id, novo);
-      toast.success(`${target.nome} ${novo === 'ativo' ? 'reativado' : 'bloqueado'}.`);
+      toast.success(`${safeTargetName} ${novo === 'ativo' ? 'reativado' : 'bloqueado'}.`);
     }
     if (act === 'promote') {
       const novo = target.perfil === 'admin' ? 'user' : 'admin';
       await authProvider.setPerfil(id, novo);
-      toast.success(`${target.nome} agora é ${novo}.`);
+      toast.success(`${safeTargetName} agora é ${novo}.`);
     }
     if (act === 'approve') {
       await authProvider.approveUser(id);
-      toast.success(`${target.nome} aprovado!`);
+      toast.success(`${safeTargetName} aprovado!`);
     }
     if (act === 'deny') {
-      await authProvider.deleteUser(id);
-      toast.success(`${target.nome} recusado e removido.`);
+      await authProvider.rejectUser(id);
+      toast.success(authProvider.isFirebaseMode
+        ? `${safeTargetName} recusado.`
+        : `${safeTargetName} recusado e removido.`);
     }
     if (act === 'delete') {
-      const ok = await confirmModal({ title: 'Remover usuário', message: `Remover ${target.nome}?`, danger: true });
+      const ok = await confirmModal({ title: 'Remover usuário', message: `Remover ${safeTargetName}?`, danger: true });
       if (ok) {
         await authProvider.deleteUser(id);
-        toast.success(`${target.nome} removido.`);
+        toast.success(`${safeTargetName} removido.`);
       } else {
         return;
       }

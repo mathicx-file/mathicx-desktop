@@ -316,7 +316,8 @@ function shouldEnterDirectory(relativePath) {
 function shouldCopyRuntimeFile(relativePath) {
   const normalized = relativePath.split(path.sep).join('/');
   const name = path.posix.basename(normalized);
-  if (FORBIDDEN_FILES.has(name) || name.endsWith('.local.js') || name.startsWith('.env')) return false;
+  if (FORBIDDEN_FILES.has(name) || name.endsWith('.local.js') || name.startsWith('.env')
+    || isCredentialLikeName(name)) return false;
   return ALLOWED_EXTENSIONS.has(path.posix.extname(name).toLowerCase());
 }
 
@@ -388,9 +389,14 @@ function validatePublishedPath(relativePath) {
     throw new TypeError(`Forbidden directory in Pages artifact: ${relativePath}.`);
   }
   const name = segments.at(-1);
-  if (name.startsWith('.env') || name.endsWith('.local.js') || FORBIDDEN_FILES.has(name)) {
+  if (name.startsWith('.env') || name.endsWith('.local.js') || FORBIDDEN_FILES.has(name)
+    || isCredentialLikeName(name)) {
     throw new TypeError(`Forbidden file in Pages artifact: ${relativePath}.`);
   }
+}
+
+function isCredentialLikeName(name) {
+  return /(?:service[-_]?account|firebase[-_]?adminsdk|private[-_]?key)/iu.test(name);
 }
 
 async function validateFirebaseConfig(filePath) {

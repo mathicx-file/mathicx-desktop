@@ -4,7 +4,7 @@
 >
 > Status geral: em andamento
 >
-> Subfase atual: 17.3 em validacao; nova chave pronta para deploy
+> Subfase atual: 17.5.1 - preparacao dos gates de rollout
 
 ## 1. Objetivo
 
@@ -45,8 +45,8 @@ sao segredos e nunca podem entrar no repositorio ou no artefato Pages.
 | ID | Ameaca | Impacto | Controle atual | Tratamento |
 | --- | --- | --- | --- | --- |
 | T1 | Usuario altera status ou papel no proprio perfil | Critico | Rules restringem create/update e admin usa claim | Manter testes na 17.2 |
-| T2 | Campo `role` diverge do claim `admin` | Alto | Rules confiam apenas no claim; UI ainda preserva compatibilidade | Resolver na 17.4 |
-| T3 | Cliente automatizado abusa Auth/Firestore | Alto | Auth, whitelist e rules; App Check ausente | Observacao na 17.3 |
+| T2 | Campo `role` diverge do claim `admin` | Alto | Rules e UI confiam somente no claim; campo e projecao | Resolvido na 17.4 |
+| T3 | Cliente automatizado abusa Auth/Firestore | Alto | Auth, whitelist, rules e App Check em observacao | Rollout gradual na 17.5 |
 | T4 | Token App Check ou service account entra no Git | Critico | `.gitignore` e teste de baseline | Bloqueio continuo desde 17.1 |
 | T5 | Mensagem forjada entre iframe e host | Alto | Origem/fonte/protocolo no contrato | Wildcard restante removido na 17.1 |
 | T6 | Flag local ou Emulator chega a producao | Alto | Flags centrais e validacao Pages | Gate automatico desde 17.1; ampliar na 17.5 |
@@ -169,12 +169,27 @@ a site key publica no cliente. Chaves Enterprise nao sao movidas entre projetos.
 
 Intervencao concluida em 2026-07-15: a API foi habilitada, o Web App foi
 reconfigurado e uma nova site key do projeto `mathicx-file-desktop` substituiu a
-chave do projeto incorreto. Aguarda deploy e repeticao do teste publicado.
+chave do projeto incorreto. O deploy `6beba03` publicou somente a nova chave.
+
+O reteste atingiu o endpoint correto, mas recebeu HTTP 403 e o SDK persistiu
+`initial-throttle` por 24 horas. O App Check classificou essas chamadas como
+invalidas. Antes de alterar codigo ou threshold, devem ser confirmados no
+Console o Key ID vinculado ao Web App, o dominio permitido e o score das
+avaliacoes. O proximo teste deve usar janela anonima para nao reutilizar o
+throttle do perfil principal.
 
 O mesmo teste revelou recursao em `launcher:close` e o token de sandbox invalido
 `allow-storage`. Ambos foram corrigidos e possuem regressao automatizada.
 
-Status: **correcao preparada; aguarda novo deploy e validacao da atestacao**.
+Reteste final em 2026-07-15:
+
+- o vinculo da chave e a configuracao do App Check foram corrigidos no Console;
+- a troca de token deixou de retornar HTTP 403;
+- login e sincronizacao permaneceram operacionais no cliente publicado;
+- Authentication e Cloud Firestore continuam sem enforcement, conforme o plano;
+- a observacao de metricas pode continuar sem bloquear o encerramento da 17.3.
+
+Status: **concluida e aprovada em 2026-07-15**.
 
 Rollback da 17.3:
 
@@ -182,7 +197,164 @@ Rollback da 17.3:
 2. alterar `appCheck.enabled` para `false` na configuracao de producao;
 3. publicar novamente; nao e necessario excluir a site key ou o registro do app.
 
-## 9. Fora de Escopo
+## 9. Papeis Administrativos Confiaveis da 17.4
+
+A autoridade administrativa do modo Firebase passa a vir exclusivamente da
+custom claim assinada `admin == true`. O campo `users/{uid}.role` permanece
+somente como projecao para exibicao e compatibilidade; ele nunca libera o painel,
+as rules ou qualquer operacao privilegiada.
+
+Implementacao:
+
+- `src/auth/firebase-claims.js` concentra a decisao de papel baseada em claims;
+- restaurar a sessao forca a renovacao do ID token e reconhece claims novas;
+- o painel lista perfis Firebase e permite aprovar, rejeitar, bloquear e reativar;
+- campos de perfil controlados pelo usuario sao escapados antes da renderizacao;
+- promover ou rebaixar admin nao existe na interface Web Firebase;
+- `scripts/firebase/manage-admin.mjs` usa Admin SDK e credenciais de aplicacao;
+- alteracoes preservam outras custom claims e usam dry-run por padrao;
+- a revogacao do ultimo admin e recusada, salvo override explicito;
+- cada alteracao aplicada gera evento server-side em `adminAudit`;
+- `adminAudit` e explicitamente inacessivel a qualquer cliente pelas rules.
+
+Comandos:
+
+```text
+npm run firebase:admin -- show --email EMAIL
+npm run firebase:admin -- grant --email EMAIL
+npm run firebase:admin -- grant --email EMAIL --apply
+npm run firebase:admin -- revoke --email EMAIL
+npm run firebase:admin -- revoke --email EMAIL --apply
+```
+
+`grant` e `revoke` sem `--apply` sao apenas simulacoes. Depois de uma alteracao
+real, a conta afetada deve sair e entrar novamente para receber o token novo.
+
+Bootstrap do primeiro admin:
+
+1. obter credenciais ADC com permissao para Firebase Auth e Firestore;
+2. se for usada uma chave JSON, guarda-la fora do repositorio e definir
+   `GOOGLE_APPLICATION_CREDENTIALS` apenas no terminal da operacao;
+3. executar primeiro o `grant` sem `--apply` e conferir projeto, UID e e-mail;
+4. repetir com `--apply`;
+5. renovar a sessao no Desktop e validar o Painel Admin;
+6. aprovar e rejeitar uma conta de teste pelo painel.
+
+Exemplo no PowerShell, usando um arquivo mantido fora do repositorio:
+
+```powershell
+$env:GOOGLE_APPLICATION_CREDENTIALS = 'C:\firebase-admin\mathicx-file-desktop.json'
+npm.cmd run firebase:admin -- grant --email EMAIL
+npm.cmd run firebase:admin -- grant --email EMAIL --apply
+Remove-Item Env:GOOGLE_APPLICATION_CREDENTIALS
+```
+
+Arquivos de service account, tokens e chaves privadas nao podem ser enviados ao
+chat nem salvos no projeto. A `.gitignore` cobre nomes comuns como defesa extra,
+mas a protecao principal e manter a credencial em outro diretorio.
+
+Validacao automatizada local:
+
+- 4 testes de claims, parser, preservacao e protecao do ultimo admin;
+- baseline impede fallback de autoridade para o perfil Firestore;
+- rules cobrem listagem e alteracao da whitelist por admin claim;
+- rules recusam acesso cliente a `adminAudit`, inclusive para admin.
+
+Validacao real em 2026-07-15:
+
+- primeira custom claim administrativa aplicada no projeto correto;
+- logout e novo login reconheceram o papel no token;
+- Painel Admin apareceu e listou os usuarios Firebase;
+- uma conta foi bloqueada pelo painel e o login bloqueado como esperado.
+
+Status: **concluida e aprovada em 2026-07-15**.
+
+Rollback da 17.4:
+
+1. manter ao menos uma conta com claim admin;
+2. reverter o cliente para ocultar a gestao remota, sem alterar as rules de claim;
+3. usar `revoke` somente depois de confirmar outro administrador funcional;
+4. nunca substituir custom claims inteiras manualmente sem preservar as demais.
+
+## 10. Rollout e Monitoramento da 17.5
+
+A 17.5 usa rollout por produto. Nenhum enforcement e ativado apenas por existir
+um token valido; primeiro os gates tecnicos e as metricas precisam demonstrar
+que as sessoes legitimas atuais estao verificadas.
+
+Subfases:
+
+- `17.5.1`: gates tecnicos, checklist e rollback - **implementada**;
+- `17.5.2`: enforcement controlado do Cloud Firestore;
+- `17.5.3`: enforcement controlado do Authentication;
+- `17.5.4`: observacao final e aceite do rollout.
+
+O comando abaixo repete App Check, claims, baseline, rules integradas, build,
+validacao Pages e o inventario final de prontidao:
+
+```text
+npm run firebase:rollout:check
+```
+
+O workflow Pages tambem executa App Check, claims e baseline antes de publicar.
+O validador do artefato recusa nomes associados a service accounts, Admin SDK e
+chaves privadas, alem de confirmar que as ferramentas administrativas nao foram
+incluidas no site.
+
+### Gate Manual Antes de Cada Enforcement
+
+No Firebase Console > App Check > APIs, revisar separadamente Cloud Firestore e
+Authentication. Para o baixo trafego deste projeto, porcentagem isolada nao e
+suficiente. O gate exige:
+
+1. requisicoes verificadas produzidas pela versao Pages atual;
+2. login normal e anonimo/privado reconhecidos como verificados;
+3. Desktop, Japanese Study e Finances sincronizados com sucesso;
+4. nenhuma requisicao invalida originada dessas sessoes deliberadas;
+5. ausencia de volume material de clientes desatualizados;
+6. rollback acessivel no Console e uma conta admin funcional.
+
+### Ordem do Rollout
+
+1. manter Authentication e Cloud Firestore sem enforcement durante a revisao;
+2. ativar enforcement apenas para Cloud Firestore;
+3. aguardar ate 15 minutos e repetir login, leitura e sync dos tres modulos;
+4. observar pelo menos 24 horas sem regressao antes do segundo produto;
+5. ativar enforcement para Authentication;
+6. aguardar ate 15 minutos, testar novo login, logout, restauracao de sessao e
+   whitelist;
+7. observar mais 24 horas e registrar o aceite da `17.5.4`.
+
+Clientes locais deixarao de acessar o backend real depois do enforcement se nao
+usarem debug provider. O token de debug deve ser registrado no Console, mantido
+fora do repositorio e removido quando o teste terminar. Emuladores continuam
+ignorando App Check e sao a opcao padrao para suites automatizadas.
+
+### Rollback
+
+Se login, leitura ou sincronizacao legitima falhar depois de um estagio:
+
+1. retornar somente o produto afetado para **Unenforced** no Console;
+2. aguardar ate 15 minutos pela propagacao;
+3. repetir login e sync e confirmar recuperacao;
+4. registrar horario, produto, categoria da metrica e erro do Console;
+5. nao avancar ao proximo produto ate identificar a origem.
+
+Desativar `appCheck.enabled` no cliente e um rollback secundario e so deve ser
+feito com todos os produtos novamente sem enforcement.
+
+Status: **17.5.1 implementada; aguarda revisao das metricas e aprovacao da 17.5.2**.
+
+Validacao em 2026-07-15:
+
+- `firebase:rollout:check` retornou `technicalReady: true`;
+- 18 de 18 controles de prontidao foram aprovados;
+- 6 testes App Check, 4 de claims e 9 de baseline passaram;
+- 12 testes de rules e 4 integracoes Auth/Firestore passaram;
+- 6 testes do artefato Pages passaram, inclusive credencial com nome suspeito;
+- artefato final validado com 1.583 arquivos e nenhuma ferramenta privilegiada.
+
+## 11. Fora de Escopo
 
 - proteger dados contra controle total do dispositivo ou perfil do navegador;
 - criptografia ponta a ponta dos documentos armazenados no Firestore;
@@ -190,18 +362,18 @@ Rollback da 17.3:
 - enforcement App Check antes da medicao da 17.3;
 - remocao de compatibilidade antes da 17.6.
 
-## 10. Subfases da Fase 17
+## 12. Subfases da Fase 17
 
 - `17.1`: matriz de ameacas e limites - **concluida tecnicamente**;
 - `17.2`: testes Auth/Firestore integrados - **concluida tecnicamente**;
-- `17.3`: App Check em observacao - **em andamento**;
-- `17.4`: papeis administrativos confiaveis;
-- `17.5`: rollout e monitoramento;
+- `17.3`: App Check em observacao - **concluida e aprovada**;
+- `17.4`: papeis administrativos confiaveis - **concluida e aprovada**;
+- `17.5`: rollout e monitoramento - **em andamento (17.5.1)**;
 - `17.6`: inventario e remocao gradual do legado.
 
 A Fase 17 possui **6 subfases** no total.
 
-## 11. Criterios de Saida Concluidos
+## 13. Criterios de Saida Concluidos
 
 - ativos e fronteiras de confianca documentados;
 - ameacas possuem impacto, controle e subfase responsavel;
@@ -211,8 +383,12 @@ A Fase 17 possui **6 subfases** no total.
 - decisoes que dependem do Console permanecem explicitamente adiadas;
 - integracao real entre Auth e Firestore pode ser repetida por um unico comando;
 - cadastro, aprovacao, isolamento por UID e logout foram validados em emuladores.
+- cliente publicado troca tokens App Check sem erro e preserva login e sync;
+- enforcement permanece adiado para o rollout controlado da 17.5.
+- autoridade administrativa real e entregue somente por custom claim assinada;
+- whitelist Firebase foi operada e validada pelo Painel Admin;
 
-## 12. Referencias Oficiais
+## 14. Referencias Oficiais
 
 Consultadas em 2026-07-14:
 

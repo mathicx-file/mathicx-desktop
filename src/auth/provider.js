@@ -388,23 +388,29 @@ class AuthProviderFacade {
   }
 
   async pendingUsers() {
-    if (this.isFirebaseMode) return [];
-    return this._local().pendingUsers();
+    const provider = await this._activeAsync();
+    return provider.pendingUsers();
   }
 
   async listUsers() {
-    if (this.isFirebaseMode) return [];
-    return this._local().listUsers();
+    const provider = await this._activeAsync();
+    return provider.listUsers();
   }
 
   async approveUser(id) {
-    if (this.isFirebaseMode) throw new Error('Aprovacao Firebase deve ser feita pelo Console nesta fase.');
-    return this._local().approveUser(id);
+    const provider = await this._activeAsync();
+    return provider.approveUser(id);
+  }
+
+  async rejectUser(id) {
+    if (!this.isFirebaseMode) return this._local().deleteUser(id);
+    const provider = await this._firebaseProvider();
+    return provider.rejectUser(id);
   }
 
   async setStatus(id, status) {
-    if (this.isFirebaseMode) throw new Error('Gestao Firebase remota indisponivel nesta fase.');
-    return this._local().setStatus(id, status);
+    const provider = await this._activeAsync();
+    return provider.setStatus(id, status);
   }
 
   async setPerfil(id, perfil) {

@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import assert from 'node:assert/strict';
 import process from 'node:process';
 import {
   assertFails,
@@ -6,9 +7,11 @@ import {
   initializeTestEnvironment,
 } from '@firebase/rules-unit-testing';
 import {
+  collection,
   deleteDoc,
   doc,
   getDoc,
+  getDocs,
   setDoc,
   updateDoc,
 } from 'firebase/firestore';
@@ -162,6 +165,30 @@ test('owner can update only safe profile fields', async (env) => {
     role: 'admin',
     updatedAt: now,
   }));
+});
+
+test('admin claim can list profiles and manage whitelist status', async (env) => {
+  await seed(env, {
+    'users/alice': profile('alice', 'pending'),
+    'users/bob': profile('bob', 'approved'),
+  });
+  const admin = userDb(env, 'owner', { admin: true });
+  const snapshot = await assertSucceeds(getDocs(collection(admin, 'users')));
+  assert.equal(snapshot.size, 2);
+  await assertSucceeds(updateDoc(doc(admin, 'users/alice'), {
+    accessStatus: 'approved',
+    updatedAt: now,
+  }));
+  await assertSucceeds(updateDoc(doc(admin, 'users/bob'), {
+    accessStatus: 'rejected',
+    updatedAt: now,
+  }));
+});
+
+test('admin audit is server-only even for an admin claim', async (env) => {
+  const admin = userDb(env, 'owner', { admin: true });
+  await assertFails(getDocs(collection(admin, 'adminAudit')));
+  await assertFails(setDoc(doc(admin, 'adminAudit/client-write'), { action: 'forged' }));
 });
 
 test('pending owner cannot access desktop/app/migration subcollections', async (env) => {

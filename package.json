@@ -13,6 +13,9 @@
     "test:recovery": "node --test src/apps/integration/restore-backup.test.mjs src/apps/integration/recovery-integration.test.mjs src/apps/integration/encrypted-backup.test.mjs src/apps/integration/unified-backup.test.mjs",
     "test:security-baseline": "node --test scripts/firebase/test-security-baseline.mjs",
     "test:app-check": "node --test src/firebase/firebase-app-check.test.mjs",
+    "test:admin-claims": "node --test src/auth/firebase-claims.test.mjs scripts/firebase/test-admin-claims.mjs",
+    "firebase:admin": "node scripts/firebase/manage-admin.mjs",
+    "firebase:rollout:check": "npm run test:app-check && npm run test:admin-claims && npm run test:security-baseline && npm run test:firebase-security && npm run pages:build && npm run pages:validate && node scripts/firebase/validate-rollout-readiness.mjs",
     "test:launcher-dictionary": "node --test scripts/test-launcher-dictionary-search.mjs",
     "test:dictionary-equivalence": "node --test scripts/test-dictionary-equivalence.mjs",
     "test:dictionary-pipeline": "node --test scripts/dictionary/tests/pipeline-schema.test.mjs scripts/dictionary/tests/source-matrix.test.mjs scripts/dictionary/tests/importers.test.mjs scripts/dictionary/tests/bootstrap-package.test.mjs scripts/dictionary/tests/editorial-review.test.mjs scripts/dictionary/tests/entry-shards.test.mjs scripts/dictionary/tests/search-indexes.test.mjs scripts/dictionary/tests/browse-pages.test.mjs scripts/dictionary/tests/distribution-manifest.test.mjs scripts/dictionary/tests/dictionary-cache.test.mjs",
@@ -46,6 +49,7 @@
     "fake-indexeddb": "6.2.5",
     "fast-xml-parser": "5.10.0",
     "firebase": "^12.15.0",
+    "firebase-admin": "^13.4.0",
     "wanakana": "^5.3.1"
   }
 }

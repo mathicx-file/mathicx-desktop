@@ -111,3 +111,16 @@ test('rejects sensitive files added to the publication artifact', async () => {
     await fs.rm(forbiddenPath, { force: true });
   }
 });
+
+test('rejects credential-like JSON files added to the publication artifact', async () => {
+  const forbiddenPath = path.join(outputRoot, 'src', 'firebase', 'service-account-production.json');
+  try {
+    await fs.writeFile(forbiddenPath, '{"private_key":"not-for-pages"}\n');
+    await assert.rejects(
+      validatePagesArtifact({ outputRoot }),
+      /Forbidden file in Pages artifact/,
+    );
+  } finally {
+    await fs.rm(forbiddenPath, { force: true });
+  }
+});

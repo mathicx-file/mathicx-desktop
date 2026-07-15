@@ -15,9 +15,11 @@ import {
 } from 'https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js';
 
 import {
+  collection,
   doc,
   getDoc,
   getDocFromServer,
+  getDocs,
   serverTimestamp,
   setDoc,
   updateDoc,
@@ -25,6 +27,7 @@ import {
 
 import { initFirebase } from '../firebase/firebase-client.js';
 import { USER_ACCESS_STATUS, USER_ROLES, firestorePaths } from '../firebase/firestore-paths.js';
+import { hasAdminClaim, roleFromClaims } from './firebase-claims.js';
 
 const SCHEMA_VERSION = 1;
 
@@ -66,6 +69,7 @@ class FirebaseAuthProvider {
 
     this._current = await this._buildSession(auth.currentUser, {
       forceServerProfile: forceRefresh,
+      forceTokenRefresh: forceRefresh,
       touchLogin: false,
     });
     this._emit(this._current);
@@ -142,12 +146,56 @@ class FirebaseAuthProvider {
   }
 
   isApproved() {
-    return this.getCurrentUser()?.accessStatus === USER_ACCESS_STATUS.APPROVED;
+    return this.isAdmin()
+      || this.getCurrentUser()?.accessStatus === USER_ACCESS_STATUS.APPROVED;
   }
 
   isAdmin() {
-    return this.getCurrentUser()?.role === USER_ROLES.ADMIN
-      || this._current?.claims?.admin === true;
+    return hasAdminClaim(this._current?.claims);
+  }
+
+  requireAdmin() {
+    if (!this.isAdmin()) throw new Error('Permissao negada: requer admin claim.');
+  }
+
+  async listUsers() {
+    this.requireAdmin();
+    const { firestore } = await this._init();
+    const snapshot = await getDocs(collection(firestore, 'users'));
+    return snapshot.docs
+      .map((item) => _normalizeManagedProfile(item.id, item.data()))
+      .sort((left, right) => left.nome.localeCompare(right.nome, 'pt-BR'));
+  }
+
+  async pendingUsers() {
+    return (await this.listUsers()).filter((user) => (
+      user.accessStatus === USER_ACCESS_STATUS.PENDING
+    ));
+  }
+
+  async approveUser(uid) {
+    return this.setStatus(uid, USER_ACCESS_STATUS.APPROVED);
+  }
+
+  async rejectUser(uid) {
+    return this.setStatus(uid, USER_ACCESS_STATUS.REJECTED);
+  }
+
+  async setStatus(uid, status) {
+    this.requireAdmin();
+    const accessStatus = _toAccessStatus(status);
+    const { firestore } = await this._init();
+    const userRef = doc(firestore, firestorePaths.user(uid));
+    await updateDoc(userRef, { accessStatus, updatedAt: serverTimestamp() });
+    return _normalizeManagedProfile(uid, (await getDoc(userRef)).data());
+  }
+
+  async setPerfil() {
+    throw new Error('Papeis Firebase so podem ser alterados pelo script administrativo confiavel.');
+  }
+
+  async deleteUser() {
+    throw new Error('Exclusao de contas Firebase exige uma operacao administrativa dedicada.');
   }
 
   onAuthChange(callback) {
@@ -169,11 +217,16 @@ class FirebaseAuthProvider {
     return this._services;
   }
 
-  async _buildSession(firebaseUser, { forceServerProfile = false, touchLogin = false } = {}) {
+  async _buildSession(firebaseUser, {
+    forceServerProfile = false,
+    forceTokenRefresh = false,
+    touchLogin = false,
+  } = {}) {
     const session = await this._ensureUserProfile(firebaseUser, {
       displayName: firebaseUser.displayName || '',
       createPendingProfile: false,
       forceServerProfile,
+      forceTokenRefresh,
       touchLogin,
     });
     return session;
@@ -183,6 +236,7 @@ class FirebaseAuthProvider {
     displayName = '',
     createPendingProfile = false,
     forceServerProfile = false,
+    forceTokenRefresh = false,
     touchLogin = false,
   } = {}) {
     const { firestore } = await this._init();
@@ -206,7 +260,7 @@ class FirebaseAuthProvider {
 
     const refreshed = forceServerProfile ? await getDocFromServer(userRef) : await getDoc(userRef);
     const profile = refreshed.exists() ? refreshed.data() : _newPendingProfile(firebaseUser, displayName);
-    const token = await firebaseUser.getIdTokenResult();
+    const token = await firebaseUser.getIdTokenResult(forceTokenRefresh);
     const normalizedUser = _normalizeUser(firebaseUser, profile, token.claims);
 
     return {
@@ -248,6 +302,7 @@ function _newPendingProfile(firebaseUser, displayName) {
 }
 
 function _normalizeUser(firebaseUser, profile, claims) {
+  const role = roleFromClaims(claims);
   return {
     id: firebaseUser.uid,
     uid: firebaseUser.uid,
@@ -256,12 +311,49 @@ function _normalizeUser(firebaseUser, profile, claims) {
     email: profile.email || firebaseUser.email || '',
     avatar: (profile.displayName || firebaseUser.email || 'U').trim().charAt(0).toUpperCase(),
     photoURL: profile.photoURL || firebaseUser.photoURL || '',
-    perfil: claims.admin === true ? USER_ROLES.ADMIN : (profile.role || USER_ROLES.USER),
-    role: claims.admin === true ? USER_ROLES.ADMIN : (profile.role || USER_ROLES.USER),
+    perfil: role,
+    role,
     accessStatus: profile.accessStatus || USER_ACCESS_STATUS.PENDING,
     schemaVersion: profile.schemaVersion || SCHEMA_VERSION,
     provider: 'firebase',
   };
+}
+
+function _normalizeManagedProfile(uid, profile = {}) {
+  const accessStatus = profile.accessStatus || USER_ACCESS_STATUS.PENDING;
+  const statusMap = {
+    [USER_ACCESS_STATUS.PENDING]: 'pendente',
+    [USER_ACCESS_STATUS.APPROVED]: 'ativo',
+    [USER_ACCESS_STATUS.REJECTED]: 'bloqueado',
+  };
+  const displayName = profile.displayName || profile.email || 'Usuario';
+  return {
+    id: uid,
+    uid,
+    nome: displayName,
+    displayName,
+    email: profile.email || '',
+    username: '',
+    avatar: displayName.trim().charAt(0).toUpperCase() || 'U',
+    perfil: profile.role === USER_ROLES.ADMIN ? USER_ROLES.ADMIN : USER_ROLES.USER,
+    role: profile.role === USER_ROLES.ADMIN ? USER_ROLES.ADMIN : USER_ROLES.USER,
+    status: statusMap[accessStatus] || 'pendente',
+    accessStatus,
+    provider: 'firebase',
+  };
+}
+
+function _toAccessStatus(status) {
+  const aliases = {
+    ativo: USER_ACCESS_STATUS.APPROVED,
+    bloqueado: USER_ACCESS_STATUS.REJECTED,
+    pendente: USER_ACCESS_STATUS.PENDING,
+  };
+  const normalized = aliases[status] || status;
+  if (!Object.values(USER_ACCESS_STATUS).includes(normalized)) {
+    throw new Error(`Status Firebase invalido: ${status}`);
+  }
+  return normalized;
 }
 
 function _validateCredentials({ name, email, password }) {

@@ -36,6 +36,12 @@ jobs:
       - name: Install validation dependencies
         run: npm ci --ignore-scripts
 
+      - name: Validate Firebase security runtime
+        run: |
+          npm run test:app-check
+          npm run test:admin-claims
+          npm run test:security-baseline
+
       - name: Validate dictionary pipeline
         run: npm run test:dictionary-pipeline
 
@@ -52,7 +58,9 @@ jobs:
         run: npm run pages:build
 
       - name: Validate Pages artifact
-        run: npm run pages:validate
+        run: |
+          npm run pages:validate
+          node scripts/firebase/validate-rollout-readiness.mjs
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

@@ -4,7 +4,7 @@
 >
 > Status: fonte oficial de planejamento e execucao
 >
-> Fase atual: Fase 17.3 em validacao; nova chave pronta para deploy
+> Fase atual: Fase 17.5.1 - preparacao dos gates de rollout
 
 ## 1. Autoridade Deste Documento
 
@@ -532,11 +532,8 @@ Ja existe:
 
 Ainda falta:
 
-- publicar o cliente instrumentado e observar as metricas do App Check;
 - token de debug fora do repositorio;
 - enforcement gradual;
-- avaliar custom claims ou script administrativo para papeis;
-- checklist de monitoramento e rollback;
 - definir periodo minimo antes de remover aliases ou caminhos legados;
 - remover legado somente com backup e versao estavel comprovada.
 
@@ -544,15 +541,15 @@ Subfases previstas:
 
 - `17.1`: matriz de ameacas e limites - **concluida tecnicamente**;
 - `17.2`: testes Auth/Firestore integrados - **concluida tecnicamente**;
-- `17.3`: App Check em observacao - **em andamento**;
-- `17.4`: papeis administrativos confiaveis;
-- `17.5`: rollout e monitoramento;
+- `17.3`: App Check em observacao - **concluida e aprovada**;
+- `17.4`: papeis administrativos confiaveis - **concluida e aprovada**;
+- `17.5`: rollout e monitoramento - **em andamento (17.5.1)**;
 - `17.6`: inventario e remocao gradual do legado.
 
 A Fase 17 possui **6 subfases** no total.
 
-Intervencao do proprietario: registrar o Web App com reCAPTCHA Enterprise sem
-enforcement e, somente depois da janela de observacao, aprovar enforcement.
+Intervencao do proprietario: revisar as metricas por produto e aprovar cada
+estagio do enforcement App Check separadamente.
 
 ### Fase 18: Evolucoes Opcionais
 
@@ -697,10 +694,33 @@ observacao aguarda uma nova chave Website `SCORE` criada no projeto correto. O
 teste tambem levou a correcoes no fechamento do Launcher e sandbox.
 
 Em 2026-07-15, a nova chave foi criada no projeto correto, vinculada ao Web App
-e preparada no cliente. Resta publicar e confirmar tokens verificados nas
-metricas do App Check.
+e publicada no cliente pelo commit `6beba03`. O novo teste chegou ao endpoint
+Enterprise, mas recebeu HTTP 403, foi classificado como invalido e gerou
+throttle local de 24 horas. Resta conferir Key ID, dominio e score no Console e
+repetir em uma sessao anonima antes de alterar o threshold.
 
-Etapa atual: **concluir a ativacao sem enforcement da Fase 17.3**.
+A configuracao foi corrigida no Console e o reteste deixou de apresentar HTTP
+403. Login e sincronizacao permaneceram operacionais na versao publicada, com
+Authentication e Cloud Firestore ainda sem enforcement. A `17.3` foi concluida
+e aprovada em 2026-07-15; as metricas continuarao sendo observadas ate o rollout
+gradual previsto na `17.5`.
+
+A `17.4` removeu a dependencia de `users/{uid}.role` para autoridade no cliente:
+somente a custom claim assinada `admin == true` libera recursos administrativos.
+O script `scripts/firebase/manage-admin.mjs` concede e revoga o papel com dry-run,
+preserva claims existentes, protege o ultimo admin e registra auditoria
+server-side. O painel Firebase passou a listar usuarios e operar a whitelist,
+mas nao promove administradores. Em 2026-07-15, a primeira claim foi aplicada,
+o papel apareceu depois do novo login, o painel listou os usuarios e o bloqueio
+de uma conta foi efetivo. A subfase foi concluida e aprovada.
+
+A `17.5.1` prepara o rollout por produto com o comando unico
+`npm run firebase:rollout:check`, gates no workflow Pages, bloqueio adicional de
+credenciais no artefato e um procedimento de rollback. O plano ativa primeiro
+Cloud Firestore, observa por 24 horas e somente depois considera Authentication.
+O gate completo aprovou 18 de 18 controles e retornou `technicalReady: true`.
+
+Etapa atual: **revisar metricas e decidir a Fase 17.5.2 - enforcement do Cloud Firestore**.
 
 ## 8. Protocolo de Atualizacao do Roteiro
 

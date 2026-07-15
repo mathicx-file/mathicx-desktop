@@ -39,6 +39,31 @@ test('runtime postMessage calls do not use a wildcard target origin', async () =
   assert.deepEqual(violations, []);
 });
 
+test('Firebase runtime grants admin UI only from signed custom claims', async () => {
+  const provider = await read('src/auth/firebase-auth-provider.js');
+  const claims = await read('src/auth/firebase-claims.js');
+  assert.match(provider, /return hasAdminClaim\(this\._current\?\.claims\)/u);
+  assert.match(provider, /return this\.isAdmin\(\)[\s\S]{0,100}USER_ACCESS_STATUS\.APPROVED/u);
+  assert.doesNotMatch(provider, /profile\.role\s*\|\|/u);
+  assert.match(claims, /claims\?\.admin\s*===\s*true/u);
+  assert.doesNotMatch(claims, /claims\?\.role/u);
+});
+
+test('admin script uses application credentials and dry-run protection', async () => {
+  const script = await read('scripts/firebase/manage-admin.mjs');
+  assert.match(script, /applicationDefault\(\)/u);
+  assert.match(script, /if \(options\.apply\)/u);
+  assert.match(script, /setCustomUserClaims/u);
+  assert.doesNotMatch(script, /initializeApp\(\{[\s\S]{0,200}credential:\s*cert\(/u);
+});
+
+test('Firebase admin panel escapes user-controlled profile fields', async () => {
+  const panel = await read('src/apps/admin/view.js');
+  assert.match(panel, /import \{ escapeHTML \}/u);
+  assert.doesNotMatch(panel, /\$\{u\.(?:nome|email|username|avatar)\}/u);
+  assert.doesNotMatch(panel, /\$\{target\.nome\}/u);
+});
+
 test('integrated iframes use the supported storage-access sandbox token', async () => {
   const source = await read('src/apps/integration/iframe-app.js');
   assert.match(source, /['"]allow-storage-access-by-user-activation['"]/u);
@@ -65,6 +90,8 @@ test('gitignore protects privileged Firebase and local environment files', async
   for (const expected of [
     'serviceAccountKey.json',
     '*-firebase-adminsdk-*.json',
+    '*-service-account*.json',
+    '.firebase-admin/',
     'app-check-debug-token*',
     '.env.*',
   ]) {
