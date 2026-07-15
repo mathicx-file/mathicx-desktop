@@ -9,7 +9,7 @@ export const firebaseConfig = {
   appCheck: {
     enabled: true,
     provider: 'recaptcha-enterprise',
-    siteKey: '6Lclo1MtAAAAAJ14V7keajqlyrzquJ_pEh3vSUm-',
+    siteKey: '6LfZ-1QtAAAAAK1HIpqQwt2vuuUwdnn_wDfNh24W',
     debug: false,
   },
 };

@@ -8,7 +8,7 @@ import { appDataHost } from './app-data-host.js';
 const DEFAULT_SANDBOX = [
   'allow-same-origin',
   'allow-scripts',
-  'allow-storage',
+  'allow-storage-access-by-user-activation',
   'allow-popups',
   'allow-popups-to-escape-sandbox',
 ];

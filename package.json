@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "test:app-ids": "node scripts/test-app-id-migration.mjs",
+    "test:launcher": "node --test src/launcher/launcher.test.mjs",
     "test:app-data-contract": "node --test src/apps/integration/app-data-contract.test.mjs",
     "test:sync-center": "node --test src/apps/configuracoes/sync-center.test.mjs",
     "test:unified-backup": "node --test src/apps/integration/unified-backup.test.mjs",

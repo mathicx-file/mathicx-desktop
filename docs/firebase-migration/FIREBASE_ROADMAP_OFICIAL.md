@@ -4,7 +4,7 @@
 >
 > Status: fonte oficial de planejamento e execucao
 >
-> Fase atual: Fase 17.3 em andamento; pronta para deploy e observacao
+> Fase atual: Fase 17.3 em validacao; nova chave pronta para deploy
 
 ## 1. Autoridade Deste Documento
 
@@ -689,7 +689,16 @@ Auth e Firestore, com bypass para emuladores, debug restrito ao localhost e 6
 testes automatizados. O Web App foi registrado com reCAPTCHA Enterprise e a
 site key publica foi incluida no cliente. O artefato Pages voltou a ser
 reproduzivel no Windows apos fixar os bytes dos pacotes content-addressed e foi
-validado com 1.582 arquivos. A observacao real aguarda o deploy.
+validado com 1.582 arquivos. O primeiro teste publicado manteve Auth e sync
+funcionais sem enforcement, mas a troca do token Enterprise retornou HTTP 400.
+A resposta confirmou uma chave criada no projeto Google Cloud
+`mathicx-desktop`, diferente do projeto Firebase `mathicx-file-desktop`. A
+observacao aguarda uma nova chave Website `SCORE` criada no projeto correto. O
+teste tambem levou a correcoes no fechamento do Launcher e sandbox.
+
+Em 2026-07-15, a nova chave foi criada no projeto correto, vinculada ao Web App
+e preparada no cliente. Resta publicar e confirmar tokens verificados nas
+metricas do App Check.
 
 Etapa atual: **concluir a ativacao sem enforcement da Fase 17.3**.
 

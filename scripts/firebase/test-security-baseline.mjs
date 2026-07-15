@@ -39,6 +39,12 @@ test('runtime postMessage calls do not use a wildcard target origin', async () =
   assert.deepEqual(violations, []);
 });
 
+test('integrated iframes use the supported storage-access sandbox token', async () => {
+  const source = await read('src/apps/integration/iframe-app.js');
+  assert.match(source, /['"]allow-storage-access-by-user-activation['"]/u);
+  assert.doesNotMatch(source, /['"]allow-storage['"]/u);
+});
+
 test('runtime sources contain no private keys or assigned App Check debug tokens', async () => {
   const files = await runtimeFiles();
   const violations = [];

@@ -317,6 +317,7 @@ export class Launcher {
     setTimeout(() => this._el.querySelector('[data-el="search"]')?.focus(), 50);
   }
   close() {
+    if (!this._open) return;
     this._open = false;
     this._el.classList.add('is-hidden');
     this.bus.emit(EVT.LAUNCHER_CLOSE);

@@ -4,7 +4,7 @@
 >
 > Status geral: em andamento
 >
-> Subfase atual: 17.3 em andamento; pronta para deploy e observacao
+> Subfase atual: 17.3 em validacao; nova chave pronta para deploy
 
 ## 1. Objetivo
 
@@ -152,7 +152,29 @@ Nao adicionar `localhost` aos dominios reCAPTCHA. Quando testes locais contra o
 backend real forem necessarios, sera usado um debug token privado registrado no
 Console e mantido fora do repositorio.
 
-Status: **implementacao e registro preparados; aguarda deploy para observacao**.
+Primeiro teste publicado em 2026-07-14:
+
+- Auth e sincronizacao continuam disponiveis com enforcement desligado;
+- `exchangeRecaptchaEnterpriseToken` retorna HTTP 400 e entra em throttle;
+- Desktop, Japanese Study e Finances reproduzem a mesma recusa;
+- a resposta `FAILED_PRECONDITION` confirmou que a site key pertence ao projeto
+  Google Cloud `mathicx-desktop`, diferente do projeto Firebase
+  `mathicx-file-desktop`;
+- a observacao ainda nao pode ser considerada valida.
+
+Correcao definida: habilitar a API reCAPTCHA Enterprise no projeto existente
+`mathicx-file-desktop`, criar nele uma nova chave Website `SCORE` para
+`mathicx-file.github.io`, atualizar o registro do Web App e substituir somente
+a site key publica no cliente. Chaves Enterprise nao sao movidas entre projetos.
+
+Intervencao concluida em 2026-07-15: a API foi habilitada, o Web App foi
+reconfigurado e uma nova site key do projeto `mathicx-file-desktop` substituiu a
+chave do projeto incorreto. Aguarda deploy e repeticao do teste publicado.
+
+O mesmo teste revelou recursao em `launcher:close` e o token de sandbox invalido
+`allow-storage`. Ambos foram corrigidos e possuem regressao automatizada.
+
+Status: **correcao preparada; aguarda novo deploy e validacao da atestacao**.
 
 Rollback da 17.3:
 
