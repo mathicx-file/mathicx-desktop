@@ -1,7 +1,13 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { resolveAppCheckRuntime } from './firebase-app-check.js';
+import { IDBFactory, indexedDB } from 'fake-indexeddb';
+
+import {
+  ensureAppCheckDebugTokenStore,
+  readStoredAppCheckDebugToken,
+  resolveAppCheckRuntime,
+} from './firebase-app-check.js';
 import { firebaseConfig as productionConfig } from './firebase-config.prod.js';
 
 const enabledConfig = {
@@ -72,4 +78,64 @@ test('debug mode is accepted only on localhost', () => {
   assert.equal(local.debug, true);
   assert.equal(production.enabled, false);
   assert.equal(production.reason, 'debug-outside-localhost');
+});
+
+test('an explicit local token enables debug without affecting production hosts', () => {
+  const config = {
+    appCheck: {
+      ...enabledConfig.appCheck,
+      debug: false,
+      debugToken: '123a4567-b89c-12d3-a456-426614174000',
+    },
+  };
+  const local = resolveAppCheckRuntime(config, { hostname: '127.0.0.1' });
+  const production = resolveAppCheckRuntime(config, { hostname: 'mathicx-file.github.io' });
+
+  assert.equal(local.enabled, true);
+  assert.equal(local.debug, true);
+  assert.equal(production.enabled, false);
+  assert.equal(production.reason, 'debug-outside-localhost');
+});
+
+test('reads the persisted local debug token without embedding it in source', async () => {
+  await new Promise((resolve, reject) => {
+    const request = indexedDB.open('firebase-app-check-database', 1);
+    request.onupgradeneeded = () => {
+      request.result.createObjectStore('firebase-app-check-store', { keyPath: 'compositeKey' });
+    };
+    request.onsuccess = () => {
+      const database = request.result;
+      const transaction = database.transaction('firebase-app-check-store', 'readwrite');
+      transaction.objectStore('firebase-app-check-store').put({
+        compositeKey: 'debug-token',
+        value: 'generated-debug-token-for-test',
+      });
+      transaction.oncomplete = () => {
+        database.close();
+        resolve();
+      };
+      transaction.onerror = () => reject(transaction.error);
+    };
+    request.onerror = () => reject(request.error);
+  });
+
+  assert.equal(
+    await readStoredAppCheckDebugToken(indexedDB),
+    'generated-debug-token-for-test',
+  );
+});
+
+test('repairs an App Check debug database created without its object store', async () => {
+  const malformedIndexedDB = new IDBFactory();
+  await new Promise((resolve, reject) => {
+    const request = malformedIndexedDB.open('firebase-app-check-database', 1);
+    request.onsuccess = () => {
+      request.result.close();
+      resolve();
+    };
+    request.onerror = () => reject(request.error);
+  });
+
+  assert.equal(await ensureAppCheckDebugTokenStore(malformedIndexedDB), true);
+  assert.equal(await readStoredAppCheckDebugToken(malformedIndexedDB), null);
 });

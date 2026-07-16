@@ -1,10 +1,13 @@
 import { APP_DATA_ACTIONS } from '../integration/app-data-contract.js';
+import {
+  listIntegratedAppDefinitions,
+  validateIntegratedAppCapabilities,
+} from '../integration/integrated-app.js';
+import { appRegistry } from '../registry.js';
 
-export const SYNC_CENTER_APPS = Object.freeze([
-  { appId: 'desktop', name: 'Mathicx Desktop', shortName: 'M', canOpen: false, financial: false },
-  { appId: 'japanese-study', name: 'Japanese Study', shortName: '日', canOpen: true, financial: false },
-  { appId: 'finances', name: 'Finances', shortName: '$', canOpen: true, financial: true },
-]);
+export function getSyncCenterApps(registry = appRegistry) {
+  return listIntegratedAppDefinitions(registry.list());
+}
 
 const STATUS_META = Object.freeze({
   synced: { label: 'Sincronizado', tone: 'success' },
@@ -21,7 +24,8 @@ const STATUS_META = Object.freeze({
 
 export async function loadSyncCenterState(host, options = {}) {
   const timeoutMs = options.timeoutMs ?? 3_000;
-  return Promise.all(SYNC_CENTER_APPS.map(async (definition) => {
+  const definitions = options.apps || getSyncCenterApps(options.registry);
+  return Promise.all(definitions.map(async (definition) => {
     const iframe = options.resolveIframe?.(definition.appId) || null;
     if (!host.isMounted(definition.appId) && !iframe) {
       return normalizeSyncApp(definition, {
@@ -38,6 +42,12 @@ export async function loadSyncCenterState(host, options = {}) {
         request(APP_DATA_ACTIONS.capabilities),
         request(APP_DATA_ACTIONS.syncStatus),
       ]);
+      const validation = validateIntegratedAppCapabilities(
+        capabilities,
+        definition.appId,
+        definition.version,
+      );
+      if (!validation.ok) throw new Error(validation.errors.join(' '));
       return normalizeSyncApp(definition, status, capabilities, Boolean(iframe));
     } catch (error) {
       return normalizeSyncApp(definition, {

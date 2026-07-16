@@ -6,6 +6,7 @@ import {
 
 export const UNIFIED_BACKUP_FORMAT = 'mathicx-unified-backup';
 export const UNIFIED_BACKUP_SCHEMA_VERSION = 1;
+export const GUEST_BACKUP_SOURCE = 'guest-local';
 
 export async function collectUnifiedBackup(host, apps, options = {}) {
   if (!Array.isArray(apps) || apps.length === 0) {
@@ -54,12 +55,14 @@ export async function createUnifiedBackupPackage(entries, options = {}) {
   }
   if (apps.length === 0) throw createProtocolError('empty-backup-selection', 'Select at least one app for backup.');
 
+  const source = normalizeBackupSource(options.source);
   return {
     format: UNIFIED_BACKUP_FORMAT,
     schemaVersion: UNIFIED_BACKUP_SCHEMA_VERSION,
     protocolVersion: APP_DATA_PROTOCOL_VERSION,
     exportedAt: now().toISOString(),
     encrypted: options.encrypted === true,
+    ...(source ? { source } : {}),
     apps,
   };
 }
@@ -75,6 +78,9 @@ export async function validateUnifiedBackupPackage(value, options = {}) {
   if (value.protocolVersion !== APP_DATA_PROTOCOL_VERSION) errors.push('Versao do protocolo de aplicativos nao suportada.');
   if (typeof value.encrypted !== 'boolean') errors.push('Estado de criptografia invalido para este formato.');
   if (!Array.isArray(value.apps) || value.apps.length === 0) errors.push('O pacote nao possui aplicativos.');
+  if (value.source !== undefined && !isValidBackupSource(value.source)) {
+    errors.push('Procedencia do backup invalida.');
+  }
 
   const seen = new Set();
   const summaries = [];
@@ -97,6 +103,10 @@ export async function validateUnifiedBackupPackage(value, options = {}) {
   }
 
   return { ok: errors.length === 0, errors, apps: summaries };
+}
+
+export function isGuestMigrationBackup(value) {
+  return value?.source?.kind === GUEST_BACKUP_SOURCE && value.source.schemaVersion === 1;
 }
 
 export function downloadUnifiedBackup(backup, options = {}) {
@@ -146,6 +156,17 @@ function assertBackupEntry(entry, contract, allowFinancialData) {
   if (entry.backup.format !== contract.format || entry.backup.schemaVersion !== contract.schemaVersion) {
     throw createProtocolError('invalid-app-backup', `Backup contract mismatch: ${entry.appId}`);
   }
+}
+
+function normalizeBackupSource(source) {
+  if (source?.kind !== GUEST_BACKUP_SOURCE) return null;
+  return { kind: GUEST_BACKUP_SOURCE, schemaVersion: 1 };
+}
+
+function isValidBackupSource(source) {
+  return source?.kind === GUEST_BACKUP_SOURCE
+    && source.schemaVersion === 1
+    && Object.keys(source).every((key) => key === 'kind' || key === 'schemaVersion');
 }
 
 async function sha256Hex(value, cryptoImpl) {

@@ -10,10 +10,12 @@
  */
 
 const PREFIX = 'mathicx:';
+const SCOPED_PREFIX = `${PREFIX}scope/`;
 
 class LocalStorageAdapter {
   constructor() {
     this._available = this._check();
+    this._scope = '';
   }
 
   _check() {
@@ -27,7 +29,16 @@ class LocalStorageAdapter {
     }
   }
 
-  _key(name) { return PREFIX + name; }
+  _key(name) {
+    return this._scope
+      ? `${SCOPED_PREFIX}${this._scope}:${name}`
+      : PREFIX + name;
+  }
+
+  setScope(scope = '') {
+    this._scope = String(scope || '').trim().replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 96);
+    return this._scope;
+  }
 
   get(name, fallback = null) {
     if (!this._available) return fallback;
@@ -58,12 +69,19 @@ class LocalStorageAdapter {
 
   clear() {
     if (!this._available) return;
+    const currentPrefix = this._scope
+      ? `${SCOPED_PREFIX}${this._scope}:`
+      : PREFIX;
     Object.keys(window.localStorage)
-      .filter((k) => k.startsWith(PREFIX))
+      .filter((key) => {
+        if (!key.startsWith(currentPrefix)) return false;
+        return this._scope || !key.startsWith(SCOPED_PREFIX);
+      })
       .forEach((k) => window.localStorage.removeItem(k));
   }
 
   get available() { return this._available; }
+  get scope() { return this._scope; }
 }
 
 export const ls = new LocalStorageAdapter();

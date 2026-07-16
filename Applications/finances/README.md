@@ -1,139 +1,110 @@
-# 💰 Finanças Pessoais
+# Finances
 
-Aplicação web completa de **gerenciamento financeiro pessoal**, construída com **HTML5, CSS3 e JavaScript puro** (sem frameworks). 100% local — seus dados nunca saem do navegador.
+Aplicacao local-first de financas pessoais integrada ao Mathicx Desktop. Usa
+HTML, CSS e JavaScript nativo, funciona como pagina independente e ganha escopo
+por usuario, tema, sincronizacao e backup unificado quando aberta pelo host.
 
-![Stack](https://img.shields.io/badge/HTML5-orange) ![Stack](https://img.shields.io/badge/CSS3-blue) ![Stack](https://img.shields.io/badge/JavaScript-vanilla-yellow) ![Status](https://img.shields.io/badge/status-pronto-success)
+## Recursos
 
-## ✨ Funcionalidades
+- dashboard financeiro e indicadores mensais;
+- receitas, despesas, parcelas e recorrencias;
+- cartoes, categorias, metas e orcamentos;
+- calendario, simulador e relatorios;
+- exportacao PDF, Excel e CSV por bibliotecas CDN;
+- temas claro, escuro e personalizado;
+- backup JSON proprio e participacao no backup unificado;
+- conflito explicito entre dispositivos.
 
-| Módulo | Descrição |
-|---|---|
-| 🏠 **Dashboard** | Saldo, receitas/despesas do mês, economia, indicadores de saúde financeira, gráficos interativos (evolução, distribuição, receitas x despesas) |
-| 💸 **Movimentações** | Receitas e despesas com descrição, valor, categoria, vencimento, pagamento, observações, status e forma de pagamento. Filtros avançados + busca |
-| 🧾 **Parcelamentos** | Cadastro gera as parcelas automaticamente (1/12, 2/12...), marca parcelas pagas individualmente, cancela futuras, acompanha progresso |
-| 🔁 **Recorrentes** | Contas fixas (mensal, quinzenal, semanal, anual) com geração automática de lançamentos futuros |
-| 💳 **Cartões** | Limite, dias de fechamento/vencimento, fatura atual e % de uso |
-| 🏷️ **Categorias** | Personalizadas com cor e ícone, separadas por tipo (receita/despesa) |
-| 🧮 **Simulador** | Calcula parcela (tabela Price com juros), impacto no orçamento, alertas de comprometimento da renda e **botão para efetivar o lançamento** |
-| 🎯 **Metas** | Objetivos com barra de progresso e valor acumulado |
-| 📊 **Relatórios** | 7 relatórios filtráveis (fluxo de caixa, por categoria, parcelamentos, atrasadas, evolução, ranking) com exportação **PDF, Excel e CSV** |
-| 📅 **Calendário** | Visão mensal de vencimentos por dia, com indicadores de status |
-| ⚙️ **Configurações** | Temas (claro/escuro/auto/personalizado com gradiente), orçamento por categoria, backup/restore, dados |
+## Persistencia
 
-### 🔔 Extras incluídos
-- Alertas de contas atrasadas e vencimentos próximos (topo da página)
-- Indicador de saúde financeira (anel de progresso 0–100)
-- Previsão de saldo futuro (simulador)
-- Ranking das categorias de maior gasto
-- Sistema de orçamento mensal por categoria
-- Busca global no topo
-- Notificações (toasts) e feedback visual
-- Layout 100% responsivo (desktop + mobile, com FAB e sidebar deslizante)
+O aplicativo sempre mantem um estado local no navegador. No Mathicx Desktop:
 
-## 🚀 Como executar
+- o host informa o UID antes da leitura do storage;
+- cada conta usa um namespace local separado;
+- visitante usa somente o escopo local `guest-local-v1`;
+- usuario Firebase aprovado sincroniza um snapshot transacional em
+  `users/{uid}/apps/finances/profile/snapshot`;
+- cada gravacao compara a revisao remota para evitar sobrescrita silenciosa;
+- conflitos oferecem escolha entre a versao local e a versao do Firebase.
 
-Não há build nem dependências para instalar. Basta abrir o `index.html`:
+O modelo de snapshot permanece oficial enquanto o gate de arquitetura nao
+identificar tamanho, volume, conflitos ou latencia que justifiquem dividir as
+entidades. Consulte `npm run firebase:assess-sync` na raiz.
 
-**Opção 1 — Abrir direto**
+## Executar
+
+O modo standalone nao precisa de build:
+
 ```bash
-# Dê duplo clique em finances/index.html, ou:
-start finances/index.html        # Windows
-open finances/index.html         # macOS
-xdg-open finances/index.html     # Linux
-```
-
-**Opção 2 — Servidor local (recomendado, evita restrições de `file://`)**
-```bash
-cd finances
+cd Applications/finances
 python -m http.server 8080
-# abra http://localhost:8080
 ```
 
-> 💡 Na primeira execução a aplicação já vem com **dados de exemplo** (salário, contas, um parcelamento, uma meta, um cartão) para você explorar. Para começar do zero, vá em **Configurações → Apagar todos os dados**.
+Acesse `http://localhost:8080`. Para testar a integracao completa, sirva a raiz
+do Mathicx Desktop e abra o Finances pelo launcher.
 
-## 🌐 Dependências (via CDN)
+## Integracao com o Desktop
 
-Carregadas automaticamente — não precisam de instalação:
+Arquivos principais:
+
+```text
+Applications/finances/js/app-data-adapter.js
+Applications/finances/js/firebase/finances-firebase-sync.js
+Applications/finances/js/firebase/finances-firestore-repository.js
+src/apps/finances/manifest.js
+src/apps/finances/view.js
+```
+
+O manifesto integrado declara dados financeiros e isolamento por usuario. Por
+isso, backups unificados que incluem o Finances exigem protecao criptografada.
+O adaptador oferece capacidades, status de sync, exportacao, validacao,
+restauracao `merge`/`replace` e pausa transacional durante rollback.
+
+## Dependencias de Runtime
+
+Carregadas por CDN:
 
 | Biblioteca | Uso |
-|---|---|
-| [Chart.js 4](https://chartjs.org) | Gráficos interativos |
-| [jsPDF](https://github.com/parallax/jsPDF) + autoTable | Exportação PDF |
-| [SheetJS (xlsx)](https://sheetjs.com) | Exportação Excel |
-| [Google Fonts (Inter)](https://fonts.google.com) | Tipografia |
+| --- | --- |
+| Chart.js | Graficos |
+| jsPDF e autoTable | PDF |
+| SheetJS | Excel |
+| Google Fonts | Tipografia |
 
-> Caso fique **offline**, os gráficos e exportações ficam indisponíveis, mas todo o restante da aplicação continua funcionando (os dados são salvos localmente).
+Sem rede, dados e telas continuam locais; recursos dependentes das bibliotecas
+CDN podem ficar indisponiveis.
 
-## 🗂️ Estrutura do projeto
+## Estrutura
 
-```
-finances/
-├── index.html              # Estrutura base + templates
-├── css/
-│   └── styles.css          # Design system, temas, layout, componentes
-├── js/
-│   ├── storage.js          # Camada de dados (LocalStorage, backup, seed)
-│   ├── utils.js            # Formatação, datas, agregações financeiras
-│   ├── ui.js               # Componentes (toast, modal, charts, tabelas)
-│   ├── app.js              # Router, navegação, tema, alertas
-│   └── views/
-│       ├── dashboard.js
-│       ├── transactions.js
-│       ├── installments.js
-│       ├── recurring.js
-│       ├── categories.js
-│       ├── cards.js
-│       ├── simulator.js
-│       ├── goals.js
-│       ├── reports.js
-│       ├── calendar.js
-│       └── settings.js
-└── test/
-    ├── smoke.js            # Teste: carrega + renderiza todas as views
-    └── functional.js       # Teste: lógica financeira, cálculos, backup
+```text
+index.html
+css/styles.css
+js/storage.js
+js/app-data-adapter.js
+js/firebase/
+js/views/
+test/
 ```
 
-### Arquitetura
+## Seguranca e Privacidade
 
-- **Sem framework**: cada view é um módulo (`App.Dashboard.render()`, `App.Transactions.render()`, …) exposto no objeto global `App`.
-- **Store central** (`js/storage.js`): único ponto de acesso ao estado, com `subscribe()` para que as views se re-renderizem ao mudar os dados. Persistência via `localStorage` com debounce.
-- **Utils** (`js/utils.js`): funções puras de domínio financeiro (agregação por mês, status efetivo, tabela Price, formatação BRL).
-- **UI** (`js/ui.js`): biblioteca de componentes reutilizáveis (modal, toast, tabelas, gráficos Chart.js com cores do tema).
+- nenhuma senha ou token Firebase e enviado por `postMessage`;
+- a sessao Firebase e obtida no mesmo origin do host;
+- dados ficam isolados por UID no navegador e no Firestore;
+- App Check, whitelist e Firestore Rules protegem o acesso remoto;
+- o modo visitante nunca acessa o Firebase.
 
-## 🧪 Testes
+## Validacao Recomendada
+
+Na raiz do projeto:
 
 ```bash
-cd finances
-node test/smoke.js          # carrega todos os scripts + renderiza as 11 views
-node test/functional.js     # valida categorias, cálculos, status, backup/restore
+npm run test:integration-kit
+npm run test:recovery
+npm run test:firebase-security
+npm run pages:build
+npm run pages:validate
 ```
 
-## 💾 Backup e privacidade
-
-- Todos os dados ficam no `localStorage` do navegador.
-- **Configurações → Exportar backup** gera um JSON completo.
-- **Importar backup** permite restaurar (substituindo ou mesclando).
-- Os dados **não são enviados a nenhum servidor**.
-
-## 🎨 Temas
-
-Quatro opções em **Configurações → Aparência**:
-
-1. **Claro** — fundo claro
-2. **Escuro** — fundo escuro
-3. **Automático** — segue a preferência do sistema operacional
-4. **Personalizado** — escolha a cor primária, de destaque, o fundo e um gradiente pré-definido
-
-Há também um botão rápido 🎨 na barra lateral para alternar claro/escuro.
-
-## 📋 Roadmap / ideias futuras
-
-- Sincronização opcional com nuvem
-- Modo multiusuário / família
-- Importação de extratos bancários (OFX/CSV)
-- Notificações no navegador e por e-mail
-- App instalável (PWA) com service worker offline
-
----
-
-Feito com 💙 · Dados 100% locais · Sem rastreamento
+Teste manualmente dois navegadores, sincronizacao, conflito, backup criptografado
+e restauracao seletiva.

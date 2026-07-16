@@ -1,8 +1,7 @@
 import {
-  APP_DATA_ACTIONS,
   createAppDataResponder,
-  createProtocolError,
 } from '../../../src/apps/integration/app-data-contract.js';
+import { createIntegratedAppDataHandlers } from '../../../src/apps/integration/integrated-app.js';
 
 export const FINANCES_BACKUP_FORMAT = 'finances-backup';
 export const FINANCES_BACKUP_SCHEMA_VERSION = 1;
@@ -14,42 +13,31 @@ export function createFinancesAppDataHandlers(options = {}) {
     throw new Error('Finances app data adapter requires the snapshot storage API.');
   }
 
-  return {
-    [APP_DATA_ACTIONS.capabilities]: async () => ({
-      appId: APP_ID,
-      protocolVersion: 1,
-      actions: Object.values(APP_DATA_ACTIONS),
-      backup: {
-        format: FINANCES_BACKUP_FORMAT,
-        schemaVersion: FINANCES_BACKUP_SCHEMA_VERSION,
-        modes: ['merge', 'replace'],
-        containsFinancialData: true,
-      },
-    }),
-    [APP_DATA_ACTIONS.syncStatus]: async () => clone(options.getSyncStatus?.() || {
+  return createIntegratedAppDataHandlers({
+    appId: APP_ID,
+    appVersion: '1.0.0',
+    backup: {
+      format: FINANCES_BACKUP_FORMAT,
+      schemaVersion: FINANCES_BACKUP_SCHEMA_VERSION,
+      modes: ['merge', 'replace'],
+      containsFinancialData: true,
+    },
+    getSyncStatus: () => clone(options.getSyncStatus?.() || {
       state: 'checking',
       message: 'Sincronizacao ainda nao inicializada.',
     }),
-    [APP_DATA_ACTIONS.syncNow]: async () => (
+    syncNow: () => (
       options.syncNow?.() || { ok: false, reason: 'not-ready' }
     ),
-    [APP_DATA_ACTIONS.backupExport]: async () => createFinancesBackup(storage.exportSnapshot(), options.now),
-    [APP_DATA_ACTIONS.backupValidate]: async ({ backup } = {}) => validateFinancesBackup(backup),
-    [APP_DATA_ACTIONS.backupImport]: async ({ backup, mode, confirmed } = {}) => {
-      if (confirmed !== true) {
-        throw createProtocolError('confirmation-required', 'Backup import requires explicit confirmation.');
-      }
-      if (!['merge', 'replace'].includes(mode)) {
-        throw createProtocolError('invalid-import-mode', `Unsupported backup import mode: ${mode}`);
-      }
-      const validation = validateFinancesBackup(backup);
-      if (!validation.ok) throw createProtocolError('invalid-backup', validation.errors.join(' '));
+    exportBackup: () => createFinancesBackup(storage.exportSnapshot(), options.now),
+    validateBackup: (backup) => validateFinancesBackup(backup),
+    importBackup: (backup, mode, validation) => {
       storage.importSnapshot(backup.data, { replace: mode === 'replace', source: 'unified-backup' });
-      return { imported: true, mode, summary: validation.summary };
+      return { summary: validation.summary };
     },
-    [APP_DATA_ACTIONS.restoreBegin]: async () => options.beginRestore?.() || { ok: true, supported: false },
-    [APP_DATA_ACTIONS.restoreEnd]: async (payload = {}) => options.endRestore?.(payload) || { ok: true, supported: false },
-  };
+    beginRestore: () => options.beginRestore?.() || { ok: true, supported: false },
+    endRestore: (payload) => options.endRestore?.(payload) || { ok: true, supported: false },
+  });
 }
 
 export function createFinancesBackup(state, now = () => new Date()) {

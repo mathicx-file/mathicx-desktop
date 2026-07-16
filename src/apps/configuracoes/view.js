@@ -10,16 +10,32 @@ import { bus, EVT } from '../../core/event-bus.js';
 import { toast } from '../../ui/toast.js';
 import { confirmModal } from '../../ui/modal.js';
 import { authProvider } from '../../auth/provider.js';
+import {
+  clearGuestMigrationReady,
+  getGuestMigrationReady,
+  markGuestMigrationReady,
+} from '../../auth/guest-migration.js';
+import { getInitializedFirebase } from '../../firebase/firebase-client.js';
+import { featureFlags } from '../../firebase/feature-flags.js';
 import { WIDGET_DEFS } from '../../desktop/widgets.js';
+import { explorerProvider } from '../../explorer/fs-store.js';
 import { appDataHost } from '../integration/app-data-host.js';
+import { resolveAuthenticatedUserScope } from '../integration/user-scope.js';
 import {
   loadSyncCenterState,
   summarizeSyncCenter,
   syncCenterApp,
 } from './sync-center.js';
 import {
+  createOperationalDiagnostics,
+  downloadOperationalDiagnostics,
+  resolveRuntimeChannel,
+  updateDiagnosticHistory,
+} from './operational-diagnostics.js';
+import {
   collectUnifiedBackup,
   downloadUnifiedBackup,
+  isGuestMigrationBackup,
   validateUnifiedBackupPackage,
 } from '../integration/unified-backup.js';
 import {
@@ -114,6 +130,30 @@ const CSS = `
 .mxc-set .sync-time { margin-top:3px; color:var(--muted); font-size:10.5px; }
 .mxc-set .sync-actions { display:flex; align-items:center; gap:6px; }
 .mxc-set .sync-empty { padding:18px; color:var(--muted); text-align:center; font-size:12px; }
+.mxc-set .diagnostics-toolbar { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.mxc-set .diagnostics-summary { flex:1; min-width:0; color:var(--muted); font-size:11.5px; }
+.mxc-set .diagnostics-summary strong { color:var(--text); }
+.mxc-set .diagnostics-facts {
+  display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:8px; margin-bottom:10px;
+}
+.mxc-set .diagnostics-fact {
+  min-width:0; padding:10px 12px; background:var(--surface-2); border:1px solid var(--border-soft);
+  border-radius:var(--r-sm);
+}
+.mxc-set .diagnostics-fact .k { color:var(--muted); font-size:10.5px; font-weight:800; }
+.mxc-set .diagnostics-fact .v { margin-top:3px; color:var(--text); font-size:12px; font-weight:700; overflow-wrap:anywhere; }
+.mxc-set .diagnostics-apps { display:flex; flex-direction:column; border-top:1px solid var(--border-soft); }
+.mxc-set .diagnostics-app {
+  display:grid; grid-template-columns:minmax(0, 1fr) auto; gap:10px; align-items:center;
+  padding:9px 2px; border-bottom:1px solid var(--border-soft);
+}
+.mxc-set .diagnostics-app-name { color:var(--text); font-size:11.5px; font-weight:800; }
+.mxc-set .diagnostics-app-meta { margin-top:2px; color:var(--muted); font-size:10.5px; }
+.mxc-set .diagnostics-app-state { color:var(--muted); font-size:10.5px; font-weight:800; }
+.mxc-set .diagnostics-app-state[data-tone="danger"] { color:var(--danger); }
+.mxc-set .diagnostics-app-state[data-tone="warning"] { color:var(--warning); }
+.mxc-set .diagnostics-app-state[data-tone="success"] { color:var(--success); }
+.mxc-set .diagnostics-history { margin-top:10px; color:var(--muted); font-size:10.5px; line-height:1.55; }
 .mxc-set .backup-list { display:flex; flex-direction:column; gap:8px; }
 .mxc-set .backup-mode { display:flex; justify-content:flex-end; margin-bottom:10px; }
 .mxc-set .backup-passwords {
@@ -165,6 +205,8 @@ const CSS = `
   .mxc-set .widget-actions { grid-column:2; }
   .mxc-set .sync-item { grid-template-columns:36px minmax(0, 1fr); }
   .mxc-set .sync-actions { grid-column:2; justify-content:flex-start; }
+  .mxc-set .diagnostics-toolbar { align-items:stretch; flex-direction:column; }
+  .mxc-set .diagnostics-facts { grid-template-columns:1fr; }
   .mxc-set .backup-item { grid-template-columns:auto minmax(0, 1fr); }
   .mxc-set .backup-state { grid-column:2; }
   .mxc-set .backup-passwords { grid-template-columns:1fr; }
@@ -197,6 +239,10 @@ export function mount(host, context = {}) {
   const userEmail = user?.email || '';
   const userProfile = user?.perfil || user?.role || 'user';
   const userAvatar = user?.avatar || userName.charAt(0).toUpperCase();
+  const guestNotice = authProvider.isGuestMode
+    ? '<div class="row"><div class="label"><div class="t">Dados somente neste navegador</div><div class="d">O modo visitante nao usa Firebase. Use o backup para preservar ou transferir estes dados.</div></div></div>'
+    : '';
+  const guestMigrationPrepared = !authProvider.isGuestMode && getGuestMigrationReady();
 
   host.innerHTML = `
     <div class="mxc-set">
@@ -218,6 +264,7 @@ export function mount(host, context = {}) {
               </div>
               <button class="btn btn-danger" data-act="logout">Sair</button>
             </div>
+            ${guestNotice}
           </div>` : ''}
           <div class="group">
             <h3>Aparencia</h3>
@@ -261,7 +308,16 @@ export function mount(host, context = {}) {
             <div class="sync-list" data-el="sync-list" aria-live="polite"></div>
           </div>
           <div class="group">
-            <h3>Backup unificado</h3>
+            <h3>Diagnostico operacional</h3>
+            <div class="diagnostics-toolbar">
+              <div class="diagnostics-summary" data-el="diagnostics-summary" aria-live="polite">Aguardando estados...</div>
+              <button type="button" class="btn" data-act="diagnostics-export">Exportar relatorio</button>
+            </div>
+            <div data-el="diagnostics-panel"></div>
+          </div>
+          <div class="group">
+            <h3>${authProvider.isGuestMode ? 'Migrar dados do visitante' : 'Backup unificado'}</h3>
+            ${authProvider.isGuestMode ? '<div class="row"><div class="label"><div class="t">Preparar dados para uma conta</div><div class="d">O arquivo exportado podera ser importado depois que a conta estiver aprovada.</div></div></div>' : ''}
             <div class="backup-mode">
               <div class="seg" data-el="backup-mode" aria-label="Protecao do backup">
                 <button type="button" class="is-active" data-backup-mode="plain">Sem senha</button>
@@ -282,7 +338,8 @@ export function mount(host, context = {}) {
             </div>
           </div>
           <div class="group">
-            <h3>Restaurar backup</h3>
+            <h3>${guestMigrationPrepared ? 'Migrar dados do visitante' : 'Restaurar backup'}</h3>
+            ${guestMigrationPrepared ? '<div class="row"><div class="label"><div class="t">Migracao preparada</div><div class="d">Selecione o arquivo exportado no modo visitante para escolher os aplicativos.</div></div></div>' : ''}
             <div class="restore-toolbar">
               <button type="button" class="btn" data-act="restore-file">Selecionar arquivo</button>
               <span class="restore-file-name" data-el="restore-file-name">Nenhum arquivo selecionado</span>
@@ -425,8 +482,8 @@ function initResetControls(host) {
       danger: true,
     });
     if (!ok) return;
-    await db.store('fs').clear();
-    await db.store('widgets').clear();
+    await explorerProvider.clearCurrentScope();
+    if (!authProvider.isGuestMode) await db.store('widgets').clear();
     ls.clear();
     toast.success('Dados resetados. Recarregando...');
     setTimeout(() => location.reload(), 800);
@@ -449,6 +506,8 @@ function initSyncCenter(host, context) {
   const restoreRunButton = host.querySelector('[data-act="restore-run"]');
   const refreshButton = host.querySelector('[data-act="sync-refresh"]');
   const syncAllButton = host.querySelector('[data-act="sync-all"]');
+  const diagnosticsSummary = host.querySelector('[data-el="diagnostics-summary"]');
+  const diagnosticsPanel = host.querySelector('[data-el="diagnostics-panel"]');
   if (!list || !summaryEl) return undefined;
 
   let apps = [];
@@ -463,6 +522,9 @@ function initSyncCenter(host, context) {
   let restorePassword = '';
   const restoreSelection = new Set();
   const restoreModes = new Map();
+  const diagnosticsHistoryKey = `operational-diagnostics-history:${resolveAuthenticatedUserScope(authProvider)}`;
+  let diagnosticsHistory = ls.get(diagnosticsHistoryKey, {});
+  let diagnosticsReport = null;
 
   const refresh = async () => {
     const sequence = ++renderSequence;
@@ -474,6 +536,15 @@ function initSyncCenter(host, context) {
     if (disposed || sequence !== renderSequence) return;
     apps = nextApps;
     renderSyncCenter(list, summaryEl, apps);
+    diagnosticsReport = createCurrentDiagnostics(apps);
+    diagnosticsHistory = updateDiagnosticHistory(diagnosticsReport, diagnosticsHistory);
+    ls.set(diagnosticsHistoryKey, diagnosticsHistory);
+    renderOperationalDiagnostics(
+      diagnosticsPanel,
+      diagnosticsSummary,
+      diagnosticsReport,
+      diagnosticsHistory.entries,
+    );
     renderBackupCenter(backupList, backupExportButton, apps, backupSelection, backupMode);
     renderRestoreCenter(restoreList, restoreRunButton, restoreUnified, apps, restoreSelection, restoreModes);
     list.classList.remove('is-loading');
@@ -496,6 +567,17 @@ function initSyncCenter(host, context) {
     if (!button) return;
     if (button.dataset.act === 'sync-refresh') {
       await refresh();
+      return;
+    }
+    if (button.dataset.act === 'diagnostics-export') {
+      try {
+        if (!diagnosticsReport) await refresh();
+        const result = downloadOperationalDiagnostics(diagnosticsReport);
+        toast.success(`Relatorio exportado: ${formatBytes(result.byteLength)}.`);
+      } catch (error) {
+        console.warn('[operational-diagnostics] export failed', error);
+        toast.error('Nao foi possivel exportar o diagnostico.');
+      }
       return;
     }
     if (button.dataset.act === 'restore-file') {
@@ -555,6 +637,7 @@ function initSyncCenter(host, context) {
         mode: backupMode,
         passwordInput: backupPassword,
         confirmationInput: backupPasswordConfirm,
+        source: authProvider.isGuestMode ? { kind: 'guest-local' } : null,
       });
       return;
     }
@@ -686,7 +769,11 @@ async function exportSelectedBackup(button, apps, selection, wm, options) {
   button.disabled = true;
   button.textContent = 'Preparando...';
   try {
-    const requestOptions = { resolveIframe: (appId) => getOpenAppIframe(wm, appId) };
+    const isGuestExport = options.source?.kind === 'guest-local';
+    const requestOptions = {
+      resolveIframe: (appId) => getOpenAppIframe(wm, appId),
+      source: options.source,
+    };
     let result;
     if (options.mode === 'protected') {
       const password = options.passwordInput?.value || '';
@@ -696,15 +783,20 @@ async function exportSelectedBackup(button, apps, selection, wm, options) {
         throw createViewError('password-mismatch', 'As senhas nao conferem.');
       }
       const encrypted = await collectEncryptedBackup(appDataHost, selectedApps, password, requestOptions);
-      result = downloadEncryptedBackup(encrypted);
+      result = downloadEncryptedBackup(encrypted, {
+        fileName: isGuestExport ? createGuestMigrationFileName(true) : undefined,
+      });
       if (options.passwordInput) options.passwordInput.value = '';
       if (options.confirmationInput) options.confirmationInput.value = '';
     } else {
       const backup = await collectUnifiedBackup(appDataHost, selectedApps, requestOptions);
       const validation = await validateUnifiedBackupPackage(backup);
       if (!validation.ok) throw new Error(validation.errors.join(' '));
-      result = downloadUnifiedBackup(backup);
+      result = downloadUnifiedBackup(backup, {
+        fileName: isGuestExport ? createGuestMigrationFileName(false) : undefined,
+      });
     }
+    if (isGuestExport) markGuestMigrationReady();
     toast.success(`Backup exportado: ${formatBytes(result.byteLength)}.`);
   } catch (error) {
     console.warn('[sync-center] unified backup failed', error);
@@ -715,7 +807,7 @@ async function exportSelectedBackup(button, apps, selection, wm, options) {
     }[error?.code] || 'Nao foi possivel exportar o backup unificado.';
     toast.error(message);
   } finally {
-    button.textContent = options.mode === 'protected' ? 'Exportar backup protegido' : 'Exportar backup';
+    button.textContent = backupExportLabel(options.mode);
     updateBackupExportButton(button, apps, selection, options.mode);
   }
 }
@@ -741,7 +833,7 @@ function renderBackupCenter(list, button, apps, selection, mode) {
         <span class="backup-state ${available ? 'is-ready' : ''}">${escapeHTML(state)}</span>
       </label>`;
   }).join('');
-  if (button) button.textContent = mode === 'protected' ? 'Exportar backup protegido' : 'Exportar backup';
+  if (button) button.textContent = backupExportLabel(mode);
   updateBackupExportButton(button, apps, selection, mode);
 }
 
@@ -770,6 +862,11 @@ async function runSelectedRestore(options) {
     toast.error('Selecione e valide um arquivo de backup.');
     return;
   }
+  const guestMigration = isGuestMigrationBackup(options.unified) && !authProvider.isGuestMode;
+  if (guestMigration && (!authProvider.isAuthenticated() || !authProvider.isApproved())) {
+    toast.error('A conta precisa estar aprovada para receber dados do visitante.');
+    return;
+  }
   const selections = options.unified.apps
     .filter((entry) => options.selection.has(entry.appId))
     .map((entry) => {
@@ -787,9 +884,9 @@ async function runSelectedRestore(options) {
 
   const replaceCount = selections.filter((selection) => selection.mode === 'replace').length;
   const confirmed = await confirmModal({
-    title: 'Restaurar backup?',
-    message: `${selections.length} aplicativo(s) serao restaurado(s). ${replaceCount} usarao substituicao. Um backup preventivo sera baixado antes da primeira alteracao.`,
-    okText: 'Restaurar',
+    title: guestMigration ? 'Migrar dados do visitante?' : 'Restaurar backup?',
+    message: `${selections.length} aplicativo(s) serao ${guestMigration ? 'migrado(s)' : 'restaurado(s)'}. ${replaceCount} usarao substituicao. Um backup preventivo sera baixado antes da primeira alteracao.`,
+    okText: guestMigration ? 'Migrar' : 'Restaurar',
     danger: replaceCount > 0,
   });
   if (!confirmed) return;
@@ -808,7 +905,8 @@ async function runSelectedRestore(options) {
           : downloadUnifiedBackup(recovery.backup, { fileName });
       },
     });
-    toast.success(`${result.restored.length} aplicativo(s) restaurado(s).`);
+    if (guestMigration) clearGuestMigrationReady();
+    toast.success(`${result.restored.length} aplicativo(s) ${guestMigration ? 'migrado(s)' : 'restaurado(s)'}.`);
     options.onSuccess?.();
     await options.refresh();
   } catch (error) {
@@ -821,7 +919,7 @@ async function runSelectedRestore(options) {
     }[error?.code] || error?.message || 'Nao foi possivel restaurar o backup.';
     toast.error(message);
   } finally {
-    options.button.textContent = 'Restaurar selecionados';
+    options.button.textContent = guestMigration ? 'Migrar selecionados' : 'Restaurar selecionados';
     updateRestoreButton(options.button, options.unified, options.apps, options.selection);
   }
 }
@@ -839,10 +937,17 @@ function renderRestoreCenter(list, button, unified, apps, selection, modes) {
   if (!list) return;
   if (!unified) {
     list.innerHTML = '<div class="restore-empty">Selecione um arquivo de backup.</div>';
-    if (button) button.disabled = true;
+    if (button) {
+      button.textContent = 'Restaurar selecionados';
+      button.disabled = true;
+    }
     return;
   }
-  list.innerHTML = unified.apps.map((entry) => {
+  const guestMigration = isGuestMigrationBackup(unified) && !authProvider.isGuestMode;
+  const migrationNotice = guestMigration
+    ? '<div class="restore-empty">Pacote do modo visitante detectado. A importacao sera tratada como migracao para esta conta.</div>'
+    : '';
+  list.innerHTML = migrationNotice + unified.apps.map((entry) => {
     const app = apps.find((candidate) => candidate.appId === entry.appId);
     const available = isRestoreAvailable(entry.appId, unified, apps);
     const name = app?.name || entry.appId;
@@ -866,6 +971,7 @@ function renderRestoreCenter(list, button, unified, apps, selection, modes) {
             : '<span class="restore-status">Indisponivel</span>'}
       </div>`;
   }).join('');
+  if (button) button.textContent = guestMigration ? 'Migrar selecionados' : 'Restaurar selecionados';
   updateRestoreButton(button, unified, apps, selection);
 }
 
@@ -901,6 +1007,107 @@ function formatBytes(value) {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function createGuestMigrationFileName(encrypted) {
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-').replace('Z', '');
+  return `mathicx-guest-migration-${encrypted ? 'protected-' : ''}${stamp}.json`;
+}
+
+function backupExportLabel(mode) {
+  if (!authProvider.isGuestMode) return mode === 'protected' ? 'Exportar backup protegido' : 'Exportar backup';
+  return mode === 'protected' ? 'Exportar dados protegidos' : 'Exportar dados do visitante';
+}
+
+function createCurrentDiagnostics(apps) {
+  return createOperationalDiagnostics({
+    runtime: {
+      channel: resolveRuntimeChannel(globalThis.location?.hostname),
+      online: globalThis.navigator?.onLine !== false,
+      secureContext: globalThis.isSecureContext === true,
+    },
+    auth: {
+      mode: authProvider.mode,
+      authenticated: authProvider.isAuthenticated(),
+      approved: authProvider.isApproved(),
+      admin: authProvider.isAdmin(),
+    },
+    firebase: getInitializedFirebase(),
+    firebaseEmulatorsEnabled: featureFlags.firebaseEmulatorsEnabled,
+    apps,
+  });
+}
+
+function renderOperationalDiagnostics(panel, summaryEl, report, history = []) {
+  if (!panel || !summaryEl || !report) return;
+  const appCheck = report.firebase.appCheck;
+  summaryEl.innerHTML = report.summary.failures > 0
+    ? `<strong>${report.summary.failures} falha(s)</strong> requerem verificacao`
+    : (report.summary.attention > 0
+      ? `<strong>${report.summary.attention} modulo(s)</strong> requerem atencao`
+      : `<strong>Operacional</strong> - ${report.summary.total} modulo(s) verificado(s)`);
+
+  const channelLabels = { local: 'Servidor local', 'github-pages': 'GitHub Pages', web: 'Web' };
+  const appCheckLabels = {
+    active: 'Ativo', debug: 'Debug local', disabled: 'Desativado', error: 'Erro',
+    misconfigured: 'Configuracao invalida', ready: 'Preparado', unavailable: 'Indisponivel',
+  };
+  const authState = !report.auth.authenticated
+    ? 'Sem sessao'
+    : (report.auth.approved ? (report.auth.admin ? 'Admin aprovado' : 'Usuario aprovado') : 'Aguardando aprovacao');
+  const historyItems = history.slice(0, 4).map((entry) => (
+    `${formatSyncTime(entry.occurredAt)} - ${entry.appId}: ${diagnosticStateLabel(entry.state)}`
+  ));
+
+  panel.innerHTML = `
+    <div class="diagnostics-facts">
+      ${diagnosticFact('Ambiente', `${channelLabels[report.runtime.channel]} - ${report.runtime.online ? 'online' : 'offline'}`)}
+      ${diagnosticFact('Autenticacao', `${diagnosticAuthModeLabel(report.auth.mode)} - ${authState}`)}
+      ${diagnosticFact('App Check', `${appCheckLabels[appCheck.status] || 'Indisponivel'}${appCheck.provider ? ` - ${appCheck.provider}` : ''}`)}
+      ${diagnosticFact('Projeto Firebase', report.firebase.projectId || 'Nao inicializado')}
+    </div>
+    <div class="diagnostics-apps">
+      ${report.apps.map((app) => {
+        const tone = diagnosticStateTone(app.state);
+        const protocol = app.protocolVersion ? `contrato v${app.protocolVersion}` : 'contrato indisponivel';
+        const backup = app.backup ? ` - backup v${app.backup.schemaVersion}` : '';
+        return `<div class="diagnostics-app">
+          <div>
+            <div class="diagnostics-app-name">${escapeHTML(app.name)} v${escapeHTML(app.appVersion)}</div>
+            <div class="diagnostics-app-meta">${escapeHTML(app.connection)} - ${escapeHTML(protocol)}${escapeHTML(backup)}</div>
+          </div>
+          <div class="diagnostics-app-state" data-tone="${tone}">${escapeHTML(diagnosticStateLabel(app.state))}</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="diagnostics-history">
+      ${historyItems.length
+        ? `<strong>Falhas recentes:</strong><br>${historyItems.map(escapeHTML).join('<br>')}`
+        : 'Nenhuma transicao recente para erro ou conflito.'}
+    </div>`;
+}
+
+function diagnosticFact(key, value) {
+  return `<div class="diagnostics-fact"><div class="k">${escapeHTML(key)}</div><div class="v">${escapeHTML(value)}</div></div>`;
+}
+
+function diagnosticStateLabel(state) {
+  return {
+    synced: 'Sincronizado', syncing: 'Sincronizando', hydrating: 'Carregando',
+    checking: 'Verificando', restoring: 'Restaurando', conflict: 'Conflito',
+    pending: 'Pendente', error: 'Erro', disabled: 'Desativado', closed: 'Fechado',
+  }[state] || 'Indisponivel';
+}
+
+function diagnosticStateTone(state) {
+  if (state === 'synced') return 'success';
+  if (state === 'error') return 'danger';
+  if (state === 'conflict' || state === 'pending') return 'warning';
+  return 'neutral';
+}
+
+function diagnosticAuthModeLabel(mode) {
+  return { firebase: 'Firebase', guest: 'Visitante local', local: 'Local' }[mode] || 'Local';
 }
 
 function renderSyncCenter(list, summaryEl, apps) {

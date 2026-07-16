@@ -38,6 +38,7 @@ class Kernel {
     /** Subsistemas inicializados na ordem de boot. */
     this.modules = {};
     this._booted = false;
+    this._statePersistenceWired = false;
     this._disposeDesktopAppData = registerDesktopAppData({ store, sync: desktopSync });
   }
 
@@ -47,6 +48,8 @@ class Kernel {
 
     // 1. Storage + estado (precisa para ler usuários/sessões)
     await db.open();
+    authProvider.restoreGuestSession();
+    this._applySessionStorageScope();
     await this._hydrateState();
 
     // 2. AUTH GATE ─────────────────────────────────────────
@@ -71,10 +74,24 @@ class Kernel {
       initialMode,
       onAuthenticated: () => {
         loginScreen.unmount();
-        this._bootDesktop();
+        this._activateSession();
       },
     });
     loginScreen.mount(document.getElementById('app'));
+  }
+
+  async _activateSession() {
+    this._applySessionStorageScope();
+    await this._hydrateState();
+    await this._bootDesktop();
+  }
+
+  _applySessionStorageScope() {
+    const scope = authProvider.isGuestMode
+      ? authProvider.getCurrentUser()?.id || 'guest-local-v1'
+      : '';
+    this.ls.setScope(scope);
+    explorerProvider.setScope(authProvider.isGuestMode ? scope : 'local');
   }
 
   async _bootDesktop() {
@@ -193,13 +210,16 @@ class Kernel {
         shortcuts: s.shortcuts,
       });
     };
-    ['theme', 'widgets', 'widgetLayout', 'shortcuts'].forEach((k) =>
-      store.subscribe(k, persistPrefs)
-    );
-    ['favorites', 'pinned'].forEach((k) =>
-      store.subscribe(k, () => ls.set(k, store.get(k)))
-    );
-    this._wireScopedDesktopPersistence();
+    if (!this._statePersistenceWired) {
+      ['theme', 'widgets', 'widgetLayout', 'shortcuts'].forEach((k) =>
+        store.subscribe(k, persistPrefs)
+      );
+      ['favorites', 'pinned'].forEach((k) =>
+        store.subscribe(k, () => ls.set(k, store.get(k)))
+      );
+      this._wireScopedDesktopPersistence();
+      this._statePersistenceWired = true;
+    }
   }
 
   // Estado local do dashboard e launcher é persistido por usuário autenticado.

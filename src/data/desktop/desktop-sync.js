@@ -28,6 +28,10 @@ class DesktopSync {
 
   async init() {
     if (this._ready) return { enabled: true };
+    if (authProvider.isGuestMode) {
+      this._setStatus('disabled', 'Visitante usa somente dados locais deste navegador.');
+      return { enabled: false, reason: 'guest-local' };
+    }
     if (!featureFlags.firestoreDesktopReadEnabled) {
       this._setStatus('disabled', 'Sincronizacao do desktop desativada por feature flag.');
       return { enabled: false, reason: 'feature-disabled' };

@@ -7,6 +7,7 @@ import {
   createUnifiedBackupFileName,
   createUnifiedBackupPackage,
   downloadUnifiedBackup,
+  isGuestMigrationBackup,
   validateUnifiedBackupPackage,
 } from './unified-backup.js';
 
@@ -29,6 +30,25 @@ test('detects content changes through the app checksum', async () => {
 
   assert.equal(validation.ok, false);
   assert.match(validation.errors.join(' '), /Checksum invalido/);
+});
+
+test('marks a guest export without storing identity or credentials', async () => {
+  const backup = await createUnifiedBackupPackage([
+    createEntry('desktop', 'mathicx-desktop-backup'),
+  ], { source: { kind: 'guest-local', ignored: 'value' } });
+
+  assert.deepEqual(backup.source, { kind: 'guest-local', schemaVersion: 1 });
+  assert.equal(isGuestMigrationBackup(backup), true);
+  assert.equal((await validateUnifiedBackupPackage(backup)).ok, true);
+  assert.equal(JSON.stringify(backup).includes('ignored'), false);
+});
+
+test('rejects forged guest provenance metadata', async () => {
+  const backup = await createUnifiedBackupPackage([
+    createEntry('desktop', 'mathicx-desktop-backup'),
+  ]);
+  backup.source = { kind: 'guest-local', schemaVersion: 99 };
+  assert.equal((await validateUnifiedBackupPackage(backup)).ok, false);
 });
 
 test('rejects financial data until encrypted package support exists', async () => {

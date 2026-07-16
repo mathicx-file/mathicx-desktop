@@ -36,6 +36,7 @@ test('builds a minimal, versioned and valid Pages artifact', async () => {
   await assert.rejects(fs.access(path.join(outputRoot, 'package.json')));
   await assert.rejects(fs.access(path.join(outputRoot, 'node_modules')));
   await assert.rejects(fs.access(path.join(outputRoot, 'src', 'firebase', 'firebase-config.local.js')));
+  await assert.rejects(fs.access(path.join(outputRoot, 'Applications', 'french-study')));
 
   const release = JSON.parse(await fs.readFile(path.join(dictionaryRoot, 'releases', 'current.json'), 'utf8'));
   assert.equal(release.channel, 'stable');

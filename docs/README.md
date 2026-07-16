@@ -1,57 +1,43 @@
-# Documentacao do mathicx-file
+# Documentacao do Mathicx Desktop
 
-Esta pasta concentra a documentacao tecnica viva do desktop virtual `mathicx-file`.
+Indice da documentacao tecnica viva. O planejamento Firebase das Fases 0 a 18
+foi concluido em 2026-07-16.
 
 ## Leitura Recomendada
 
-1. [README principal](../README.md): visao geral, execucao local, funcionalidades e fluxo de desenvolvimento.
-2. [architecture.md](architecture.md): arquitetura do host, boot, subsistemas, storage, autenticacao e modelo de apps.
-3. [firebase-migration/](firebase-migration/): documentos de planejamento e auditoria da migracao Firebase.
-4. [app-integration.md](app-integration.md): passo a passo para integrar aplicacoes externas via iframe.
-5. [../roadmap.md](../roadmap.md): ordem sugerida de versoes e funcionalidades.
+1. [README principal](../README.md): uso, execucao, testes e publicacao.
+2. [architecture.md](architecture.md): boot, identidade, dados e aplicativos.
+3. [app-integration.md](app-integration.md): contrato para novas aplicacoes.
+4. [Roteiro Firebase oficial](firebase-migration/FIREBASE_ROADMAP_OFICIAL.md):
+   historico, status e gates.
 
-## Documentos Ativos
+## Estado Atual
 
-| Documento | Quando usar |
+| Area | Documento principal |
 | --- | --- |
-| [architecture.md](architecture.md) | Para entender como o desktop virtual funciona internamente. |
-| [firebase-migration/firebase-migration.md](firebase-migration/firebase-migration.md) | Para planejar a migracao Firebase ajustada ao projeto atual. |
-| [app-integration.md](app-integration.md) | Para adicionar apps independentes em `Applications/<app-id>` com wrapper em `src/apps/<app-id>`. |
+| Firebase e fases | [firebase-migration/README.md](firebase-migration/README.md) |
+| Seguranca e App Check | [Fase 17](firebase-migration/FIREBASE_PHASE_17_SECURITY_ROLLOUT.md) |
+| Kit multi-app | [Fase 18.1](firebase-migration/FIREBASE_PHASE_18_1_APP_INTEGRATION_KIT.md) |
+| Diagnostico | [Fase 18.3](firebase-migration/FIREBASE_PHASE_18_3_OPERATIONAL_DIAGNOSTICS.md) |
+| Visitante | [Fase 18.4](firebase-migration/FIREBASE_PHASE_18_4_GUEST_MODE.md) |
+| Gate do dicionario | [Fase 18.5](firebase-migration/FIREBASE_PHASE_18_5_DICTIONARY_INFRASTRUCTURE_GATE.md) |
+| Gate de sync | [Fase 18.6](firebase-migration/FIREBASE_PHASE_18_6_SYNC_ARCHITECTURE_GATE.md) |
+
+## Aplicativos
+
+- [Japanese Study](../Applications/japanese-study/README.md)
+- [Finances](../Applications/finances/README.md)
+- [Wrapper do Finances](../src/apps/finances/README.md)
 
 ## Arquivo Historico
 
-Documentos substituidos, longos ou historicos ficam em [archive](archive).
+Documentos substituidos ficam em [archive](archive). Materiais dentro de
+`firebase-migration` preservam a execucao das fases, mas o roteiro oficial
+prevalece em caso de divergencia.
 
-| Documento | Motivo |
-| --- | --- |
-| [archive/local-auth-legacy.md](archive/local-auth-legacy.md) | Resumo da autenticacao local antiga, agora legado diante do Firebase Auth. |
-| [archive/firebase-migration-original.md](archive/firebase-migration-original.md) | Plano Firebase original gerado antes da proposta revisada. |
+## Templates
 
-## Templates para Apps Externos
-
-Os arquivos em [templates](templates) servem como ponto de partida para apps integrados por iframe.
-
-| Template | Descricao |
-| --- | --- |
-| [templates/manifest.js](templates/manifest.js) | Manifesto do app no host. |
-| [templates/view.js](templates/view.js) | Wrapper que cria o iframe, aplica sandbox e faz cleanup. |
-| [templates/index.html](templates/index.html) | HTML base da aplicacao externa. |
-| [templates/app.js](templates/app.js) | Estrutura JavaScript com listeners e cleanup. |
-| [templates/styles.css](templates/styles.css) | CSS base para a aplicacao externa. |
-
-## Scripts
-
-| Script | Descricao |
-| --- | --- |
-| [scripts/setup-novo-app.sh](scripts/setup-novo-app.sh) | Gera a estrutura inicial de um novo app externo a partir dos templates. |
-
-## Aplicacoes Externas de Exemplo
-
-O projeto ja inclui apps externos reais em `Applications/`:
-
-| App | Host wrapper | App real | Observacao |
-| --- | --- | --- | --- |
-| Japanese Study | `src/apps/japanese-study` | `Applications/japanese-study` | Integrado por iframe, com tema do host e sincronizacao Firebase local-first por usuario. |
-| Finances | wrapper em `src/apps/` | `Applications/finances` | App de financas pessoais. |
-
-Use essas integracoes como referencia pratica para novos projetos independentes.
+Novos aplicativos integrados devem partir de
+[`templates/integrated-app`](../templates/integrated-app), com manifesto, view,
+adaptador de dados e teste contratual. O antigo conjunto de templates manuais foi
+substituido pelo kit da Fase 18.1.

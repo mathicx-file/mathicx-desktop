@@ -1,8 +1,5 @@
 import { appDataHost } from '../../apps/integration/app-data-host.js';
-import {
-  APP_DATA_ACTIONS,
-  createProtocolError,
-} from '../../apps/integration/app-data-contract.js';
+import { createIntegratedAppDataHandlers } from '../../apps/integration/integrated-app.js';
 
 export const DESKTOP_BACKUP_FORMAT = 'mathicx-desktop-backup';
 export const DESKTOP_BACKUP_SCHEMA_VERSION = 1;
@@ -15,29 +12,20 @@ export function createDesktopAppDataHandlers(options = {}) {
   if (!stateStore?.get || !stateStore?.set || !sync?.getStatus || !sync?.syncNow) {
     throw new Error('Desktop app data adapter requires store and sync APIs.');
   }
-  return {
-    [APP_DATA_ACTIONS.capabilities]: async () => ({
-      appId: APP_ID,
-      protocolVersion: 1,
-      actions: Object.values(APP_DATA_ACTIONS),
-      backup: {
-        format: DESKTOP_BACKUP_FORMAT,
-        schemaVersion: DESKTOP_BACKUP_SCHEMA_VERSION,
-        modes: ['merge', 'replace'],
-        containsFinancialData: false,
-      },
-    }),
-    [APP_DATA_ACTIONS.syncStatus]: async () => sync.getStatus(),
-    [APP_DATA_ACTIONS.syncNow]: async () => sync.syncNow('manual'),
-    [APP_DATA_ACTIONS.backupExport]: async () => createDesktopBackup(stateStore, options.now),
-    [APP_DATA_ACTIONS.backupValidate]: async ({ backup } = {}) => validateDesktopBackup(backup),
-    [APP_DATA_ACTIONS.backupImport]: async ({ backup, mode, confirmed } = {}) => {
-      if (confirmed !== true) throw createProtocolError('confirmation-required', 'Backup import requires explicit confirmation.');
-      if (!['merge', 'replace'].includes(mode)) {
-        throw createProtocolError('invalid-import-mode', `Unsupported backup import mode: ${mode}`);
-      }
-      const validation = validateDesktopBackup(backup);
-      if (!validation.ok) throw createProtocolError('invalid-backup', validation.errors.join(' '));
+  return createIntegratedAppDataHandlers({
+    appId: APP_ID,
+    appVersion: '1.0.0',
+    backup: {
+      format: DESKTOP_BACKUP_FORMAT,
+      schemaVersion: DESKTOP_BACKUP_SCHEMA_VERSION,
+      modes: ['merge', 'replace'],
+      containsFinancialData: false,
+    },
+    getSyncStatus: () => sync.getStatus(),
+    syncNow: () => sync.syncNow('manual'),
+    exportBackup: () => createDesktopBackup(stateStore, options.now),
+    validateBackup: (backup) => validateDesktopBackup(backup),
+    importBackup: (backup, mode) => {
       const current = stateStore.get();
       const next = mode === 'replace'
         ? Object.fromEntries(SETTINGS_KEYS.map((key) => [key, backup.data[key] ?? null]))
@@ -45,11 +33,11 @@ export function createDesktopAppDataHandlers(options = {}) {
           .filter((key) => backup.data[key] !== undefined)
           .map((key) => [key, backup.data[key]]));
       stateStore.set(next);
-      return { imported: true, mode, changedKeys: Object.keys(next), previous: pickSettings(current) };
+      return { changedKeys: Object.keys(next), previous: pickSettings(current) };
     },
-    [APP_DATA_ACTIONS.restoreBegin]: async () => sync.beginRestore?.() || { ok: true, supported: false },
-    [APP_DATA_ACTIONS.restoreEnd]: async (payload = {}) => sync.endRestore?.(payload) || { ok: true, supported: false },
-  };
+    beginRestore: () => sync.beginRestore?.() || { ok: true, supported: false },
+    endRestore: (payload) => sync.endRestore?.(payload) || { ok: true, supported: false },
+  });
 }
 
 export function registerDesktopAppData(options = {}) {

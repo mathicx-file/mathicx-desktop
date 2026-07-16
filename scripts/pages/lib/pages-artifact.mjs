@@ -39,6 +39,9 @@ const FORBIDDEN_FILES = new Set([
 const GENERATED_DICTIONARY_SEGMENTS = new Set([
   'indexes', 'manifests', 'packs', 'reports', 'routes', 'shards', 'releases', 'licenses',
 ]);
+const EXCLUDED_RUNTIME_DIRECTORIES = new Set([
+  'Applications/french-study',
+]);
 const DICTIONARY_RELATIVE_ROOT = 'Applications/japanese-study/data/dictionary';
 
 export async function buildPagesArtifact(options = {}) {
@@ -303,6 +306,7 @@ async function copyRuntimeTree(workspaceRoot, outputRoot, relativeRoot) {
 }
 
 function shouldEnterDirectory(relativePath) {
+  if (EXCLUDED_RUNTIME_DIRECTORIES.has(relativePath)) return false;
   const segments = relativePath.split('/');
   if (segments.some((segment) => FORBIDDEN_SEGMENTS.has(segment))) return false;
   const dictionaryOffset = segments.join('/').indexOf(`${DICTIONARY_RELATIVE_ROOT}/`);

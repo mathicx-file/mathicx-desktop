@@ -1,402 +1,153 @@
-# Guia de Integração de Aplicações
+# Integracao de Aplicativos
 
-**mathicx-file** — Adicione novas aplicações ao portal via iframe.
+Guia vigente para adicionar um aplicativo independente ao Mathicx Desktop. O
+padrao foi consolidado na Fase 18.1 e permite launcher, iframe, tema, UID, sync e
+backup sem listas fixas na Central de Sincronizacao.
 
----
+## 1. Estrutura
 
-## Índice
+Use `lowercase-kebab-case` como ID canonico:
 
-1. [Visão Geral](#1-visão-geral)
-2. [Arquitetura](#2-arquitetura)
-3. [Passo a Passo](#3-passo-a-passo)
-4. [Templates](#4-templates)
-5. [Registry](#5-registry)
-6. [Segurança](#6-segurança)
-7. [Performance](#7-performance)
-8. [Sincronização](#8-sincronização)
-9. [Comunicação Host ↔ Iframe](#9-comunicação-host--iframe)
-10. [Testes](#10-testes)
-11. [Troubleshooting](#11-troubleshooting)
-12. [Removendo um App](#12-removendo-um-app)
-
----
-
-## 1. Visão Geral
-
-### Por que Iframe?
-
-| Aspecto | Iframe | Nativo |
-|---------|--------|--------|
-| **Performance** | Isolamento de memória | Compartilha memória |
-| **Conflito CSS/JS** | Zero | Possível |
-| **Conversão de código** | Nenhuma | Completa |
-| **Manutenção separada** | Sim | Não |
-| **Reuso em outros projetos** | Sim | Difícil |
-
-### Quando Usar
-
-- App existente em HTML/CSS/JS puro
-- App que você quer desenvolver independentemente
-- App com dependências próprias (bibliotecas, frameworks)
-- App que será reutilizada em outros projetos
-
-### Quando NÃO Usar
-
-- Funcionalidade que precisa de integração profunda com o mathicx-file
-- Componente pequeno que faz mais sentido como nativo
-- Funcionalidade que precisa de acesso direto ao DOM do host
-
----
-
-## 2. Arquitetura
-
-```
-mathicx-file/
-│
-├── Applications/                    ← Aplicações externas (conteúdo do iframe)
-│   └── <app-id>/
-│       ├── index.html
-│       ├── js/
-│       ├── css/
-│       └── assets/
-│
-├── src/apps/<app-id>/              ← Integração (código do host)
-│   ├── manifest.js                  ← Metadados
-│   └── view.js                      ← Controller do iframe
-│
-└── src/apps/registry.js            ← Registro central
+```text
+Applications/meu-app/
+src/apps/meu-app/
 ```
 
-### Fluxo de Carregamento
+Parta de:
 
-```
-1. Usuário abre o launcher (Win+E)
-2. Registry lista todos os manifestos
-3. Usuário clica no app
-4. manifest.loader() faz import() dinâmico de view.js
-5. mount() é chamado com o elemento host
-6. mount() cria iframe apontando para Applications/<app-id>/
-7. Iframe carrega a aplicação isoladamente
-8. Quando a janela fecha, cleanup remove o iframe
+```text
+templates/integrated-app/
 ```
 
----
+O template inclui manifesto, view e adaptador de dados neutros.
 
-## 3. Passo a Passo
+## 2. Manifesto Integrado
 
-### 3.1. Preparar a Aplicação Original
-
-Sua aplicação precisa ter:
-
-```
-seu-app/
-├── index.html
-├── js/app.js
-├── css/styles.css
-└── .git/              (recomendado)
-```
-
-Teste localmente:
-
-```bash
-cd ~/projetos/seu-app
-python -m http.server 8888
-# Abra http://localhost:8888
-```
-
-### 3.2. Criar Pastas no mathicx-file
-
-```bash
-cd /caminho/mathicx-file
-mkdir -p src/apps/<app-id>
-mkdir -p Applications/<app-id>
-```
-
-### 3.3. Copiar a Aplicação
-
-```bash
-cp -r ~/projetos/seu-app/* Applications/<app-id>/
-```
-
-### 3.4. Criar a Integração
-
-Crie `src/apps/<app-id>/manifest.js` e `src/apps/<app-id>/view.js`.
-
-→ Veja os templates completos na seção [Templates](#4-templates).
-
-### 3.5. Registrar no Registry
-
-Edite `src/apps/registry.js`:
-
-**Import** (topo do arquivo):
-```javascript
-import meuApp from './meu-app/manifest.js';
-```
-
-**Registro** (dentro de `registerAll()`):
-```javascript
-registerAll() {
-  [calculadora, notas, arquivos, ..., meuApp].forEach((m) => this.register(m));
-}
-```
-
-### 3.6. Testar
-
-```bash
-python -m http.server 8080
-# Abra http://localhost:8080 + Ctrl+Shift+R
-# Win+E → seu app
-```
-
----
-
-## 4. Templates
-
-Os templates completos estão em arquivos separados em `docs/templates/`:
-
-| Arquivo | Descrição |
-|---------|-----------|
-| `docs/templates/manifest.js` | Metadados do app (id, nome, ícone, tamanho) |
-| `docs/templates/view.js` | Controller do iframe com sandbox e performance |
-| `docs/templates/index.html` | HTML mínimo para a aplicação externa |
-| `docs/templates/app.js` | JavaScript base com inicialização e cleanup |
-| `docs/templates/styles.css` | CSS reset + layout responsivo |
-
-Use também o script automatizado:
-
-```bash
-bash docs/scripts/setup-novo-app.sh relatorios Relatórios 📊
-```
-
-### Referência Rápida — manifest.js
+Registre o app com `defineIntegratedAppManifest`:
 
 ```javascript
-export default {
-  id: '<app-id>',
-  name: '<Nome>',
-  icon: '<emoji>',
-  category: '<categoria>',
-  description: '<descrição>',
-  defaultSize: { width: 1000, height: 700 },
-  resizable: true,
-  minSize: { width: 600, height: 400 },
+export default defineIntegratedAppManifest({
+  id: 'meu-app',
+  name: 'Meu App',
+  category: 'pessoal',
+  defaultSize: { width: 900, height: 650 },
+  integration: {
+    appData: true,
+    version: '1.0.0',
+    shortName: 'MA',
+    canOpen: true,
+    financial: false,
+    userScoped: true,
+    order: 30,
+  },
   loader: () => import('./view.js'),
-};
-```
-
-**Categorias disponíveis:** `pessoal`, `trabalho`, `ferramenta`, `sistema`, `midia`
-
-**Tamanhos sugeridos:**
-
-| Tipo | defaultSize | minSize |
-|------|-------------|---------|
-| App complexo | 1000×700 | 600×400 |
-| App médio | 800×600 | 400×300 |
-| App pequeno | 400×500 | 300×400 |
-
-### Referência Rápida — view.js (estrutura)
-
-```javascript
-export function mount(host) {
-  // 1. Cria container com spinner
-  // 2. Cria iframe com sandbox + atributos de performance
-  // 3. gerencia load/error com timeout
-  // 4. Retorna função de cleanup
-}
-```
-
----
-
-## 5. Registry
-
-O arquivo `src/apps/registry.js` é o registro central. Para adicionar um app:
-
-### Import no topo
-
-```javascript
-import meuApp from './meu-app/manifest.js';
-```
-
-### Registrar no método registerAll()
-
-```javascript
-registerAll() {
-  const apps = [calculadora, notas, arquivos, formularios, configuracoes, meuApp];
-  apps.forEach((m) => this.register(m));
-}
-```
-
----
-
-## 6. Segurança
-
-### Sandbox Attributes (obrigatórios)
-
-```javascript
-iframe.sandbox.add('allow-same-origin');   // localStorage, fetch
-iframe.sandbox.add('allow-scripts');        // JavaScript
-iframe.sandbox.add('allow-storage');        // localStorage/IndexedDB
-```
-
-### Sandbox Attributes (opcionais)
-
-```javascript
-iframe.sandbox.add('allow-popups');                    // window.open()
-iframe.sandbox.add('allow-popups-to-escape-sandbox');  // popup fora do sandbox
-iframe.sandbox.add('allow-forms');                     // submit de formulários
-```
-
-### O que NÃO incluir
-
-```javascript
-// ❌ Evite a menos que absolutamente necessário:
-allow-top-navigation    // Permite redirecionar o host
-allow-pointer-lock      // Bloqueio de ponteiro
-allow-modals            // alert/confirm/prompt
-```
-
----
-
-## 7. Performance
-
-Atributos obrigatórios no iframe:
-
-```javascript
-iframe.loading = 'lazy';      // Nativo do browser: carrega só quando visível
-iframe.decoding = 'async';    // Decodificação assíncrona
-iframe.importance = 'low';    // Dica de baixa prioridade
-```
-
-### Cleanup (libera memória ao fechar)
-
-```javascript
-return () => {
-  iframe.src = 'about:blank';  // Zera o src antes de remover
-  iframe.remove();
-};
-```
-
----
-
-## 8. Sincronização
-
-### Fluxo Recomendado
-
-```
-1. EDITAR no projeto original
-2. TESTAR localmente (python -m http.server 8888)
-3. SINCRONIZAR com mathicx-file
-4. TESTAR integração (Ctrl+Shift+R)
-5. VERSIONAR no git do projeto original
-```
-
-### Script de Sincronização
-
-Crie `sync-<app-id>.sh` na raiz do **projeto original**:
-
-```bash
-#!/bin/bash
-SOURCE="$(pwd)"
-DEST="/caminho/mathicx-file/Applications/<app-id>"
-cp -r "$SOURCE"/* "$DEST"/
-echo "✅ Sincronizado!"
-```
-
----
-
-## 9. Comunicação Host ↔ Iframe
-
-### Host → Iframe
-
-```javascript
-// Em view.js, após iframe carregar:
-iframe.contentWindow.postMessage({ type: 'theme', value: 'dark' }, '*');
-```
-
-### Iframe → Host
-
-```javascript
-// Dentro do iframe:
-window.parent.postMessage({ type: 'data-updated', payload: {...} }, '*');
-
-// No host:
-window.addEventListener('message', (e) => {
-  if (e.data.type === 'data-updated') { /* fazer algo */ }
 });
 ```
 
----
+`financial` deve ser verdadeiro para qualquer dado financeiro. Isso faz o
+backup unificado exigir protecao adequada e nao pode ser usado apenas como uma
+preferencia visual.
 
-## 10. Testes
+Registre somente o manifesto em `src/apps/registry.js`. A Central descobre
+automaticamente manifests com `integration.appData: true`.
 
-### Checklist de Integração
+## 3. Iframe e Host
 
-- [ ] App funciona standalone (`python -m http.server 8888`)
-- [ ] `Applications/<app-id>/index.html` acessível
-- [ ] `manifest.js` com todos os campos preenchidos
-- [ ] `view.js` com sandbox, performance e cleanup
-- [ ] Registry importado e registrado
-- [ ] App abre corretamente no mathicx-file
-- [ ] App fecha sem erros no console
-- [ ] Error handling funciona
-- [ ] Cleanup libera memória
-- [ ] Testar com `Ctrl+Shift+R` (cache)
+O wrapper deve:
 
-### Teste via Console (F12)
+- criar o iframe apenas quando o app for aberto;
+- preservar query e hash ao adicionar `desktopUserScope`;
+- enviar tema e escopo antes de o app ler dados pessoais;
+- validar origem, source e formato de mensagens;
+- remover listeners, timers e iframe no cleanup;
+- manter o aplicativo fechado em estado lazy.
 
-```javascript
-// Verificar se app está registrada
-window.app.modules?.launcher?.registry?.get('<app-id>')
+Nao envie senha, ID token, App Check token ou service account por `postMessage`.
+Aplicativos same-origin usam a sessao Firebase inicializada no proprio origin.
 
-// Listar todas as apps
-window.app.modules?.launcher?.registry?.list()
+## 4. Escopo Local
 
-// Abrir app manualmente
-window.app.launchApp('<app-id>')
+Use `src/apps/integration/user-scope.js` para normalizar e transportar o UID.
+
+Regras obrigatorias:
+
+- conta Firebase: namespace local por UID;
+- visitante: namespace `guest-local-v1`;
+- app standalone: namespace local proprio;
+- aplique o escopo antes de qualquer leitura de LocalStorage ou IndexedDB;
+- trocar de usuario nao pode reutilizar estado pessoal anterior.
+
+## 5. Firestore
+
+Dados pessoais ficam somente em:
+
+```text
+users/{uid}/apps/{appId}/...
 ```
 
----
+Adicione paths em `src/firebase/firestore-paths.js`, rules por UID e testes no
+Emulator Suite. Dados estaticos publicos nao devem ser duplicados por usuario.
 
-## 11. Troubleshooting
+## 6. Contrato de Sync e Backup
 
-| Problema | Causa Comum | Solução |
-|----------|-------------|---------|
-| App não aparece no menu | Cache ou registry | `Ctrl+Shift+R`, verificar import em `registry.js` |
-| Iframe branco/não carrega | Caminho errado | Verificar se `Applications/<app-id>/index.html` existe; conferir console (F12) |
-| Spinner nunca some | Erro interno no app | Ver console dentro do iframe (F12) |
-| Erro de sandbox | Permissão faltando | Adicionar `allow-forms`, `allow-popups` conforme necessário |
-| Memory leak | Cleanup ausente | Verificar `removeEventListener` e `clearTimeout` no cleanup |
+O adaptador pode usar `createIntegratedAppDataHandlers` para implementar:
 
-### Debug Rápido
+- capacidades e versao contratual;
+- estado de sincronizacao;
+- sincronizacao manual;
+- exportacao e validacao sem efeito colateral;
+- importacao `merge` e `replace`;
+- confirmacao explicita;
+- pausa, commit e rollback de restauracao.
+
+Backups devem possuir `format`, `schemaVersion`, `appVersion`, `exportedAt` e
+payload de dados. Versoes futuras desconhecidas devem ser recusadas.
+
+## 7. Modo Visitante
+
+Visitante nunca inicializa repository Firestore. O app deve continuar funcional
+localmente e participar do backup unificado identificado como `guest-local`.
+Migracao para uma conta aprovada ocorre pelo fluxo de backup, com snapshot
+preventivo da conta antes da importacao.
+
+## 8. Testes
+
+Adapte `scripts/testing/integrated-app-contract.mjs` e execute:
 
 ```bash
-# Verificar estrutura
-ls src/apps/<app-id>/
-ls Applications/<app-id>/
-
-# Verificar registro
-grep "<app-id>" src/apps/registry.js
-
-# Testar sintaxe
-node -c src/apps/registry.js
+npm run test:integration-kit
+npm run test:app-data-contract
+npm run test:recovery
+npm run test:guest-mode
+npm run test:firebase-security
+npm run pages:build
+npm run pages:validate
 ```
 
----
+Teste manualmente:
 
-## 12. Removendo um App
+1. dois usuarios no mesmo navegador;
+2. dois navegadores com a mesma conta;
+3. app fechado e aberto pela Central;
+4. sync manual, conflito e falha de rede;
+5. backup merge/replace e rollback;
+6. visitante sem requisicoes Firebase;
+7. tema claro e escuro;
+8. GitHub Pages com caminhos relativos.
 
-```bash
-# 1. Apagar a aplicação externa
-rm -rf Applications/<app-id>/
+## 9. Checklist
 
-# 2. Apagar a integração
-rm -rf src/apps/<app-id>/
+- [ ] ID canonico e sem colisao
+- [ ] manifest integrado e versao semantica
+- [ ] iframe lazy com cleanup
+- [ ] UID aplicado antes do storage
+- [ ] visitante estritamente local
+- [ ] Firestore sob `users/{uid}/apps/{appId}`
+- [ ] rules e testes por UID
+- [ ] backup versionado e validacao pura
+- [ ] merge, replace, confirmacao e rollback
+- [ ] diagnostico sem dados pessoais
+- [ ] Pages e dois usuarios validados
 
-# 3. Remover do registry.js
-#    - Remover import
-#    - Remover do array registerAll()
-```
-
----
-
-*Documento consolidado a partir dos manuais de integração do mathicx-file.*
+Japanese Study e Finances sao as referencias reais. O placeholder French Study
+nao faz parte da integracao ou do artefato enquanto nao houver aprovacao explicita.

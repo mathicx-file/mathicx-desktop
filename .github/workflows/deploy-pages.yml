@@ -42,6 +42,14 @@ jobs:
           npm run test:admin-claims
           npm run test:security-baseline
 
+      - name: Validate integrated apps and recovery
+        run: |
+          npm run test:integration-kit
+          npm run test:diagnostics
+          npm run test:guest-mode
+          npm run test:recovery
+          npm run test:sync-architecture
+
       - name: Validate dictionary pipeline
         run: npm run test:dictionary-pipeline
 

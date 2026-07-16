@@ -26,6 +26,7 @@ import {
   InstalledDictionaryPackagesSource,
   LayeredDictionarySource,
 } from './dictionary/installed-dictionary-packages-source.js?v=15.9';
+import { isRemoteUserScope, normalizeUserScope } from '../../../src/apps/integration/user-scope.js';
 
 const JapaneseApp = (() => {
   let allData = [];
@@ -64,6 +65,10 @@ const JapaneseApp = (() => {
   async function init() {
     if (initialized) return;
     initialized = true;
+    const desktopUserScope = normalizeUserScope(
+      new URLSearchParams(globalThis.location?.search || '').get('desktopUserScope'),
+    );
+    JapaneseStorage.setUserScope(desktopUserScope);
 
     JapaneseUI.init();
     setupHostListener();
@@ -73,7 +78,12 @@ const JapaneseApp = (() => {
     setupDictionaryBrowseControls();
     setupAppShellControls();
     void initializeAppShell();
-    const firebaseSyncReady = setupFirebaseSync().finally(() => setupAppDataBridge());
+    const firebaseSyncReady = (isRemoteUserScope(desktopUserScope)
+      ? setupFirebaseSync()
+      : Promise.resolve(updateFirebaseSyncStatus({
+        state: 'disabled',
+        message: 'Visitante usa somente dados locais deste navegador.'
+      }))).finally(() => setupAppDataBridge());
     const dictionaryRuntimeReady = setupDictionaryRuntime();
 
     const loadingEl = document.getElementById('loading-state');

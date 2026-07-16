@@ -2,7 +2,9 @@
 
 > Planejada em: 2026-07-15
 >
-> Status: planejamento; nenhuma subfase iniciada
+> Status: concluida em 2026-07-16
+>
+> Subfase atual: nenhuma; gates permanecem disponiveis para reavaliacao
 
 ## 1. Objetivo
 
@@ -14,7 +16,7 @@ beneficio, custo, risco, rollback e criterio de aceite antes de ser iniciada.
 
 ### 18.1 Kit de Integracao para Novos Aplicativos
 
-Prioridade recomendada: **alta**.
+Status: **concluida e aprovada em 2026-07-16**.
 
 Escopo proposto:
 
@@ -30,7 +32,7 @@ alterar o kernel, a Central de Sincronizacao ou o orquestrador de backup.
 
 ### 18.2 Ambiente Firebase de Desenvolvimento
 
-Prioridade recomendada: **media**.
+Status: **cancelada por decisao de escopo em 2026-07-16**.
 
 Escopo proposto:
 
@@ -43,9 +45,15 @@ Escopo proposto:
 Intervencao necessaria: criar o projeto Firebase de desenvolvimento e registrar
 o Web App. Esta subfase pode ser adiada enquanto os emuladores forem suficientes.
 
+Decisao: o projeto permanecera pequeno e utilizara um unico projeto Firebase.
+Testes automatizados continuam nos emuladores; testes ocasionais contra o
+backend real usam o token App Check debug privado ja registrado. Um segundo Web
+App no mesmo projeto nao isolaria Authentication nem o Firestore e, portanto,
+nao justificaria a complexidade adicional.
+
 ### 18.3 Diagnostico Operacional Multi-App
 
-Prioridade recomendada: **media**.
+Status: **concluida e aprovada em 2026-07-16**.
 
 Escopo proposto:
 
@@ -59,7 +67,7 @@ console do navegador ou expor credenciais.
 
 ### 18.4 Modo Visitante Local
 
-Prioridade recomendada: **opcional, posterior**.
+Status: **concluida e aprovada em 2026-07-16**.
 
 Escopo proposto:
 
@@ -78,7 +86,7 @@ misturam com contas autenticadas no mesmo navegador.
 
 ### 18.5 Infraestrutura Ampliada do Dicionario
 
-Prioridade recomendada: **baixa ate existir demanda**.
+Status: **concluida e aprovada em 2026-07-16 pela alternativa A**.
 
 Possibilidades:
 
@@ -92,6 +100,8 @@ atualizacao continuarem adequados.
 
 ### 18.6 Sync Seletivo e Granularizacao
 
+Status: **18.6.1 concluida e aprovada em 2026-07-16**.
+
 Prioridade recomendada: **baixa ate existir evidencia**.
 
 Possibilidades:
@@ -103,6 +113,11 @@ Possibilidades:
 
 Esta subfase exige metricas de volume, latencia ou colaboracao que justifiquem a
 complexidade adicional.
+
+A `18.6.1` confirmou que o Japanese Study ja usa documentos por dominio e que o
+Finances preserva um snapshot transacional com revisao e conflito explicito. Um
+gate reproduzivel agora reabre a decisao por tamanho, registros, conflitos,
+latencia ou demanda de colaboracao.
 
 ## 3. Regras da Fase 18
 
@@ -116,7 +131,10 @@ complexidade adicional.
 
 ## 4. Recomendacao Atual
 
-Iniciar pela `18.1`. Ela reduz o custo das futuras integracoes sem exigir outro
-projeto Firebase e cria uma base verificavel para Japanese Study, Finances e os
-proximos aplicativos. A `18.4` permanece registrada como opcional para depois
-das prioridades atuais.
+A `18.1` foi aprovada pelo proprietario em 2026-07-16. A `18.2` foi cancelada
+para manter um unico projeto Firebase. A `18.3` foi aprovada depois da validacao
+visual do diagnostico e da exportacao. A `18.4` foi concluida com migracao
+visitante validada em uma conta Firebase. A `18.5.1` mediu capacidade, retornou
+`keep-static` e teve a alternativa A aprovada. A `18.6.1` recomenda manter os
+modelos atuais de sync ate que um dos gatilhos objetivos seja atingido; essa
+recomendacao foi aprovada e encerrou a Fase 18 em 2026-07-16.

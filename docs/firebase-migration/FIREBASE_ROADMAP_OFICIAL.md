@@ -4,7 +4,7 @@
 >
 > Status: fonte oficial de planejamento e execucao
 >
-> Fase atual: Fase 18 - evolucoes opcionais (aguarda priorizacao)
+> Fase atual: Fase 18 concluida; proxima fase ainda nao planejada
 
 ## 1. Autoridade Deste Documento
 
@@ -71,7 +71,7 @@ Fase 10.3 Metricas de equivalencia com o JSON legado
 | 15 | Dicionario ampliado, pacotes offline e PWA | Concluida | Antiga Fase 12 revisada |
 | 16 | Confiabilidade, backup e recuperacao | Concluida | Melhoria incorporada |
 | 17 | Seguranca, rollout e remocao do legado | Concluida | Planos anteriores 12/13 |
-| 18 | Evolucoes opcionais | Opcional | Antiga Fase 13 revisada |
+| 18 | Evolucoes opcionais | Em andamento | Antiga Fase 13 revisada |
 
 ## 5. Fases Concluidas
 
@@ -553,7 +553,7 @@ estagio do enforcement App Check separadamente.
 
 ### Fase 18: Evolucoes Opcionais
 
-Status: **Planejada; aguarda aprovacao da primeira subfase**.
+Status: **Concluida em 2026-07-16**.
 
 Executar somente mediante necessidade comprovada:
 
@@ -571,15 +571,56 @@ Cada item aprovado deve virar subfase `18.x`, com motivacao, custo, risco e crit
 
 Planejamento consolidado em `FIREBASE_PHASE_18_OPTIONAL_EVOLUTIONS.md`:
 
-- `18.1`: kit de integracao para novos aplicativos - **recomendada**;
-- `18.2`: ambiente Firebase de desenvolvimento;
-- `18.3`: diagnostico operacional multi-app;
-- `18.4`: modo visitante estritamente local - **opcional e posterior**;
-- `18.5`: infraestrutura ampliada do dicionario;
-- `18.6`: sync seletivo e granularizacao orientados por evidencia.
+- `18.1`: kit de integracao para novos aplicativos - **concluida e aprovada em 2026-07-16**;
+- `18.2`: ambiente Firebase de desenvolvimento - **cancelada por decisao de escopo em 2026-07-16**;
+- `18.3`: diagnostico operacional multi-app - **concluida e aprovada em 2026-07-16**;
+- `18.4`: modo visitante estritamente local - **concluida e aprovada em 2026-07-16**;
+- `18.5`: infraestrutura ampliada do dicionario - **concluida e aprovada pela alternativa A em 2026-07-16**;
+- `18.6`: sync seletivo e granularizacao orientados por evidencia - **18.6.1 concluida e aprovada em 2026-07-16**.
 
 O placeholder `Applications/french-study` nao faz parte do planejamento
 versionado nem sera integrado antes de aprovacao explicita.
+
+A `18.1` introduziu manifests integrados descobertos automaticamente pela
+Central, factory compartilhado para capacidades/sync/backup, helper de escopo por
+UID, templates neutros e uma suite contratual reutilizavel. Japanese Study,
+Finances e Desktop foram adaptados sem alterar seus formatos externos. Detalhes
+em `FIREBASE_PHASE_18_1_APP_INTEGRATION_KIT.md`.
+
+A `18.2` foi cancelada antes de criar recursos externos. O projeto continuara
+com um unico Firebase, emuladores para testes automatizados e App Check debug
+privado para testes locais ocasionais. O gate especifico iniciado para separar
+um projeto dev foi removido; as protecoes preexistentes contra configuracoes e
+segredos locais no artefato Pages permanecem ativas.
+
+A `18.3` adicionou um relatorio operacional sanitizado em Configuracoes,
+historico local curto de falhas e versao semantica nos contratos integrados. A
+Central agora detecta divergencia entre a versao declarada pelo manifest e pelo
+adaptador. A validacao visual foi aprovada em 2026-07-16. Detalhes em
+`FIREBASE_PHASE_18_3_OPERATIONAL_DIAGNOSTICS.md`.
+
+A `18.4` introduziu uma sessao visitante sem credenciais e separou preferencias,
+Explorer, Japanese Study e Finances no escopo `guest-local-v1`. Sync, Firestore,
+whitelist e administracao permanecem indisponiveis. A base foi aprovada pelo
+proprietario. A `18.4.5` implementou migracao por backup identificado, selecao
+por aplicativo, confirmacao e snapshot preventivo da conta; o fluxo completo
+foi aprovado em 2026-07-16. Detalhes em
+`FIREBASE_PHASE_18_4_GUEST_MODE.md`.
+
+A `18.5.1` adicionou um gate reproduzivel de capacidade. Com 35.570.829 bytes
+no Pages e maior shard de 225.377 bytes, o resultado atual e `keep-static`.
+Cloud Storage exigiria Blaze e faturamento sem resolver um limite presente.
+A alternativa A foi aprovada pelo proprietario em 2026-07-16.
+Detalhes em `FIREBASE_PHASE_18_5_DICTIONARY_INFRASTRUCTURE_GATE.md`.
+
+A `18.6.1` mapeou os tres modelos de sincronizacao. O Desktop usa um documento
+leve de preferencias; o Japanese Study ja separa documentos por dominio; o
+Finances usa snapshot transacional com revisao e conflito explicito. O gate
+`firebase:assess-sync` recomenda manter esses modelos e reabrir a arquitetura
+somente por tamanho, volume, conflitos, latencia ou colaboracao comprovados.
+A recomendacao foi aprovada pelo proprietario em 2026-07-16 e encerrou a Fase
+18 sem adicionar listeners em tempo real ou migrar o snapshot do Finances.
+Detalhes em `FIREBASE_PHASE_18_6_SYNC_ARCHITECTURE_GATE.md`.
 
 ## 7. Direcao Atual
 
@@ -791,8 +832,7 @@ contratos host/iframe, Central de Sincronizacao, backup e rollback, sync Firebas
 dos apps e dicionario lazy/offline. Com o gate de seguranca, as metricas em
 producao e essa regressao aprovados, a Fase 17 foi encerrada em 2026-07-15.
 
-Etapa atual: **Fase 18 - escolher e justificar uma evolucao opcional antes de
-abrir uma nova subfase**.
+Etapa atual: **planejar a proxima fase oficial a partir das prioridades atuais do projeto**.
 
 ## 8. Protocolo de Atualizacao do Roteiro
 

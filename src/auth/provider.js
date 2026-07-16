@@ -14,6 +14,7 @@ import { bus, EVT } from '../core/event-bus.js';
 import { uid, norm } from '../core/utils.js';
 import { hashPassword, verifyPassword } from './crypto.js';
 import { featureFlags } from '../firebase/feature-flags.js';
+import { guestSession } from './guest-session.js';
 
 const SESSION_TTL = 7 * 24 * 60 * 60 * 1000;   // 7 dias
 
@@ -262,11 +263,20 @@ class AuthProviderFacade {
   }
 
   get mode() {
+    if (guestSession.active) return 'guest';
     return featureFlags.authMode === 'firebase' ? 'firebase' : 'local';
   }
 
   get isFirebaseMode() {
     return this.mode === 'firebase';
+  }
+
+  get isGuestMode() {
+    return this.mode === 'guest';
+  }
+
+  restoreGuestSession() {
+    return guestSession.restore();
   }
 
   async _firebaseProvider() {
@@ -303,6 +313,10 @@ class AuthProviderFacade {
   }
 
   async restoreSession() {
+    if (guestSession.restore()) {
+      bus.emit(EVT.AUTH_CHANGE, { user: guestSession.getUser(), session: { provider: 'guest' } });
+      return true;
+    }
     const provider = await this._activeAsync();
     const restored = await provider.restoreSession();
     if (!this.isFirebaseMode) return restored;
@@ -314,6 +328,7 @@ class AuthProviderFacade {
   }
 
   async register(payload) {
+    if (this.isGuestMode) return { ok: false, error: 'Encerre a sessao visitante antes de criar uma conta.' };
     const provider = await this._activeAsync();
     const result = await provider.register(payload);
     if (this.isFirebaseMode && result.ok) {
@@ -324,6 +339,7 @@ class AuthProviderFacade {
   }
 
   async login(login, senha) {
+    if (this.isGuestMode) return { ok: false, error: 'Encerre a sessao visitante antes de entrar.' };
     const provider = await this._activeAsync();
     const result = await provider.login(login, senha);
     if (this.isFirebaseMode && result.ok) {
@@ -334,6 +350,13 @@ class AuthProviderFacade {
   }
 
   async logout() {
+    if (this.isGuestMode) {
+      const previous = guestSession.getUser();
+      guestSession.clear();
+      bus.emit(EVT.USER_LOGOUT, previous);
+      bus.emit(EVT.AUTH_CHANGE, null);
+      return;
+    }
     const provider = await this._activeAsync();
     const previous = provider.getCurrentUser?.() ?? null;
     const result = await provider.logout();
@@ -345,102 +368,128 @@ class AuthProviderFacade {
   }
 
   getCurrentUser() {
+    if (this.isGuestMode) return guestSession.getUser();
     const provider = this._activeSync();
     if (provider) return provider.getCurrentUser();
     return null;
   }
 
   async getCurrentUserAsync() {
+    if (this.isGuestMode) return guestSession.getUser();
     const provider = await this._activeAsync();
     return provider.getCurrentUser();
   }
 
   isAuthenticated() {
+    if (this.isGuestMode) return true;
     const provider = this._activeSync();
     return provider ? provider.isAuthenticated() : false;
   }
 
   async isAuthenticatedAsync() {
+    if (this.isGuestMode) return true;
     const provider = await this._activeAsync();
     return provider.isAuthenticated();
   }
 
   isApproved() {
+    if (this.isGuestMode) return true;
     if (!this.isFirebaseMode) return true;
     return this._firebaseProviderInstance?.isApproved() === true;
   }
 
   async isApprovedAsync() {
+    if (this.isGuestMode) return true;
     if (!this.isFirebaseMode) return true;
     const provider = await this._firebaseProvider();
     return provider.isApproved();
   }
 
   isAdmin() {
+    if (this.isGuestMode) return false;
     const provider = this._activeSync();
     return provider ? provider.isAdmin() : false;
   }
 
   requireAdmin() {
+    if (this.isGuestMode) throw new Error('Permissao negada: visitante nao possui acesso administrativo.');
     const provider = this._activeSync();
     if (provider) return provider.requireAdmin();
     throw new Error('Permissao negada: requer admin');
   }
 
   async pendingUsers() {
+    if (this.isGuestMode) return [];
     const provider = await this._activeAsync();
     return provider.pendingUsers();
   }
 
   async listUsers() {
+    if (this.isGuestMode) return [];
     const provider = await this._activeAsync();
     return provider.listUsers();
   }
 
   async approveUser(id) {
+    if (this.isGuestMode) throw new Error('Operacao remota indisponivel para visitante.');
     const provider = await this._activeAsync();
     return provider.approveUser(id);
   }
 
   async rejectUser(id) {
+    if (this.isGuestMode) throw new Error('Operacao remota indisponivel para visitante.');
     if (!this.isFirebaseMode) return this._local().deleteUser(id);
     const provider = await this._firebaseProvider();
     return provider.rejectUser(id);
   }
 
   async setStatus(id, status) {
+    if (this.isGuestMode) throw new Error('Operacao remota indisponivel para visitante.');
     const provider = await this._activeAsync();
     return provider.setStatus(id, status);
   }
 
   async setPerfil(id, perfil) {
+    if (this.isGuestMode) throw new Error('Operacao remota indisponivel para visitante.');
     if (this.isFirebaseMode) throw new Error('Admin Firebase requer custom claims.');
     return this._local().setPerfil(id, perfil);
   }
 
   async deleteUser(id) {
+    if (this.isGuestMode) throw new Error('Operacao remota indisponivel para visitante.');
     if (this.isFirebaseMode) throw new Error('Gestao Firebase remota indisponivel nesta fase.');
     return this._local().deleteUser(id);
   }
 
   async topApps(options) {
-    if (this.isFirebaseMode) return [];
+    if (this.isFirebaseMode || this.isGuestMode) return [];
     return this._local().topApps(options);
   }
 
   async loginsByDay(days) {
-    if (this.isFirebaseMode) return [];
+    if (this.isFirebaseMode || this.isGuestMode) return [];
     return this._local().loginsByDay(days);
   }
 
   async avgSessionDuration() {
-    if (this.isFirebaseMode) return 0;
+    if (this.isFirebaseMode || this.isGuestMode) return 0;
     return this._local().avgSessionDuration();
   }
 
   async _logStat(payload) {
-    if (this.isFirebaseMode) return;
+    if (this.isFirebaseMode || this.isGuestMode) return;
     return this._local()._logStat(payload);
+  }
+
+  async enterGuest() {
+    if (featureFlags.authMode === 'firebase') {
+      const provider = await this._firebaseProvider();
+      if (provider.isAuthenticated?.()) await provider.logout();
+    }
+    const user = guestSession.enter();
+    bus.emit(EVT.USER_LOGIN, { user, session: { provider: 'guest' } });
+    bus.emit(EVT.AUTH_CHANGE, { user, session: { provider: 'guest' } });
+    return { ok: true, user };
   }
 }
 

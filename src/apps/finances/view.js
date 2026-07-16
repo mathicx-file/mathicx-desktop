@@ -1,11 +1,16 @@
 import { authProvider } from '../../auth/provider.js';
 import { mountIframeApp } from '../integration/iframe-app.js';
+import {
+  appendUserScope,
+  createUserScopeMessage,
+  resolveAuthenticatedUserScope,
+} from '../integration/user-scope.js';
 
 const APP_ID = 'finances';
 
 export function mount(host, context = {}) {
   const userScope = getDesktopUserScope();
-  const appPath = `./Applications/finances/index.html?desktopUserScope=${encodeURIComponent(userScope)}`;
+  const appPath = appendUserScope('./Applications/finances/index.html', userScope);
 
   return mountIframeApp(host, {
     appId: APP_ID,
@@ -18,15 +23,11 @@ export function mount(host, context = {}) {
     context,
     actionType: 'navigate',
     onLoad: ({ post }) => {
-      post('user-scope', {
-        appId: APP_ID,
-        scope: userScope,
-      });
+      post('user-scope', createUserScopeMessage(APP_ID, userScope));
     },
   });
 }
 
 function getDesktopUserScope() {
-  const user = authProvider.getCurrentUser?.();
-  return user?.uid || user?.id || user?.email || 'local';
+  return resolveAuthenticatedUserScope(authProvider);
 }

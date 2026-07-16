@@ -129,7 +129,7 @@
     if (location.protocol === 'file:') return false;
     const params = new URLSearchParams(location.search || '');
     const scope = String(params.get('desktopUserScope') || '').trim();
-    return Boolean(scope && scope !== 'local');
+    return Boolean(scope && scope !== 'local' && scope !== 'guest-local-v1');
   }
 
   function bindFirebaseSyncStatus() {

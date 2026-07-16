@@ -15,7 +15,11 @@ test('encrypts and decrypts a financial unified backup', async () => {
   const unified = await createUnifiedBackupPackage([
     createEntry('desktop', 'mathicx-desktop-backup', false),
     createEntry('finances', 'finances-backup', true),
-  ], { encrypted: true, now: () => new Date('2026-07-14T18:00:00.000Z') });
+  ], {
+    encrypted: true,
+    now: () => new Date('2026-07-14T18:00:00.000Z'),
+    source: { kind: 'guest-local' },
+  });
   const encrypted = await encryptUnifiedBackup(unified, PASSWORD);
   const secondEncrypted = await encryptUnifiedBackup(unified, PASSWORD);
   const decrypted = await decryptUnifiedBackup(encrypted, PASSWORD);
@@ -24,6 +28,7 @@ test('encrypts and decrypts a financial unified backup', async () => {
   assert.equal(validateEncryptedBackupEnvelope(encrypted).ok, true);
   assert.deepEqual(decrypted, unified);
   assert.deepEqual(decrypted.apps.map((app) => app.appId), ['desktop', 'finances']);
+  assert.deepEqual(decrypted.source, { kind: 'guest-local', schemaVersion: 1 });
   assert.notEqual(secondEncrypted.encryption.iv, encrypted.encryption.iv);
   assert.notEqual(secondEncrypted.encryption.kdf.salt, encrypted.encryption.kdf.salt);
 });

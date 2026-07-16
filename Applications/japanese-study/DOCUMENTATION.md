@@ -1,5 +1,14 @@
 # Japanese Study App
 
+> Estado consolidado em 2026-07-16: integrado ao Mathicx Desktop, sincronizado
+> por UID no Firebase, participante do backup unificado e compativel com modo
+> visitante estritamente local. O dicionario ampliado usa pacotes estaticos
+> `essential`, `core` e `full`, cache offline, PWA, atualizacao e rollback.
+>
+> As secoes de versoes abaixo preservam a evolucao historica. Para o estado
+> operacional vigente, prevalecem o `README.md` deste aplicativo e o roteiro
+> oficial em `../../docs/firebase-migration/FIREBASE_ROADMAP_OFICIAL.md`.
+
 Aplicação web standalone para estudo de hiragana e katakana, criada para ser carregada pelo ecossistema Mathicx-File como uma aplicação externa via iframe.
 
 O projeto usa apenas HTML5, CSS3 e JavaScript vanilla com ES Modules. Não há etapa de build, bundler ou dependência de framework.
@@ -7,7 +16,7 @@ O projeto usa apenas HTML5, CSS3 e JavaScript vanilla com ES Modules. Não há e
 ```text
 Versão atual: 2.3
 Última atualização da documentação: 2026-07-08
-Próxima versão recomendada: 2.4 - Integração com Mathicx-File e sincronização Firebase
+Proxima versao: ainda nao definida; integracao e sincronizacao foram concluidas
 ```
 
 ## Objetivo
@@ -222,10 +231,10 @@ Esta tabela substitui a leitura antiga de conformidade por uma visão centraliza
 | Digitação guiada | Concluído | 2.1 | MVP local-first com hiragana, cópia guiada, JSON local, conversão romaji para kana, feedback e persistência |
 | Exportação A4 de kana | Concluído | 2.2 | Tabela de consulta, folha de prática com traços, folha em branco, orientação retrato/paisagem, linhas extras e agrupamentos por linha fonética |
 | Gamificação local-first | Concluído | 2.3 | Ledger de XP, níveis, dimensões hábito/domínio/prática, metas configuráveis, missões, conquistas e caderno de erros |
-| Integração profunda | Planejado | 2.4 | Iframe no Mathicx-File, widget, launcher, deep links, notificações, status em tempo real e ponte para Firebase |
+| Integração profunda | Concluído | 2.4 | Iframe, launcher, deep links, tema, Central de Sincronização e contrato de backup |
 | Expansão da digitação guiada | Planejado | 2.5 | Katakana, tradução guiada, dicas, textos médios e caderno de erros frasal |
 | Assistente de estudo diário | Em andamento | 1.7+ / 3.0 | Recomendações explicáveis, evidências, sessão sugerida, resumo pós-quiz e uso do contexto de gamificação |
-| Sincronização Firebase por usuário | Planejado | 4.0 | Progresso, eventos de gamificação, SRS, favoritos e settings em `users/{uid}/japaneseStudy` |
+| Sincronização Firebase por usuário | Concluído | 4.0 | Dados pessoais isolados em `users/{uid}/apps/japanese-study` |
 
 ## Riscos e Pontos Técnicos
 

@@ -22,7 +22,8 @@ O projeto usa HTML, CSS e JavaScript vanilla com ES Modules. Nao ha framework, e
 
 - Estudo de hiragana, katakana e uma fatia inicial de Kanji N5.
 - Busca por romaji, kana, kanji, leitura, significado, radical, tag e vocabulario; o romaji dos pacotes ampliados e derivado das leituras com WanaKana e a navegacao e ordenada globalmente por romaji.
-- Dicionario local com palavras em kana e kanji.
+- Dicionario em pacotes `essential`, `core` e `full`, com busca, navegacao
+  paginada, ordenacao por romaji e cache offline.
 - Dashboard com progresso, atividade recente, tempo de estudo, SRS, Kanji N5 e ultimos caracteres vistos.
 - Gamificacao local-first com XP, niveis, missoes, conquistas persistidas, metas configuraveis e caderno de erros.
 - Assistente de Estudo Diario v2 com recomendacao explicavel, motivo, evidencias, acao sugerida e proximo passo.
@@ -38,6 +39,8 @@ O projeto usa HTML, CSS e JavaScript vanilla com ES Modules. Nao ha framework, e
 - Exportacao, validacao, mescla, substituicao e exclusao de dados locais.
 - Integracao por iframe com o ecossistema Mathicx-File via `manifest.js` e `view.js`.
 - Sincronizacao Firebase local-first por UID quando executado dentro do Mathicx-File.
+- Participacao no backup unificado, restauracao seletiva e migracao do visitante.
+- PWA opt-in para shell e dicionario offline.
 
 ## Stack tecnica
 
@@ -71,14 +74,14 @@ Nao ha dependencias npm obrigatorias de runtime.
 ### 1. Clone o repositorio
 
 ```bash
-git clone https://github.com/mathicx-file/Japanese_study.git
-cd Japanese_study
+git clone https://github.com/mathicx-file/mathicx-desktop.git
+cd mathicx-desktop/Applications/japanese-study
 ```
 
 Se voce estiver usando este workspace local, o diretorio atual esperado e:
 
 ```text
-D:\AI\Japonese\Applications\japanese-study
+D:\AI\mathicx-file\Applications\japanese-study
 ```
 
 ### 2. Suba um servidor estatico
@@ -324,6 +327,9 @@ Quando ha usuario Firebase aprovado, o banco local tambem recebe escopo por UID:
 JapaneseStudyDB_{uid}
 ```
 
+No modo visitante, LocalStorage e IndexedDB usam um escopo local dedicado e nao
+inicializam o repository Firestore.
+
 Tipos comuns de registro:
 
 - `view`: caractere aberto no modal.
@@ -405,6 +411,9 @@ Quando executado dentro do Mathicx-File:
 - o tema recebido do host e aplicado como `dark` ou `light`;
 - a aba Dados mostra o status da sincronizacao Firebase.
 - o painel de sync permite `Sincronizar agora` e mostra detalhes do ultimo envio.
+- o adaptador participa da Central de Sincronizacao e do backup unificado;
+- visitante permanece local e pode migrar por backup para uma conta aprovada;
+- App Check, whitelist e rules continuam sob responsabilidade do host.
 
 Paths pessoais atualmente planejados/usados:
 
@@ -452,22 +461,25 @@ Estado atual:
 - Digitacao guiada v2.1: concluido como MVP local-first com hiragana, copia guiada, JSON local, feedback e persistencia.
 - Gamificacao local-first: concluido com ledger de XP, niveis, metas configuraveis, missoes, conquistas e caderno de erros.
 - Assistente de Estudo Diario v2: iniciado com recomendacoes explicaveis e resumo pos-quiz.
-- Integracao Mathicx-File por iframe: concluida.
-- Sincronizacao Firebase por usuario aprovado: concluida como camada local-first inicial.
+- Integracao Mathicx-File por iframe e contrato multi-app: concluida.
+- Sincronizacao Firebase por usuario aprovado: concluida e isolada por UID.
 - Status visual da sincronizacao Firebase: concluido.
 - Marcador de migracao `japanese-study-local-first-sync-v1`: concluido.
 - Botao `Sincronizar agora` e detalhes do ultimo sync: concluido.
-- Deep links por `postMessage` e acoes do launcher do Mathicx-File: iniciado.
+- Deep links por `postMessage` e acoes do launcher do Mathicx-File: concluido no
+  nivel planejado para busca e abertura de secoes.
+- Pacotes ampliados do dicionario, instalacao offline, atualizacao e rollback:
+  concluidos.
+- Backup unificado e migracao do visitante: concluidos.
 
 Proximos passos recomendados:
 
-1. Melhorar reconciliacao de conflitos entre dispositivos.
-2. Adicionar widget/resumo do Japanese Study no desktop ou dashboard do Mathicx-File.
-3. Aprofundar busca global com termos do dicionario local.
-4. Expandir a digitacao guiada com katakana, traducao guiada, dicas e textos medios.
-5. Expandir Kanji N5 em blocos pequenos, mantendo validacao de dados e compatibilidade com backup/sync.
+1. Expandir a digitacao guiada com katakana, traducao guiada, dicas e textos medios.
+2. Expandir Kanji N5 em blocos pequenos, mantendo validacao e compatibilidade.
+3. Considerar widget de estudo somente como nova prioridade aprovada.
+4. Reavaliar infraestrutura externa apenas quando o gate do dicionario disparar.
 
-## Futuro banco de dados
+## Arquitetura de dados
 
 O app deve continuar funcionando localmente nesta fase. Ainda assim, a arquitetura ja evita espalhar acesso a dados pela UI:
 
@@ -477,11 +489,10 @@ O app deve continuar funcionando localmente nesta fase. Ainda assim, a arquitetu
 - O assistente usa contratos versionados com `schemaVersion`.
 - IDs de kana, kanji, palavras e eventos sao estaveis o suficiente para sincronizacao futura.
 
-Firebase e o caminho atual para sincronizacao pessoal quando o app roda dentro do Mathicx-File, mas nao e dependencia do app standalone. Outras alternativas tambem podem fazer sentido dependendo do objetivo:
-
-- Firebase/Firestore para progresso por usuario, eventos de gamificacao, SRS, favoritos e settings.
-- Supabase/Postgres se o projeto precisar de consultas relacionais mais fortes.
-- Meilisearch/Algolia se o dicionario crescer e precisar de busca textual/fuzzy dedicada.
+Firebase/Firestore e a sincronizacao pessoal vigente dentro do Mathicx Desktop,
+mas nao e dependencia do app standalone. O dicionario permanece em bundles
+estaticos porque o gate de capacidade aprovou o pipeline atual. Cloud Storage ou
+busca gerenciada so devem ser reconsiderados quando houver evidencia mensuravel.
 
 ## Troubleshooting
 

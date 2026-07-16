@@ -152,6 +152,11 @@ Nao adicionar `localhost` aos dominios reCAPTCHA. Quando testes locais contra o
 backend real forem necessarios, sera usado um debug token privado registrado no
 Console e mantido fora do repositorio.
 
+Em 2026-07-16, o runtime local passou a reler o token gerado pelo SDK na base
+`firebase-app-check-database` e reapresenta-lo no console a cada inicializacao
+debug. O valor continua privado, nao e salvo no codigo e esse comportamento nao
+e ativado no GitHub Pages (`debug: false`).
+
 Primeiro teste publicado em 2026-07-14:
 
 - Auth e sincronizacao continuam disponiveis com enforcement desligado;

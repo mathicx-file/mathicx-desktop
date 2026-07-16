@@ -4,9 +4,13 @@ Este documento descreve como o `mathicx-file` funciona por dentro. Ele complemen
 
 ## Visao Geral
 
-O projeto e um desktop virtual 100% client-side. O navegador e o runtime da aplicacao, e todos os dados locais ficam no proprio navegador via LocalStorage e IndexedDB.
+O projeto e um desktop virtual client-side. O navegador e o runtime da
+aplicacao; LocalStorage e IndexedDB sustentam o modelo local-first, enquanto
+Firebase Auth e Cloud Firestore fornecem identidade e sincronizacao opcionais
+para contas aprovadas.
 
-Nao existe backend, build step ou framework no host. A aplicacao usa:
+Nao existe servidor de aplicacao proprio, build step ou framework no host. A
+aplicacao usa:
 
 - HTML estatico como shell.
 - CSS modular por area da interface.
@@ -14,6 +18,8 @@ Nao existe backend, build step ou framework no host. A aplicacao usa:
 - Um kernel central para coordenar boot.
 - Subsistemas independentes comunicando por event bus.
 - Apps carregados sob demanda.
+- Firebase App Check para proteger Authentication e Firestore.
+- GitHub Actions para validar e montar o artefato estatico do Pages.
 
 ## Fluxo de Boot
 
@@ -30,9 +36,10 @@ app.boot()
   |-- _hydrateState()
   |-- _authGate()
       |
-      |-- authProvider.restoreSession()
+      |-- restaurar sessao Firebase ou visitante
       |-- LoginScreen se nao houver sessao
-      |-- _bootDesktop() apos autenticar
+      |-- validar whitelist para conta Firebase
+      |-- _bootDesktop() apos autenticar ou entrar como visitante
           |
           |-- themeManager.init()
           |-- appRegistry.registerAll()
@@ -132,7 +139,9 @@ Arquivos principais:
 - `src/storage/local-storage.js`
 - `src/storage/indexeddb.js`
 
-LocalStorage e usado para preferencias e listas leves. IndexedDB guarda dados estruturados.
+LocalStorage e usado para preferencias e listas leves. IndexedDB guarda dados
+estruturados. Chaves pessoais recebem escopo por UID; o visitante usa
+`guest-local-v1` e nunca compartilha o namespace de uma conta.
 
 Stores IndexedDB:
 
@@ -146,40 +155,38 @@ Stores IndexedDB:
 | `sessions` | `key` | Sessoes autenticadas. |
 | `stats` | `id` | Eventos de uso. |
 
-### Autenticacao
+### Identidade e Acesso
 
 Arquivos principais:
 
-- `src/auth/crypto.js`
 - `src/auth/provider.js`
 - `src/auth/login-screen.js`
+- `src/auth/firebase-auth-provider.js`
+- `src/auth/guest-session.js`
+- `src/auth/guest-migration.js`
 
 Fluxo:
 
 ```text
 boot
   |
-  |-- restoreSession()
-  |     |-- sessao valida -> desktop
-  |     `-- sem sessao -> LoginScreen
-  |
-  |-- primeiro uso -> criar admin
-  |-- login valido -> desktop
-  `-- novo usuario -> status pendente
+  |-- restaurar Firebase ou visitante
+  |-- sem sessao -> LoginScreen
+  |     |-- login/cadastro Firebase
+  |     `-- entrar como visitante
+  |-- Firebase -> validar accessStatus e claims
+  |-- visitante -> aplicar guest-local-v1
+  `-- iniciar desktop
 ```
 
-O `AuthProvider` gerencia:
+Firebase Auth e a fonte de verdade. O perfil Firestore define `accessStatus` e
+o papel administrativo confiavel vem de claims. O App Check protege chamadas
+ao backend. O provider local baseado em Web Crypto permanece dormente somente
+como legado controlado, sem participar do fluxo de producao.
 
-- Cadastro.
-- Login.
-- Logout.
-- Restauracao de sessao.
-- Usuarios pendentes.
-- Promocao/rebaixamento de perfil.
-- Bloqueio/aprovacao.
-- Estatisticas de login e uso de apps.
-
-Senhas usam PBKDF2 via Web Crypto API com salt por usuario.
+O visitante nao cria usuario anonimo no Firebase: sua sessao e seus dados ficam
+no navegador atual. A migracao posterior usa backup identificado, confirmacao e
+snapshot preventivo da conta de destino.
 
 ### Desktop
 
@@ -370,7 +377,8 @@ Desvantagens:
 - Nao ha acesso direto ao DOM do host.
 - Permissoes dependem de `sandbox`.
 
-Para integrar projetos como `japanese-study`, o modelo externo via iframe tende a ser o melhor ponto de partida.
+Japanese Study e Finances usam esse modelo. Novos apps devem partir do kit em
+`templates/integrated-app`, que acrescenta contrato de dados, tema e escopo.
 
 ## Comunicacao Host-App
 
@@ -401,7 +409,8 @@ return () => {
 };
 ```
 
-Em producao, troque `'*'` por uma validacao de origem sempre que possivel.
+Wrappers atuais validam `origin`, `source` e payload. Tokens Firebase nunca
+trafegam por esse canal.
 
 ## Temas
 
@@ -419,27 +428,29 @@ themeManager.cycle()
   `-- EVT.THEME_CHANGE
 ```
 
-## Estatisticas de Uso
+## Atividade e Diagnostico
 
-O kernel conecta eventos de janelas ao `AuthProvider`:
+O kernel registra atividade no escopo do usuario atual. O diagnostico operacional
+da Central agrega somente estado tecnico sanitizado, versoes e falhas curtas:
 
 - `WINDOW_OPEN` registra `app_open`.
 - `WINDOW_CLOSE` registra `app_close` com duracao.
 - `login()` registra `login`.
 - `logout()` registra `logout`.
 
-Esses eventos alimentam o Painel Admin.
+Dados de uma conta ou visitante nao sao compartilhados com outro escopo local.
 
 ## Extensibilidade Recomendada
 
 Para novos apps:
 
-1. Use iframe se o app e independente.
+1. Use `templates/integrated-app` se o app e independente.
 2. Use app interno se precisa de acesso ao host.
 3. Mantenha manifesto pequeno e descritivo.
 4. Retorne cleanup em toda view.
 5. Use categorias existentes para manter launcher organizado.
-6. Documente dependencias do app externo no README proprio do app.
+6. Declare contrato de sync/backup e isolamento no manifesto integrado.
+7. Documente dependencias do app externo no README proprio do app.
 
 Para evoluir o host:
 
@@ -451,19 +462,18 @@ Para evoluir o host:
 
 ## Riscos e Pontos de Atencao
 
-- Autenticacao client-side nao equivale a seguranca de backend.
+- Firebase config publica nao e segredo; seguranca depende de Auth, App Check,
+  claims e Firestore Rules.
 - Dados locais podem ser apagados pelo usuario/navegador.
 - Web Crypto API exige contexto seguro fora de `localhost`.
 - Apps externos com CDNs podem falhar offline.
 - Iframes precisam de sandbox bem escolhido para equilibrar compatibilidade e seguranca.
-- O registry atual exige import manual para cada app.
+- O registry exige importar um manifesto novo, mas Central e backup descobrem
+  capacidades automaticamente.
 
-## Melhorias Futuras
+## Gates Futuros
 
-- Testes automatizados para o host.
-- Export/import global de dados locais.
-- Registro dinamico de apps.
-- PWA com cache offline.
-- Backend opcional para sincronizacao.
-- Canal padronizado de `postMessage` para apps externos.
-- Documentacao especifica para criacao de apps internos.
+As Fases 0 a 18 concluiram testes automatizados, backup global, PWA, Firebase e
+contrato multi-app. Mudancas de infraestrutura agora dependem dos gates
+`dictionary:assess-infrastructure` e `firebase:assess-sync`. Novos aplicativos
+ou uma Fase 19 exigem prioridade e escopo aprovados antes de alterar o kernel.

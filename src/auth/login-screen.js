@@ -52,6 +52,14 @@ const CSS = `
 }
 .mx-auth .btn-auth:hover { transform: translateY(-1px); }
 .mx-auth .btn-auth:disabled { opacity: .6; cursor: wait; }
+.mx-auth .guest-divider { display:flex; align-items:center; gap:10px; margin:var(--sp-4) 0 var(--sp-2); color:var(--muted); font-size:10px; }
+.mx-auth .guest-divider::before, .mx-auth .guest-divider::after { content:''; flex:1; height:1px; background:var(--border-soft); }
+.mx-auth .btn-guest {
+  width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:var(--r-md);
+  background:var(--surface-2); color:var(--text); font-size:12px; font-weight:700; cursor:pointer;
+}
+.mx-auth .btn-guest:hover { background:var(--surface-hover); }
+.mx-auth .btn-guest:disabled { opacity:.6; cursor:wait; }
 .mx-auth .switch { text-align: center; margin-top: var(--sp-4); font-size: 12px; color: var(--muted); }
 .mx-auth .switch button { background: none; border: none; color: var(--accent); font-weight: 700; cursor: pointer; }
 `;
@@ -138,7 +146,8 @@ export class LoginScreen {
         <button type="submit" class="btn-auth">${isLogin ? 'Entrar' : 'Criar e entrar'}</button>
       </form>
       ${isLogin ? '<div class="switch">Ainda nao tem conta? <button data-act="go-register">Criar agora</button></div>' : ''}
-      ${!isLogin && !isSetup ? '<div class="switch"><button data-act="go-login">Voltar ao login</button></div>' : ''}`;
+      ${!isLogin && !isSetup ? '<div class="switch"><button data-act="go-login">Voltar ao login</button></div>' : ''}
+      ${isFirebase ? '<div class="guest-divider">ou</div><button type="button" class="btn-guest" data-act="enter-guest">Continuar como visitante</button>' : ''}`;
   }
 
   _attach() {
@@ -189,6 +198,22 @@ export class LoginScreen {
     this._el.querySelector('[data-act="go-login"]')?.addEventListener('click', () => {
       this._mode = 'login';
       this._render();
+    });
+
+    this._el.querySelector('[data-act="enter-guest"]')?.addEventListener('click', async (event) => {
+      const button = event.currentTarget;
+      button.disabled = true;
+      try {
+        const result = await this.auth.enterGuest?.();
+        if (!result?.ok) {
+          toast.error(result?.error || 'Nao foi possivel iniciar o modo visitante.');
+          return;
+        }
+        toast.success('Sessao visitante iniciada.');
+        this.onAuthenticated?.();
+      } finally {
+        button.disabled = false;
+      }
     });
   }
 

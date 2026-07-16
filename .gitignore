@@ -33,6 +33,9 @@ Applications/**/.agents/
 Applications/**/tmp/
 Applications/**/node_modules/
 
+# Placeholder ainda nao aprovado para integracao/publicacao
+Applications/french-study/
+
 # Firebase local configuration
 src/firebase/firebase-config.local.js
 src/firebase/*.local.js
