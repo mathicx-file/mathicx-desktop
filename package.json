@@ -8,7 +8,7 @@
     "test:app-data-contract": "node --test src/apps/integration/app-data-contract.test.mjs",
     "test:integration-kit": "node --test src/apps/integration/integrated-app.test.mjs src/apps/configuracoes/sync-center.test.mjs",
     "test:diagnostics": "node --test src/apps/configuracoes/operational-diagnostics.test.mjs src/apps/integration/integrated-app.test.mjs src/apps/configuracoes/sync-center.test.mjs",
-    "test:guest-mode": "node --test --test-isolation=none src/auth/guest-session.test.mjs src/auth/guest-migration.test.mjs src/storage/local-storage.test.mjs src/explorer/fs-store.test.mjs src/apps/integration/integrated-app.test.mjs src/apps/integration/unified-backup.test.mjs",
+    "test:guest-mode": "node --test src/auth/guest-session.test.mjs src/auth/guest-migration.test.mjs src/storage/local-storage.test.mjs src/explorer/fs-store.test.mjs src/apps/integration/integrated-app.test.mjs src/apps/integration/unified-backup.test.mjs",
     "test:sync-center": "node --test src/apps/configuracoes/sync-center.test.mjs",
     "test:unified-backup": "node --test src/apps/integration/unified-backup.test.mjs",
     "test:encrypted-backup": "node --test src/apps/integration/encrypted-backup.test.mjs",
